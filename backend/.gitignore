@@ -1,0 +1,51 @@
+# Node.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log*
+
+# Logs
+logs/
+*.log
+*.gz
+*.out
+*.pid
+*.pid.lock
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Output directories
+out/
+build/
+coverage/
+
+# Editor and IDE settings
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# ESLint
+.eslintcache
+
+# Prettier
+.prettierignore
+
+# Testing
+jest.config.js
+coverage/
+.nyc_output/
+
+# Miscellaneous
+temp/
+tmp/
+
