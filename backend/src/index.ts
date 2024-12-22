@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { userRouter } from './router';
+import { userRouter } from './routes/router';
 import mongoose from "mongoose"
 
 dotenv.config();
