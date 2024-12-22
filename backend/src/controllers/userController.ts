@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const saltRounds = process.env.saltRounds || 10;
+const saltRounds: number  = Number(process.env.saltRounds) || 10;
 const USER_EMAIL_HEADER = process.env.USER_EMAIL_HEADER || "X-User-Email";
 const USER_PASSWORD_HEADER = process.env.USER_PASSWORD_HEADER || "X-User-Password";
 const USER_JWT_TOKEN = process.env.USER_JWT_TOKEN || "X-User-Token";
@@ -71,10 +71,10 @@ const registerUser = async (request: Request, response: Response) => {
         const password: string = modelData[USER_PASSWORD_HEADER];
         const userExist = await checkUser(userEmail);
         if (!userExist) {
-            const hash: String = await bcrypt.hash(password, saltRounds);
+            const hash: string = await bcrypt.hash(password, saltRounds);
             const newUser = new userModel({email: userEmail, password: hash});
-            newUser.save();
             const jwtToken: string = await createToken(userEmail);
+            newUser.save();
             response.setHeader(USER_JWT_TOKEN, jwtToken);
             response.setHeader(USER_EMAIL_HEADER, userEmail);
             response.status(HttpStatus.CREATED);
@@ -84,6 +84,8 @@ const registerUser = async (request: Request, response: Response) => {
             response.send({ERROR_TAG: "Error, the current email is already in use."});
         }
     }catch(error) {
+        console.log("ciao");
+        console.log(error);
         response.status(HttpStatus.BAD_REQUEST);
         response.setHeader(ERROR_TAG, "true");
         response.send({ ERROR_TAG: error });
