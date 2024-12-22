@@ -1,6 +1,7 @@
 import { userModel  } from "./model";
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
+import { UserDocument } from "./model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -24,23 +25,34 @@ async function createToken(inputEmail: String): Promise<string> {
     return token;
 }
 
-const loginUser = (request: Request, response: Response) => {
+const loginUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    const userEmail: String = modelData[USER_EMAIL_HEADER];
-    const password: String = modelData[USER_PASSWORD_HEADER];
-    userModel.findOne( {email: userEmail})
-        .then(storedUser =>{
-            console.log(storedUser?.password)
-        }).catch(error => {
-            response.status(HttpStatus.UNAUTHORIZED);
-            response.send({ERROR_HEADER: error});
-        });
+    const userEmail: string = modelData[USER_EMAIL_HEADER];
+    const password: string = modelData[USER_PASSWORD_HEADER];
+    const userExist = await checkUser(userEmail);
+    if (userExist) {
+        const user = await userModel.findOne({email: userEmail}) || null;
+        if (user) {
+            const samePsw = await bcrypt.compare(password, user.password);
+            if (samePsw) {
+                const jwtToken: string = await createToken(userEmail);
+                response.setHeader(USER_JWT_TOKEN, jwtToken);
+                response.setHeader(USER_EMAIL_HEADER, userEmail);
+            }else{
+                response.status(HttpStatus.CONFLICT)
+                response.send({ERROR_HEADER: "Wrong password"});
+            }
+        }
+    }else {
+        response.status(HttpStatus.FORBIDDEN);
+        response.send({ERROR_HEADER: "Wrong input email, the user does not exists"});
+    }
     response.end();
 };
 
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    const userEmail: String = modelData[USER_EMAIL_HEADER];
+    const userEmail: string = modelData[USER_EMAIL_HEADER];
     const password: string = modelData[USER_PASSWORD_HEADER];
     const userExist = await checkUser(userEmail);
     if (!userExist) {
@@ -49,6 +61,7 @@ const registerUser = async (request: Request, response: Response) => {
         newUser.save();
         const jwtToken: string = await createToken(userEmail);
         response.setHeader(USER_JWT_TOKEN, jwtToken);
+        response.setHeader(USER_EMAIL_HEADER, userEmail);
         response.status(HttpStatus.CREATED);
     }else{
         response.status(HttpStatus.CONFLICT);
