@@ -8,7 +8,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const URL: string = process.env.DB_URL || "";
-mongoose.connect(URL);
+mongoose.connect(URL, { dbName: "authorization-database" });
 
 app.use(express.json());
 
