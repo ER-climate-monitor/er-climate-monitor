@@ -70,5 +70,8 @@ const registerUser = async (request: Request, response: Response) => {
     response.end()
 };
 
+const checkToken = async (request: Request, response: Response) => {
+};
+
 
 export { registerUser, loginUser }
