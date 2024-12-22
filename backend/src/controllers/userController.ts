@@ -4,6 +4,7 @@ import HttpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
+import { DeleteResult } from "mongoose";
 
 dotenv.config();
 
@@ -93,6 +94,33 @@ const registerUser = async (request: Request, response: Response) => {
     response.end()
 };
 
+const deleteUser = async (request: Request, response: Response) => {
+    const modelData = request.body;
+    try {
+        const userEmail: string = modelData[USER_EMAIL_HEADER];
+        const password: string = modelData[USER_PASSWORD_HEADER];
+        const userExist = await checkUser(userEmail);
+        if (userExist) {
+            const status: DeleteResult = await userModel.deleteOne({email: userEmail});
+            if (status.deletedCount === 1){
+                response.status(HttpStatus.OK);
+            }else{
+                response.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else{
+            response.status(HttpStatus.BAD_REQUEST);
+            response.setHeader(ERROR_TAG, "true");
+            response.send({ERROR_TAG: "The input user does not exist"});
+        }
+
+    }catch(error) {
+        response.status(HttpStatus.BAD_REQUEST);
+        response.setHeader(ERROR_TAG, "true");
+        response.send({ERROR_TAG: error});
+    }
+    response.end();
+};
+
 const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
@@ -111,5 +139,4 @@ const checkToken = async (request: Request, response: Response) => {
     response.end();
 };
 
-
-export { registerUser, loginUser, checkToken }
+export { registerUser, loginUser, deleteUser, checkToken }
