@@ -12,7 +12,7 @@ mongoose.connect(URL, { dbName: "authorization-database" });
 
 app.use(express.json());
 
-app.get('/', (_, res) => {
+app.get('/health', (_, res) => {
     res.send(`Running in ${process.env.NODE_ENV} mode`);
 });
 
