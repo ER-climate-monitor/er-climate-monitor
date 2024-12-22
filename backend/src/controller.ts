@@ -33,7 +33,6 @@ const registerUser = async (request: Request, response: Response) => {
     const userEmail: String = modelData[USER_EMAIL_HEADER];
     const password: string = modelData[USER_PASSWORD_HEADER];
     const userExist = await checkUser(userEmail);
-    console.log(userModel.collection);
     if (!userExist) {
         const hash: String = await bcrypt.hash(password, saltRounds);
         const newUser = new userModel({email: userEmail, password: hash});
