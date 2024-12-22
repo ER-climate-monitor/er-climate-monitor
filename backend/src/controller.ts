@@ -15,7 +15,7 @@ const USER_JWT_TOKEN = process.env.USER_JWT_TOKEN || "X-User-Token";
 const ERROR_TAG = process.env.ERROR_TAG || "X-Error-Message";
 
 
-const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "";
+const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret";
 
 
 
