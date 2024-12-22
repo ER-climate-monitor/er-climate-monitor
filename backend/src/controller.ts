@@ -9,7 +9,7 @@ const ERROR_HEADER = "X-Error-Message";
 
 
 async function checkUser(inputEmail: String): Promise<Boolean> {
-    const existingUser: Boolean = await userModel.findOne({inputEmail}) || false;
+    const existingUser: Boolean = await userModel.findOne({email: inputEmail}) || false;
     console.log(existingUser)
     return existingUser
 }
@@ -33,6 +33,7 @@ const registerUser = async (request: Request, response: Response) => {
     const userEmail: String = modelData[USER_EMAIL_HEADER];
     const password: string = modelData[USER_PASSWORD_HEADER];
     const userExist = await checkUser(userEmail);
+    console.log(userModel.collection);
     if (!userExist) {
         const hash: String = await bcrypt.hash(password, saltRounds);
         const newUser = new userModel({email: userEmail, password: hash});
@@ -44,5 +45,6 @@ const registerUser = async (request: Request, response: Response) => {
     }
     response.end()
 };
+
 
 export { registerUser, loginUser }
