@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser } from "./controller";
+import { registerUser, loginUser, checkToken } from "./controller";
 
 const userRouter = express.Router();
 
@@ -10,5 +10,8 @@ userRouter.route("/register")
 
 userRouter.route("/login")
     .post(loginUser);
+
+userRouter.route("/authorized")
+    .post(checkToken);
 
 export { userRouter }
