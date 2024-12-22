@@ -1,4 +1,4 @@
-import { userModel  } from "../model";
+import { userModel  } from "../models/userModel";
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
