@@ -4,16 +4,19 @@ import HttpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
-import { DeleteResult } from "mongoose";
+import { DeleteResult, model } from "mongoose";
+import { log } from "console";
 
 dotenv.config();
 
 
-const saltRounds: number  = Number(process.env.saltRounds) || 10;
+const saltRounds  = Number(process.env.saltRounds) || 10;
 const USER_EMAIL_HEADER = process.env.USER_EMAIL_HEADER || "X-User-Email";
 const USER_PASSWORD_HEADER = process.env.USER_PASSWORD_HEADER || "X-User-Password";
 const USER_JWT_TOKEN = process.env.USER_JWT_TOKEN || "X-User-Token";
 const ERROR_TAG = process.env.ERROR_TAG || "X-Error-Message";
+const API_KEY_HEADER = process.env.API_KEY_HEADER || "X-Api-Key"
+const secretKey = process.env.SECRET_API_KEY || "__"
 
 
 const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret";
@@ -32,20 +35,17 @@ async function createToken(inputEmail: String): Promise<string> {
     return token;
 }
 
-const loginUser = async (request: Request, response: Response) => {
-    const modelData = request.body;
+async function login(email: string, password: string, response :Response): Promise<Response> {
     try{
-        const userEmail: string = modelData[USER_EMAIL_HEADER];
-        const password: string = modelData[USER_PASSWORD_HEADER];
-        const userExist = await checkUser(userEmail);
+        const userExist = await checkUser(email);
         if (userExist) {
-            const user = await userModel.findOne({email: userEmail}) || null;
+            const user = await userModel.findOne({email: email}) || null;
             if (user) {
                 const samePsw = await bcrypt.compare(password, user.password);
                 if (samePsw) {
-                    const jwtToken: string = await createToken(userEmail);
+                    const jwtToken: string = await createToken(email);
                     response.setHeader(USER_JWT_TOKEN, jwtToken);
-                    response.setHeader(USER_EMAIL_HEADER, userEmail);
+                    response.setHeader(USER_EMAIL_HEADER, email);
                 }else{
                     response.status(HttpStatus.CONFLICT);
                     response.setHeader(ERROR_TAG, "true");
@@ -61,6 +61,23 @@ const loginUser = async (request: Request, response: Response) => {
         response.status(HttpStatus.BAD_REQUEST);
         response.setHeader(ERROR_TAG, "true");
         response.send({ERROR_TAG: error});
+    }
+    return response
+}
+
+const loginUser = async (request: Request, response: Response) => {
+    const modelData = request.body;
+    response = await login(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], response);
+    response.end();
+};
+
+const loginAdmin = async (request: Request, response: Response) => {
+    const modelData = request.body;
+    const API_KEY: string = modelData[API_KEY_HEADER]
+    if (API_KEY === secretKey) {
+        response = await login(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], response);
+    }else {
+        response.status(HttpStatus.UNAUTHORIZED);
     }
     response.end();
 };
@@ -85,8 +102,6 @@ const registerUser = async (request: Request, response: Response) => {
             response.send({ERROR_TAG: "Error, the current email is already in use."});
         }
     }catch(error) {
-        console.log("ciao");
-        console.log(error);
         response.status(HttpStatus.BAD_REQUEST);
         response.setHeader(ERROR_TAG, "true");
         response.send({ ERROR_TAG: error });
