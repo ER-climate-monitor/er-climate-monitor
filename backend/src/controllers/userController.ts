@@ -5,16 +5,20 @@ import dotenv from 'dotenv';
 import { DeleteResult } from "mongoose";
 import jwt from "jsonwebtoken";
 import { login, register } from "./utils/auth";
-import { checkUser } from "./utils/checkOnUsers";
+import { checkUser } from "./utils/userUtils";
 import { verifyToken } from "./utils/jwt";
 
 dotenv.config();
 
 
 const saltRounds  = Number(process.env.saltRounds) || 10;
+
 const USER_EMAIL_HEADER = process.env.USER_EMAIL_HEADER || "X-User-Email";
 const USER_PASSWORD_HEADER = process.env.USER_PASSWORD_HEADER || "X-User-Password";
-const USER_JWT_TOKEN = process.env.USER_JWT_TOKEN || "X-User-Token";
+const USER_JWT_TOKEN_HEADER = process.env.USER_JWT_TOKEN_HEADER || "X-User-Token";
+const NORMAL_USER = process.env.NORMAL_USER || "normal";
+const ADMIN_USER = process.env.ADMIN_USER || "admin";
+
 const ERROR_TAG = process.env.ERROR_TAG || "X-Error-Message";
 const API_KEY_HEADER = process.env.API_KEY_HEADER || "X-Api-Key"
 const secretKey = process.env.SECRET_API_KEY || "__"
@@ -40,7 +44,18 @@ const loginAdmin = async (request: Request, response: Response) => {
 
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    response = await register(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], response);
+    response = await register(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], NORMAL_USER, response);
+    response.end()
+};
+
+const registerAdmin = async (request: Request, response: Response) => {
+    const modelData = request.body;
+    const API_KEY: string = modelData[API_KEY_HEADER]
+    if (API_KEY === secretKey) {
+        response = await register(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], ADMIN_USER, response);
+    }else {
+        response.status(HttpStatus.UNAUTHORIZED);
+    }
     response.end()
 };
 
@@ -74,7 +89,7 @@ const deleteUser = async (request: Request, response: Response) => {
 const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
-        const jwtToken: string = modelData[USER_JWT_TOKEN];
+        const jwtToken: string = modelData[USER_JWT_TOKEN_HEADER];
         const verified = verifyToken(jwtToken);
         if (verified) {
             response.status(HttpStatus.ACCEPTED);
@@ -89,5 +104,5 @@ const checkToken = async (request: Request, response: Response) => {
     response.end();
 };
 
-export { registerUser, loginUser, loginAdmin, deleteUser, checkToken }
-export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN, ERROR_TAG, jwtSecretKey, saltRounds }
+export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, checkToken }
+export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG, jwtSecretKey, saltRounds }
