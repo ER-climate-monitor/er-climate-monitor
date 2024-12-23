@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { createToken } from "./jwt";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG } from "../userController";
-import { checkUser, createUser } from "./userUtils";
+import { checkUser, createUser, deleteOneUser} from "./userUtils";
 
 async function login(email: string, password: string, response :Response): Promise<Response> {
     try{
@@ -58,5 +58,29 @@ async function register(email: string, password: string, role: string, response:
     return response
 }
 
+async function deleteInputUser(email: string, response: Response): Promise<Response> {
+    try {
+        const userExist = await checkUser(email);
+        if (userExist) {
+            const status = await deleteOneUser(email)
+            if (status){
+                response.status(HttpStatus.OK);
+            }else{
+                response.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }else{
+            response.status(HttpStatus.BAD_REQUEST);
+            response.setHeader(ERROR_TAG, "true");
+            response.send({ERROR_TAG: "The input user does not exist"});
+        }
 
-export { login, register }
+    }catch(error) {
+        response.status(HttpStatus.BAD_REQUEST);
+        response.setHeader(ERROR_TAG, "true");
+        response.send({ERROR_TAG: error});
+    }
+    return response;
+}
+
+
+export { login, register, deleteInputUser }
