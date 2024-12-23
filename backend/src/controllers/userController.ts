@@ -21,6 +21,10 @@ const API_KEY_HEADER = process.env.API_KEY_HEADER || "X-Api-Key"
 const secretKey = process.env.SECRET_API_KEY || "__"
 const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret"
 
+function isAdmin(data:any): boolean { 
+    const API_KEY: string = data[API_KEY_HEADER]
+    return API_KEY === secretKey
+}
 
 const loginUser = async (request: Request, response: Response) => {
     const modelData = request.body;
@@ -30,8 +34,7 @@ const loginUser = async (request: Request, response: Response) => {
 
 const loginAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
-    const API_KEY: string = modelData[API_KEY_HEADER]
-    if (API_KEY === secretKey) {
+    if (isAdmin(modelData)) {
         response = await login(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], response);
     }else {
         response.status(HttpStatus.UNAUTHORIZED);
@@ -47,8 +50,7 @@ const registerUser = async (request: Request, response: Response) => {
 
 const registerAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
-    const API_KEY: string = modelData[API_KEY_HEADER]
-    if (API_KEY === secretKey) {
+    if (isAdmin(modelData)) {
         response = await register(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], ADMIN_USER, response);
     }else {
         response.status(HttpStatus.UNAUTHORIZED);
@@ -62,6 +64,15 @@ const deleteUser = async (request: Request, response: Response) => {
     response.end();
 };
 
+const deleteAdmin = async (request: Request, response: Response) => {
+    const modelData = request.body;
+    if (isAdmin(modelData)) {
+        response = await deleteInputUser(modelData[USER_EMAIL_HEADER], response);
+    }else {
+        response.status(HttpStatus.UNAUTHORIZED);
+    }
+    response.end();
+};
 
 const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
@@ -81,5 +92,5 @@ const checkToken = async (request: Request, response: Response) => {
     response.end();
 };
 
-export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, checkToken }
+export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, deleteAdmin, checkToken }
 export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG, jwtSecretKey, saltRounds }
