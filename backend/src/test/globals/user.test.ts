@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import request from "supertest"
 import createServer from "../..";
-import { describe, it, before } from "node:test";
+import { describe, it, before, after } from "node:test";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userController";
 import { Application, response } from "express";
@@ -23,22 +23,25 @@ async function deleteUser(email: string, password: string) {
     expect(response.statusCode).to.equal(HttpStatus.OK);
 }
 
-
-
 app.on("ready", () => {
-    describe("New User Registration", async () => {
-        await it("should return OK if the email does not exists inside the Database", async () => {
+    describe("New User Registration", () => {
+        it("should return OK if the email does not exists inside the Database", async () => {
             const email = "testemail1@gmail.com";
             const password = "AVeryStrongPassword1010";
             const userInformation = {
                 [USER_EMAIL_HEADER]: email,
                 [USER_PASSWORD_HEADER]: password
             }
-            console.log(userInformation)
             const response = (await request(app).post("/user/register").send(userInformation));
             await expect(response.statusCode).to.equal(HttpStatus.CREATED);
             await deleteUser(email, password);
         });
+        after(() => {
+            console.log("done")
+            server.close(() => {
+                console.log("Closing the server...");
+                process.exit(0);
+            });
+        })
     });
 });
-
