@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, checkToken, deleteUser, registerAdmin, loginAdmin } from "../controllers/userController";
+import { registerUser, loginUser, checkToken, deleteUser, registerAdmin, loginAdmin, deleteAdmin } from "../controllers/userController";
 
 const userRouter = express.Router();
 
@@ -21,5 +21,8 @@ userRouter.route("/authorized")
 
 userRouter.route("/delete")
     .delete(deleteUser);
+
+userRouter.route("/admin/delete")
+    .delete(deleteAdmin);
 
 export { userRouter }
