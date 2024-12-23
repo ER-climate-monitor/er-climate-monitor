@@ -1,11 +1,8 @@
-import { userModel  } from "../models/userModel";
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 import dotenv from 'dotenv';
-import { DeleteResult } from "mongoose";
 import jwt from "jsonwebtoken";
-import { login, register } from "./utils/auth";
-import { checkUser } from "./utils/userUtils";
+import { login, register, deleteInputUser } from "./utils/auth";
 import { verifyToken } from "./utils/jwt";
 
 dotenv.config();
@@ -61,30 +58,10 @@ const registerAdmin = async (request: Request, response: Response) => {
 
 const deleteUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    try {
-        const userEmail: string = modelData[USER_EMAIL_HEADER];
-        const password: string = modelData[USER_PASSWORD_HEADER];
-        const userExist = await checkUser(userEmail);
-        if (userExist) {
-            const status: DeleteResult = await userModel.deleteOne({email: userEmail});
-            if (status.deletedCount === 1){
-                response.status(HttpStatus.OK);
-            }else{
-                response.status(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }else{
-            response.status(HttpStatus.BAD_REQUEST);
-            response.setHeader(ERROR_TAG, "true");
-            response.send({ERROR_TAG: "The input user does not exist"});
-        }
-
-    }catch(error) {
-        response.status(HttpStatus.BAD_REQUEST);
-        response.setHeader(ERROR_TAG, "true");
-        response.send({ERROR_TAG: error});
-    }
+    response = await deleteInputUser(modelData[USER_EMAIL_HEADER], response);
     response.end();
 };
+
 
 const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
