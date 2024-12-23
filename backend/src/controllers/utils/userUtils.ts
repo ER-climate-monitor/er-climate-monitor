@@ -1,7 +1,7 @@
 import { UserDocument, userModel } from "../../models/userModel";
 import { saltRounds } from "../userController";
 import bcrypt from "bcrypt";
-
+import { DeleteResult } from "mongoose";
 
 async function checkUser(inputEmail: String): Promise<Boolean> {
     const existingUser: Boolean = await userModel.findOne({email: inputEmail}) || false;
@@ -14,6 +14,10 @@ async function createUser(inputEmail: string, password: string, role: string): P
     newUser.save();
     return newUser
 }
+async function deleteOneUser(email:string): Promise<boolean> {
+    const status: DeleteResult = await userModel.deleteOne({email: email});
+    return status.deletedCount === 1
+}
 
 
-export { checkUser, createUser }
+export { checkUser, createUser, deleteOneUser }
