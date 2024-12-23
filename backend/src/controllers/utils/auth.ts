@@ -3,9 +3,8 @@ import { Response } from "express";
 import bcrypt from "bcrypt";
 import { createToken } from "./jwt";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_JWT_TOKEN, ERROR_TAG } from "../userController";
-import { checkUser } from "./checkOnUsers";
-import { saltRounds } from "../userController";
+import { USER_EMAIL_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG } from "../userController";
+import { checkUser, createUser } from "./userUtils";
 
 async function login(email: string, password: string, response :Response): Promise<Response> {
     try{
@@ -16,7 +15,7 @@ async function login(email: string, password: string, response :Response): Promi
                 const samePsw = await bcrypt.compare(password, user.password);
                 if (samePsw) {
                     const jwtToken: string = await createToken(email);
-                    response.setHeader(USER_JWT_TOKEN, jwtToken);
+                    response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
                     response.setHeader(USER_EMAIL_HEADER, email);
                 }else{
                     response.status(HttpStatus.CONFLICT);
@@ -37,15 +36,13 @@ async function login(email: string, password: string, response :Response): Promi
     return response
 }
 
-async function register(email: string, password: string, response: Response): Promise<Response> { 
+async function register(email: string, password: string, role: string, response: Response): Promise<Response> { 
     try {
         const userExist = await checkUser(email);
         if (!userExist) {
-            const hash: string = await bcrypt.hash(password, saltRounds);
-            const newUser = new userModel({email: email, password: hash});
             const jwtToken: string = await createToken(email);
-            newUser.save();
-            response.setHeader(USER_JWT_TOKEN, jwtToken);
+            const user = await createUser(email, password, role);
+            response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
             response.setHeader(USER_EMAIL_HEADER, email);
             response.status(HttpStatus.CREATED);
         }else{
