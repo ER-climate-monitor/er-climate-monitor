@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: API documentation for user registration, login, token verification, and deletion.
 servers:
-  - url: http://localhost:10000
+  - url: http://localhost:7777
     description: Local development server
 
 paths:
