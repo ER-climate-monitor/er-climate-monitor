@@ -26,50 +26,66 @@ function isAdmin(data:any): boolean {
     return API_KEY === secretKey
 }
 
+function fromBody(body: any, key: string, defaultValue: any): any {
+    return body && key in body ? body[key]: defaultValue;
+}
+
 const loginUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    response = await login(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], response);
-    response.end();
+    if (modelData) {
+        response = await login(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), response);
+        response.end();
+    }
 };
 
 const loginAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
-    if (isAdmin(modelData)) {
-        response = await login(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], response);
-    }else {
-        response.status(HttpStatus.UNAUTHORIZED);
+    if(modelData) {
+        if (isAdmin(modelData)) {
+            response = await login(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), response);
+        }else {
+            response.status(HttpStatus.UNAUTHORIZED);
+        }
     }
     response.end();
 };
 
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    response = await register(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], NORMAL_USER, response);
-    response.end()
+    if (modelData) {
+        response = await register(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), NORMAL_USER, response);
+        response.end()
+    }
 };
 
 const registerAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
-    if (isAdmin(modelData)) {
-        response = await register(modelData[USER_EMAIL_HEADER], modelData[USER_PASSWORD_HEADER], ADMIN_USER, response);
-    }else {
-        response.status(HttpStatus.UNAUTHORIZED);
+    if (modelData) {
+        if (isAdmin(modelData)) {
+            response = await register(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), ADMIN_USER, response);
+        }else {
+            response.status(HttpStatus.UNAUTHORIZED);
+        }
     }
     response.end()
 };
 
 const deleteUser = async (request: Request, response: Response) => {
     const modelData = request.body;
-    response = await deleteInputUser(modelData[USER_EMAIL_HEADER], response);
+    if (modelData) {
+        response = await deleteInputUser(fromBody(modelData, USER_EMAIL_HEADER, ""), response);
+    }
     response.end();
 };
 
 const deleteAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
-    if (isAdmin(modelData)) {
-        response = await deleteInputUser(modelData[USER_EMAIL_HEADER], response);
-    }else {
-        response.status(HttpStatus.UNAUTHORIZED);
+    if (modelData) {
+        if (isAdmin(modelData)) {
+            response = await deleteInputUser(fromBody(modelData, USER_EMAIL_HEADER, ""), response);
+        }else {
+            response.status(HttpStatus.UNAUTHORIZED);
+        }
     }
     response.end();
 };
@@ -77,12 +93,14 @@ const deleteAdmin = async (request: Request, response: Response) => {
 const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
-        const jwtToken: string = String(modelData[USER_JWT_TOKEN_HEADER]) || "";
-        const verified = verifyToken(jwtToken);
-        if (verified) {
-            response.status(HttpStatus.ACCEPTED);
-        }else{
-            response.status(HttpStatus.UNAUTHORIZED);
+        if (modelData) {
+            const jwtToken: string = fromBody(modelData, USER_JWT_TOKEN_HEADER, "");
+            const verified = verifyToken(jwtToken);
+            if (verified) {
+                response.status(HttpStatus.ACCEPTED);
+            }else{
+                response.status(HttpStatus.UNAUTHORIZED);
+            }
         }
     }catch(error) {
         response.status(HttpStatus.BAD_REQUEST);
