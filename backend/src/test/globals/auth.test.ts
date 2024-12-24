@@ -1,4 +1,3 @@
-import { expect } from "chai"
 import request from "supertest"
 import createServer from "../..";
 import { describe, it, after, afterEach } from "mocha";
@@ -37,39 +36,57 @@ describe("User Authentication", () => {
         await deleteAdmin(app, adminInformation);
     })
     it("should return OK if the email does not exists inside the Database", async () => {
-        const response = (await request(app).post(REGISTER_USER_ROUTE).send(userInformation));
-        expect(response.statusCode).to.equal(HttpStatus.CREATED);
-        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
+        await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CREATED)
+            .expect(USER_EMAIL_HEADER.toLowerCase(), email)
     });
     it("should return an error if I try to create a new user with an email already registered", async () => {
-        const response = (await request(app).post(REGISTER_USER_ROUTE).send(userInformation));
-        const secondResponse = await request(app).post(REGISTER_USER_ROUTE).send(userInformation);
-        expect(response.statusCode).to.equal(HttpStatus.CREATED);
-        expect(secondResponse.statusCode).to.equal(HttpStatus.CONFLICT);
+        await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CONFLICT);
     });
     it("should return OK if I register an Admin using the correct API key and using an email that does not exist", async () => {
-        const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(adminInformation));
-        expect(response.statusCode).to.equal(HttpStatus.CREATED);
-        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(adminInformation[USER_EMAIL_HEADER]);
+        await request(app)
+            .post(REGISTER_ADMIN_ROUTE)
+            .send(adminInformation)
+            .expect(HttpStatus.CREATED)
+            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
     });
     it("Should return and error if I try to create a new Admin without speciifying the API key", async () => {
-        const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(userInformation));
-        expect(response.statusCode).to.equal(HttpStatus.UNAUTHORIZED);
+        await request(app)
+            .post(REGISTER_ADMIN_ROUTE) 
+            .send(userInformation)
+            .expect(HttpStatus.UNAUTHORIZED);
     });
     it("After user registration, It should be possible to use the same credentials for the login", async () => {
-        const response = (await request(app).post(REGISTER_USER_ROUTE).send(userInformation));
-        expect(response.statusCode).to.equal(HttpStatus.CREATED);
-        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
-        const login = (await request(app).post(LOGIN_USER_ROUTE).send(userInformation));
-        expect(login.statusCode).to.equal(HttpStatus.OK);
-        expect(login.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
+        await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CREATED)
+            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
+        await request(app)
+            .post(LOGIN_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.OK)
+            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
     });
     it("After admin registration, It should be possible to use the same credentials for the login", async () => {
-        const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(adminInformation));
-        expect(response.statusCode).to.equal(HttpStatus.CREATED);
-        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
-        const login = (await request(app).post(LOGIN_ADMIN_ROUTE).send(adminInformation));
-        expect(login.statusCode).to.equal(HttpStatus.OK);
+        await request(app)
+            .post(REGISTER_ADMIN_ROUTE)
+            .send(adminInformation)
+            .expect(HttpStatus.CREATED)
+            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
+        await request(app)
+            .post(LOGIN_ADMIN_ROUTE)
+            .send(adminInformation)
+            .expect(HttpStatus.OK);
     });
     afterEach(async () => {
         await deleteUser(app, userInformation);
