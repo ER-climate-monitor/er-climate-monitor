@@ -1,6 +1,6 @@
 import request from "supertest"
 import createServer from "../..";
-import { describe, it, after, afterEach } from "mocha";
+import { describe, it, afterEach } from "mocha";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userController";
 import { Application } from "express";
