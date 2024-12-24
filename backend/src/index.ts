@@ -14,6 +14,7 @@ export default function createServer(): Application {
     mongoose.connect(URL, { dbName: "authorization-database" });
 
     app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
     app.use("/health", healthRouter);
     app.use("/user", userRouter);
