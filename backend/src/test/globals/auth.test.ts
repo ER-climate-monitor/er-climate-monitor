@@ -30,9 +30,6 @@ const adminInformation = {
 };
 
 const app: Application = createServer();
-const server = app.listen(TEST_PORT, () => { 
-    console.log("Server listening on port: ", TEST_PORT);
-});
 
 describe("User Authentication", () => {
     before(async () => {
@@ -54,7 +51,6 @@ describe("User Authentication", () => {
         const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(adminInformation));
         expect(response.statusCode).to.equal(HttpStatus.CREATED);
         expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(adminInformation[USER_EMAIL_HEADER]);
-        await deleteAdmin(app, adminInformation);
     });
     it("Should return and error if I try to create a new Admin without speciifying the API key", async () => {
         const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(userInformation));
@@ -74,9 +70,9 @@ describe("User Authentication", () => {
         expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
         const login = (await request(app).post(LOGIN_ADMIN_ROUTE).send(adminInformation));
         expect(login.statusCode).to.equal(HttpStatus.OK);
-        await deleteAdmin(app, adminInformation);
     });
     afterEach(async () => {
         await deleteUser(app, userInformation);
+        await deleteAdmin(app, adminInformation);
     });
 });
