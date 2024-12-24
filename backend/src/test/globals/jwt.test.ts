@@ -6,7 +6,6 @@ import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userC
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
 
-const TEST_PORT = 10_000;
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
 const USER_JWT_TOKEN_HEADER = process.env.USER_JWT_TOKEN_HEADER || "X-User-Token"
