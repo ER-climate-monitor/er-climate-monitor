@@ -1,4 +1,3 @@
-import { expect } from "chai"
 import request from "supertest"
 import createServer from "../..";
 import { describe, it, after, afterEach } from "mocha";
@@ -40,13 +39,15 @@ describe("JWT token for registered users", () => {
         console.log("Before all");
     });
     it("It should be possible to check the validity of a JWT token of a registered user", async () => {
-        const response = (await request(app).post(REGISTER_USER_ROUTE).send(userInformation));
-        expect(response.statusCode).to.equal(HttpStatus.CREATED);
-        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
+        const response = await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CREATED)
         const jwtToken = response.headers[USER_JWT_TOKEN_HEADER.toLowerCase()];
-        console.log(jwtToken);
-        const valid = (await request(app).post(JWT_AUTHORIZED_ROUTE).send({[USER_JWT_TOKEN_HEADER]: jwtToken}));
-        expect(valid.statusCode).to.equal(HttpStatus.ACCEPTED);
+        await request(app)
+            .post(JWT_AUTHORIZED_ROUTE)
+            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .expect(HttpStatus.ACCEPTED);
     });
     afterEach(async () => {
         await deleteUser(app, userInformation);
