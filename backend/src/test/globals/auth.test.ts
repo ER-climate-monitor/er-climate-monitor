@@ -60,6 +60,14 @@ describe("User Authentication", () => {
         const response = (await request(app).post("/user/admin/register").send(userInformation));
         expect(response.statusCode).to.equal(HttpStatus.UNAUTHORIZED);
     });
+    it("After user registration, It should be possible to use the same credentials for the login", async () => {
+        const response = (await request(app).post("/user/register").send(userInformation));
+        expect(response.statusCode).to.equal(HttpStatus.CREATED);
+        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
+        const login = (await request(app).post("/user/login").send(userInformation));
+        expect(login.statusCode).to.equal(HttpStatus.OK);
+        expect(login.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
+    });
     afterEach(async () => {
         await deleteUser(userInformation)
     });
