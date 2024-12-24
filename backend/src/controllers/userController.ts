@@ -77,7 +77,7 @@ const deleteAdmin = async (request: Request, response: Response) => {
 const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
-        const jwtToken: string = modelData[USER_JWT_TOKEN_HEADER];
+        const jwtToken: string = String(modelData[USER_JWT_TOKEN_HEADER]) || "";
         const verified = verifyToken(jwtToken);
         if (verified) {
             response.status(HttpStatus.ACCEPTED);
