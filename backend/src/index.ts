@@ -19,7 +19,7 @@ export default function createServer(): Application {
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    if (process.env.CI == "False") {
+    if (!process.env.CI || (process.env.CI == "False")) {
         const file: string = fs.readFileSync("src/doc/openapi/swagger.yaml", "utf8");
         const swaggerDocument = YAML.parse(file);
         app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
