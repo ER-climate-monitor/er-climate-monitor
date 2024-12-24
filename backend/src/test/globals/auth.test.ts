@@ -5,14 +5,13 @@ import { describe, it, after, afterEach } from "mocha";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userController";
 import { Application } from "express";
+import { deleteAdmin, deleteUser } from "./utils/userUtils";
 
 const TEST_PORT = 10_000;
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
 const api_key = process.env.SECRET_API_KEY || "";
 
-const DELETE_USER_ROUTE = "/user/delete";
-const DELETE_ADMIN_ROUTE = "/user/admin/delete";
 const REGISTER_USER_ROUTE = "/user/register";
 const REGISTER_ADMIN_ROUTE = "/user/admin/register";
 const LOGIN_USER_ROUTE = "/user/login";
@@ -35,41 +34,10 @@ const server = app.listen(TEST_PORT, () => {
     console.log("Server listening on port: ", TEST_PORT);
 });
 
-
-
-
-async function deleteUser() {
-    const registered = await isUserRegistered();
-    if (registered) {
-        const response = await request(app).delete(DELETE_USER_ROUTE).send(userInformation);
-        expect(response.statusCode).to.equal(HttpStatus.OK);
-    }
-}
-
-async function deleteAdmin() {
-    const registered = await isAdminRegistered();
-    if (registered) {
-        const response = await request(app).delete(DELETE_ADMIN_ROUTE).send(adminInformation);
-        expect(response.statusCode).to.equal(HttpStatus.OK); 
-    }
-}
-
-
-async function isUserRegistered() { 
-    const response = await request(app).post(REGISTER_USER_ROUTE).send(userInformation);
-    return response.statusCode == HttpStatus.CONFLICT || response.statusCode == HttpStatus.CREATED;
-}
-
-
-async function isAdminRegistered() {
-    const response = await request(app).post(REGISTER_ADMIN_ROUTE).send(adminInformation);
-    return response.statusCode == HttpStatus.CONFLICT ||  response.statusCode == HttpStatus.CREATED; 
-}
-
 describe("User Authentication", () => {
     before(async () => {
-        await deleteUser();
-        await deleteAdmin();
+        await deleteUser(app, userInformation);
+        await deleteAdmin(app, adminInformation);
     })
     it("should return OK if the email does not exists inside the Database", async () => {
         const response = (await request(app).post(REGISTER_USER_ROUTE).send(userInformation));
@@ -86,7 +54,7 @@ describe("User Authentication", () => {
         const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(adminInformation));
         expect(response.statusCode).to.equal(HttpStatus.CREATED);
         expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(adminInformation[USER_EMAIL_HEADER]);
-        await deleteAdmin();
+        await deleteAdmin(app, adminInformation);
     });
     it("Should return and error if I try to create a new Admin without speciifying the API key", async () => {
         const response = (await request(app).post(REGISTER_ADMIN_ROUTE).send(userInformation));
@@ -106,9 +74,9 @@ describe("User Authentication", () => {
         expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
         const login = (await request(app).post(LOGIN_ADMIN_ROUTE).send(adminInformation));
         expect(login.statusCode).to.equal(HttpStatus.OK);
-        await deleteAdmin();
+        await deleteAdmin(app, adminInformation);
     });
     afterEach(async () => {
-        await deleteUser();
+        await deleteUser(app, userInformation);
     });
 });
