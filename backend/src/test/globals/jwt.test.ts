@@ -36,7 +36,6 @@ describe("JWT token for registered users", () => {
     before(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
-        console.log("Before all");
     });
     it("It should be possible to check the validity of a JWT token of a registered user", async () => {
         const response = await request(app)
@@ -58,9 +57,9 @@ describe("JWT token for registered users", () => {
     it("It should return an error if I try to verify a token well formatted but that It is not created by this server", async () => {
         const jwt = "qyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0aW1lIjoiVHVlIERlYyAyNCAyMDI0IDE2OjA0OjM2IEdNVCswMTAwIChDZW50cmFsIEV1cm9wZWFuIFN0YW5kYXJkIFRpbWUpIiwiaWF0IjoxNzM1MDUyNjc2fQ.0z5NC4qn2566V9uwtLeWuwffRoM3lbtr6JCJA3Jp5Gs";
         await request(app)
-        .post(JWT_AUTHORIZED_ROUTE)
-        .send({[USER_JWT_TOKEN_HEADER]: jwt})
-        .expect(HttpStatus.BAD_REQUEST);
+            .post(JWT_AUTHORIZED_ROUTE)
+            .send({[USER_JWT_TOKEN_HEADER]: jwt})
+            .expect(HttpStatus.BAD_REQUEST);
     });
     afterEach(async () => {
         await deleteUser(app, userInformation);
