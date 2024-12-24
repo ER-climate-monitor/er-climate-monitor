@@ -8,7 +8,7 @@
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "mocha --webpack-config webpack.config.test.js dist/test/**/*.test.js"
+    "test": "mocha --exit --webpack-config webpack.config.test.js dist/test/**/*.test.js"
   },
   "keywords": [],
   "author": "",
