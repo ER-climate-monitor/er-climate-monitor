@@ -13,8 +13,6 @@ const api_key = process.env.SECRET_API_KEY || "";
 
 const REGISTER_USER_ROUTE = "/user/register";
 const REGISTER_ADMIN_ROUTE = "/user/admin/register";
-const LOGIN_USER_ROUTE = "/user/login";
-const LOGIN_ADMIN_ROUTE = "/user/admin/login";
 const JWT_AUTHORIZED_ROUTE = "/user/authorized";
 
 
