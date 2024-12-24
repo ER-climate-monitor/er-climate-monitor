@@ -48,6 +48,17 @@ describe("JWT token for registered users", () => {
             .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
             .expect(HttpStatus.ACCEPTED);
     });
+    it("It should be possible to check the validity of a JWT token of a registered admin", async () => {
+        const response = await request(app)
+            .post(REGISTER_ADMIN_ROUTE)
+            .send(adminInformation)
+            .expect(HttpStatus.CREATED)
+        const jwtToken = response.headers[USER_JWT_TOKEN_HEADER.toLowerCase()];
+        await request(app)
+            .post(JWT_AUTHORIZED_ROUTE)
+            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .expect(HttpStatus.ACCEPTED);
+    });
     it("It should return an error if I try to verify a token that does not exists and also It is bad formatted", async () => {
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
@@ -63,5 +74,6 @@ describe("JWT token for registered users", () => {
     });
     afterEach(async () => {
         await deleteUser(app, userInformation);
+        await deleteAdmin(app, adminInformation);
     });
 });
