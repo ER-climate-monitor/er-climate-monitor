@@ -9,9 +9,17 @@ import { Application } from "express";
 const TEST_PORT = 10_000;
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
+const api_key = process.env.SECRET_API_KEY || "";
+
 const userInformation = {
     [USER_EMAIL_HEADER]: email,
     [USER_PASSWORD_HEADER]: password,
+};
+
+const adminInformation = {
+    [USER_EMAIL_HEADER]: email,
+    [USER_PASSWORD_HEADER]: password,
+    [String(process.env.API_KEY_HEADER)]: api_key
 };
 
 const app: Application = createServer();
@@ -19,11 +27,19 @@ const server = app.listen(TEST_PORT, () => {
     console.log("Server listening on port: ", TEST_PORT);
 });
 
-async function deleteUser(data: any) {
+async function deleteUser() {
     const registered = await isUserRegistered();
     if (registered) {
-        const response = await request(app).delete("/user/delete").send(data);
+        const response = await request(app).delete("/user/delete").send(userInformation);
         expect(response.statusCode).to.equal(HttpStatus.OK);
+    }
+}
+
+async function deleteAdmin() {
+    const registered = await isAdminRegistered();
+    if (registered) {
+        const response = await request(app).delete("/user/admin/delete").send(adminInformation);
+        expect(response.statusCode).to.equal(HttpStatus.OK); 
     }
 }
 
@@ -32,7 +48,17 @@ async function isUserRegistered() {
     return response.statusCode == HttpStatus.CONFLICT;
 }
 
+async function isAdminRegistered() {
+    const response = await request(app).post("/user/admin/register").send(adminInformation);
+    return response.statusCode == HttpStatus.CONFLICT; 
+}
+
 describe("User Authentication", () => {
+    before(async () => {
+        console.log("Deletiong possible user");
+        await deleteUser();
+        await deleteAdmin();
+    })
     it("should return OK if the email does not exists inside the Database", async () => {
         const response = (await request(app).post("/user/register").send(userInformation));
         expect(response.statusCode).to.equal(HttpStatus.CREATED);
@@ -44,17 +70,10 @@ describe("User Authentication", () => {
         expect(response.statusCode).to.equal(HttpStatus.CREATED);
         expect(secondResponse.statusCode).to.equal(HttpStatus.CONFLICT);
     });
-    it("should return OK if I register an adming using the correct API key and using an email that does not exist", async () => {
-        const api_key = process.env.SECRET_API_KEY || "";
-        const userInformation = {
-            [USER_EMAIL_HEADER]: email,
-            [USER_PASSWORD_HEADER]: password,
-            [String(process.env.API_KEY_HEADER)]: api_key
-        };
+    it("should return OK if I register an Admin using the correct API key and using an email that does not exist", async () => {
         const response = (await request(app).post("/user/admin/register").send(userInformation));
         expect(response.statusCode).to.equal(HttpStatus.CREATED);
         expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
-        await deleteUser(userInformation);
     });
     it("Should return and error if I try to create a new Admin without speciifying the API key", async () => {
         const response = (await request(app).post("/user/admin/register").send(userInformation));
@@ -68,12 +87,15 @@ describe("User Authentication", () => {
         expect(login.statusCode).to.equal(HttpStatus.OK);
         expect(login.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
     });
-    afterEach(async () => {
-        await deleteUser(userInformation)
+    it("After admin registration, It should be possible to use the same credentials for the login", async () => {
+        const response = (await request(app).post("/user/admin/register").send(adminInformation));
+        expect(response.statusCode).to.equal(HttpStatus.CREATED);
+        expect(response.headers[USER_EMAIL_HEADER.toLowerCase()]).to.equal(userInformation[USER_EMAIL_HEADER]);
+        const login = (await request(app).post("/user/admin/login").send(adminInformation));
+        expect(login.statusCode).to.equal(HttpStatus.OK);
     });
-    after(() => {
-        server.close(() => {
-            process.exit(0);
-        });
+    afterEach(async () => {
+        await deleteUser();
+        await deleteAdmin();
     });
 });
