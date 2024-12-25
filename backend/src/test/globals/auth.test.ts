@@ -72,7 +72,7 @@ describe("User Authentication", () => {
             .send(badInformation)
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
-    it("Should return an error if the input email is not well formatted during the registration of an Admin, the same logic in the login even if the Admin is not registered", async () => {
+    it("Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered", async () => {
         const badInformation = {
             [USER_EMAIL_HEADER]: "notanemailDROP DATABASE@gmail.com",
             [USER_PASSWORD_HEADER]: password,
@@ -84,6 +84,10 @@ describe("User Authentication", () => {
             .expect(HttpStatus.NOT_ACCEPTABLE);
         await request(app)
             .post(LOGIN_ADMIN_ROUTE )
+            .send(badInformation)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+        await request(app)
+            .delete(DELETE_ADMIN_ROUTE)
             .send(badInformation)
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
