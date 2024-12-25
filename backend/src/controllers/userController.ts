@@ -26,14 +26,14 @@ function isAdmin(data:any): boolean {
     return API_KEY === secretKey
 }
 
-function fromBody(body: any, key: string, defaultValue: any): any {
+function fromBody<X>(body: any, key: string, defaultValue: X): X {
     return body && key in body ? body[key]: defaultValue;
 }
 
 const loginUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        response = await login(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), response);
+        response = await login(fromBody<string>(modelData, USER_EMAIL_HEADER, ""), fromBody<string>(modelData, USER_PASSWORD_HEADER, ""), response);
         response.end();
     }
 };
@@ -42,7 +42,7 @@ const loginAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
     if(modelData) {
         if (isAdmin(modelData)) {
-            response = await login(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), response);
+            response = await login(fromBody<string>(modelData, USER_EMAIL_HEADER, ""), fromBody<string>(modelData, USER_PASSWORD_HEADER, ""), response);
         }else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
@@ -53,7 +53,7 @@ const loginAdmin = async (request: Request, response: Response) => {
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        response = await register(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), NORMAL_USER, response);
+        response = await register(fromBody<string>(modelData, USER_EMAIL_HEADER, ""), fromBody<string>(modelData, USER_PASSWORD_HEADER, ""), NORMAL_USER, response);
         response.end()
     }
 };
@@ -62,7 +62,7 @@ const registerAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
         if (isAdmin(modelData)) {
-            response = await register(fromBody(modelData, USER_EMAIL_HEADER, ""), fromBody(modelData, USER_PASSWORD_HEADER, ""), ADMIN_USER, response);
+            response = await register(fromBody<string>(modelData, USER_EMAIL_HEADER, ""), fromBody<string>(modelData, USER_PASSWORD_HEADER, ""), ADMIN_USER, response);
         }else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
@@ -73,7 +73,7 @@ const registerAdmin = async (request: Request, response: Response) => {
 const deleteUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        response = await deleteInputUser(fromBody(modelData, USER_EMAIL_HEADER, ""), response);
+        response = await deleteInputUser(fromBody<string>(modelData, USER_EMAIL_HEADER, ""), response);
     }
     response.end();
 };
@@ -94,7 +94,7 @@ const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
         if (modelData) {
-            const jwtToken: string = fromBody(modelData, USER_JWT_TOKEN_HEADER, "");
+            const jwtToken: string = fromBody<string>(modelData, USER_JWT_TOKEN_HEADER, "");
             const verified = verifyToken(jwtToken);
             if (verified) {
                 response.status(HttpStatus.ACCEPTED);
