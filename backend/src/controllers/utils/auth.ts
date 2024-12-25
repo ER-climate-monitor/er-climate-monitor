@@ -87,7 +87,7 @@ async function deleteInputUser(email: string, response: Response): Promise<Respo
                 response.send({ERROR_TAG: "The input user does not exist"});
             }
         }else { 
-            response.status(HttpStatus.CONFLICT);
+            response.status(HttpStatus.NOT_ACCEPTABLE);
             response.setHeader(ERROR_TAG, "true");
             response.send({ERROR_TAG: "Error, the current email is already in use."});
         }
