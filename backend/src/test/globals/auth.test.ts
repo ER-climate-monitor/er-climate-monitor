@@ -15,6 +15,8 @@ const REGISTER_USER_ROUTE = "/user/register";
 const REGISTER_ADMIN_ROUTE = "/user/admin/register";
 const LOGIN_USER_ROUTE = "/user/login";
 const LOGIN_ADMIN_ROUTE = "/user/admin/login";
+const DELETE_USER_ROUTE = "/user/delete";
+const DELETE_ADMIN_ROUTE = "/user/admin/delete";
 
 
 const userInformation = {
@@ -52,7 +54,7 @@ describe("User Authentication", () => {
             .send(userInformation)
             .expect(HttpStatus.CONFLICT);
     });
-    it("Should return an error if the input email is not well formatted during the registration and login, even if the input user is not registered", async () => {
+    it("Should return an error if the input email is not well formatted during the registration, login and delete even if the user is not registered", async () => {
         const badInformation = {
             [USER_EMAIL_HEADER]: "notanemailDROP DATABASE@gmail.com",
             [USER_PASSWORD_HEADER]: password
@@ -63,6 +65,10 @@ describe("User Authentication", () => {
             .expect(HttpStatus.NOT_ACCEPTABLE);
         await request(app)
             .post(LOGIN_USER_ROUTE)
+            .send(badInformation)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+        await request(app)
+            .delete(DELETE_USER_ROUTE)
             .send(badInformation)
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
@@ -77,7 +83,7 @@ describe("User Authentication", () => {
             .send(badInformation)
             .expect(HttpStatus.NOT_ACCEPTABLE);
         await request(app)
-            .post(LOGIN_ADMIN_ROUTE)
+            .post(LOGIN_ADMIN_ROUTE )
             .send(badInformation)
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
