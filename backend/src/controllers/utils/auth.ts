@@ -30,7 +30,7 @@ async function login(email: string, password: string, response :Response): Promi
                 response.send({ERROR_TAG: "Wrong input email, the user does not exists"});
             }
         }else { 
-            response.status(HttpStatus.CONFLICT);
+            response.status(HttpStatus.NOT_ACCEPTABLE);
             response.setHeader(ERROR_TAG, "true");
             response.send({ERROR_TAG: "Error, the current email is already in use."});
         }
@@ -44,23 +44,23 @@ async function login(email: string, password: string, response :Response): Promi
 
 async function register(email: string, password: string, role: string, response: Response): Promise<Response> { 
     try {
-        const userExist = await checkUser(email);
-        if (!userExist) {
-            if (checkEmail(email)) {
+        if (checkEmail(email)) {
+            const userExist = await checkUser(email);
+            if (!userExist) {
                 const jwtToken: string = await createToken(email);
                 const user = await createUser(email, password, role);
                 response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
                 response.setHeader(USER_EMAIL_HEADER, email);
                 response.status(HttpStatus.CREATED);
             }else{
-                response.status(HttpStatus.NOT_ACCEPTABLE);
+                response.status(HttpStatus.CONFLICT);
                 response.setHeader(ERROR_TAG, "true");
-                response.send({ERROR_TAG: "The input email is not well formatted"});
+                response.send({ERROR_TAG: "Error, the current email is already in use."});
             }
         }else{
-            response.status(HttpStatus.CONFLICT);
+            response.status(HttpStatus.NOT_ACCEPTABLE);
             response.setHeader(ERROR_TAG, "true");
-            response.send({ERROR_TAG: "Error, the current email is already in use."});
+            response.send({ERROR_TAG: "The input email is not well formatted"});
         }
     }catch(error) {
         response.status(HttpStatus.BAD_REQUEST);
