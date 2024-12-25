@@ -4,29 +4,35 @@ import bcrypt from "bcrypt";
 import { createToken } from "./jwt";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG } from "../userController";
-import { checkUser, createUser, deleteOneUser} from "./userUtils";
+import { checkEmail, checkUser, createUser, deleteOneUser} from "./userUtils";
 
 async function login(email: string, password: string, response :Response): Promise<Response> {
     try{
-        const userExist = await checkUser(email);
-        if (userExist) {
-            const user = await userModel.findOne({email: email}) || null;
-            if (user) {
-                const samePsw = await bcrypt.compare(password, user.password);
-                if (samePsw) {
-                    const jwtToken: string = await createToken(email);
-                    response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
-                    response.setHeader(USER_EMAIL_HEADER, email);
-                }else{
-                    response.status(HttpStatus.CONFLICT);
-                    response.setHeader(ERROR_TAG, "true");
-                    response.send({ERROR_TAG: "Wrong password"});
+        if (checkEmail(email)) {
+            const userExist = await checkUser(email);
+            if (userExist) {
+                const user = await userModel.findOne({email: email}) || null;
+                if (user) {
+                    const samePsw = await bcrypt.compare(password, user.password);
+                    if (samePsw) {
+                        const jwtToken: string = await createToken(email);
+                        response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
+                        response.setHeader(USER_EMAIL_HEADER, email);
+                    }else{
+                        response.status(HttpStatus.CONFLICT);
+                        response.setHeader(ERROR_TAG, "true");
+                        response.send({ERROR_TAG: "Wrong password"});
+                    }
                 }
+            }else {
+                response.status(HttpStatus.FORBIDDEN);
+                response.setHeader(ERROR_TAG, "true");
+                response.send({ERROR_TAG: "Wrong input email, the user does not exists"});
             }
-        }else {
-            response.status(HttpStatus.FORBIDDEN);
+        }else { 
+            response.status(HttpStatus.CONFLICT);
             response.setHeader(ERROR_TAG, "true");
-            response.send({ERROR_TAG: "Wrong input email, the user does not exists"});
+            response.send({ERROR_TAG: "Error, the current email is already in use."});
         }
     }catch(error) {
         response.status(HttpStatus.BAD_REQUEST);
@@ -40,11 +46,17 @@ async function register(email: string, password: string, role: string, response:
     try {
         const userExist = await checkUser(email);
         if (!userExist) {
-            const jwtToken: string = await createToken(email);
-            const user = await createUser(email, password, role);
-            response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
-            response.setHeader(USER_EMAIL_HEADER, email);
-            response.status(HttpStatus.CREATED);
+            if (checkEmail(email)) {
+                const jwtToken: string = await createToken(email);
+                const user = await createUser(email, password, role);
+                response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
+                response.setHeader(USER_EMAIL_HEADER, email);
+                response.status(HttpStatus.CREATED);
+            }else{
+                response.status(HttpStatus.NOT_ACCEPTABLE);
+                response.setHeader(ERROR_TAG, "true");
+                response.send({ERROR_TAG: "The input email is not well formatted"});
+            }
         }else{
             response.status(HttpStatus.CONFLICT);
             response.setHeader(ERROR_TAG, "true");
