@@ -51,6 +51,20 @@ describe("User Authentication", () => {
             .send(userInformation)
             .expect(HttpStatus.CONFLICT);
     });
+    it("Should return an error if the input email is not well formatted during the registration and login, even if the input user is not registered", async () => {
+        const badInformation = {
+            [USER_EMAIL_HEADER]: "notanemailDROP DATABASE@gmail.com",
+            [USER_PASSWORD_HEADER]: password
+        };
+        await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(badInformation)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+        await request(app)
+            .post(LOGIN_USER_ROUTE)
+            .send(badInformation)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+    });
     it("should return OK if I register an Admin using the correct API key and using an email that does not exist", async () => {
         await request(app)
             .post(REGISTER_ADMIN_ROUTE)
