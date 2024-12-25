@@ -73,17 +73,23 @@ async function register(email: string, password: string, role: string, response:
 async function deleteInputUser(email: string, response: Response): Promise<Response> {
     try {
         const userExist = await checkUser(email);
-        if (userExist) {
-            const status = await deleteOneUser(email)
-            if (status){
-                response.status(HttpStatus.OK);
+        if (checkEmail(email)) {
+            if (userExist) {
+                const status = await deleteOneUser(email)
+                if (status){
+                    response.status(HttpStatus.OK);
+                }else{
+                    response.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }else{
-                response.status(HttpStatus.INTERNAL_SERVER_ERROR);
+                response.status(HttpStatus.BAD_REQUEST);
+                response.setHeader(ERROR_TAG, "true");
+                response.send({ERROR_TAG: "The input user does not exist"});
             }
-        }else{
-            response.status(HttpStatus.BAD_REQUEST);
+        }else { 
+            response.status(HttpStatus.CONFLICT);
             response.setHeader(ERROR_TAG, "true");
-            response.send({ERROR_TAG: "The input user does not exist"});
+            response.send({ERROR_TAG: "Error, the current email is already in use."});
         }
 
     }catch(error) {
