@@ -9,6 +9,7 @@ import { deleteAdmin, deleteUser } from "./utils/userUtils";
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
 const api_key = process.env.SECRET_API_KEY || "";
+const API_KEY_HEADER = String(process.env.API_KEY_HEADER)
 
 const REGISTER_USER_ROUTE = "/user/register";
 const REGISTER_ADMIN_ROUTE = "/user/admin/register";
@@ -24,7 +25,7 @@ const userInformation = {
 const adminInformation = {
     [USER_EMAIL_HEADER]: email,
     [USER_PASSWORD_HEADER]: password,
-    [String(process.env.API_KEY_HEADER)]: api_key
+    [API_KEY_HEADER]: api_key
 };
 
 const app: Application = createServer();
@@ -62,6 +63,21 @@ describe("User Authentication", () => {
             .expect(HttpStatus.NOT_ACCEPTABLE);
         await request(app)
             .post(LOGIN_USER_ROUTE)
+            .send(badInformation)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+    });
+    it("Should return an error if the input email is not well formatted during the registration of an Admin, the same logic in the login even if the Admin is not registered", async () => {
+        const badInformation = {
+            [USER_EMAIL_HEADER]: "notanemailDROP DATABASE@gmail.com",
+            [USER_PASSWORD_HEADER]: password,
+            [API_KEY_HEADER]: api_key
+        };
+        await request(app)
+            .post(REGISTER_ADMIN_ROUTE)
+            .send(badInformation)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+        await request(app)
+            .post(LOGIN_ADMIN_ROUTE)
             .send(badInformation)
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
