@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 import { isIpValid } from "./utils/ipUtils";
-import { saveSensor } from "./utils/sensorUtils";
+import { exists, saveSensor } from "./utils/sensorUtils";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
 const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
@@ -18,8 +21,12 @@ const registerSensor = async (request: Request, response: Response) => {
         const ip = fromBody(modelData, SENSOR_IP_HEADER, "");
         const port = fromBody(modelData, SENSOR_PORT_HEADER, -1);
         if ((port >= 0 && port <= MAX_PORT) && (ip != "" && isIpValid(ip))) {
-            await saveSensor(ip, port);
-            response.status(HttpStatus.CREATED);
+            if (!(await exists(ip, port))) {
+                await saveSensor(ip, port);
+                response.status(HttpStatus.CREATED);
+            }else {
+                response.status(HttpStatus.NOT_ACCEPTABLE);
+            }
         }else{ 
             response.status(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -28,3 +35,5 @@ const registerSensor = async (request: Request, response: Response) => {
     }
     response.end();
 };
+
+export { registerSensor }
