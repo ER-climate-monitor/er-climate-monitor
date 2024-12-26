@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 import { isIpValid } from "./utils/ipUtils";
-import { exists, saveSensor } from "./utils/sensorUtils";
+import { exists, findAllSensors, saveSensor } from "./utils/sensorUtils";
 import dotenv from 'dotenv';
 import { fromBody } from "./utils/requestUtils";
 
@@ -9,6 +9,8 @@ dotenv.config();
 
 const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
 const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
+const API_KEY_HEADER = String(process.env.API_KEY_HEADER);
+const API_KEY = String(process.env.API_KEY);
 const MAX_PORT = 65_535;
 
 
@@ -34,4 +36,16 @@ const registerSensor = async (request: Request, response: Response) => {
     response.end();
 };
 
-export { registerSensor }
+const allSensors = async (request: Request, response: Response) => {
+    const modelData = request.body;
+        const apikey = fromBody(modelData, API_KEY_HEADER, "");
+        if (apikey !== "" && apikey === API_KEY){
+            response.send({sensors: await findAllSensors()});
+        }
+        else{
+            response.status(HttpStatus.UNAUTHORIZED);
+        }
+    response.end();
+};
+
+export { registerSensor, allSensors }
