@@ -1,6 +1,6 @@
 import { SensorDocument, sensorModel } from "../../model/sensorModel"
 
-async function checkSensor(ip: string, port: number): boolean { 
+async function exists(ip: string, port: number): Promise<boolean> { 
     return await sensorModel.exists( {ip: ip, port: port} ) !== null;
 }
 
@@ -10,4 +10,4 @@ async function saveSensor(ip: string, port: number) {
     return newSensor;
 }
 
-export { saveSensor }
+export { saveSensor, exists }
