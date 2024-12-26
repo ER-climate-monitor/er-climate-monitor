@@ -21,4 +21,9 @@ async function findAllSensors(): Promise<Iterable<ISensor>> {
         });
 }
 
-export { saveSensor, exists, findAllSensors }
+async function deleteSensor(ip: string, port: number) {
+    const result = await sensorModel.deleteOne({ip: ip, port: port});
+    return result.deletedCount === 1
+}
+
+export { saveSensor, exists, findAllSensors, deleteSensor } 
