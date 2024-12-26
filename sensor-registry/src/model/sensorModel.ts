@@ -13,4 +13,4 @@ const sensorSchema = new mongoose.Schema({
 });
 
 const sensorModel: Model<SensorDocument> = mongoose.model<SensorDocument>("Sensors", sensorSchema);
-export { sensorModel, SensorDocument }
+export { sensorModel, SensorDocument, ISensor }
