@@ -3,6 +3,7 @@ import HttpStatus from "http-status-codes";
 import { isIpValid } from "./utils/ipUtils";
 import { exists, saveSensor } from "./utils/sensorUtils";
 import dotenv from 'dotenv';
+import { fromBody } from "./utils/requestUtils";
 
 dotenv.config();
 
@@ -10,9 +11,6 @@ const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
 const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
 const MAX_PORT = 65_535;
 
-function fromBody<X>(body: any, key: string, defaultValue: X): X {
-    return body && key in body ? body[key] : defaultValue;
-}
 
 
 const registerSensor = async (request: Request, response: Response) => {
