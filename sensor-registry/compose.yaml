@@ -1,0 +1,6 @@
+services:
+  sensor-database:
+    image: arm64v8/mongo:6.0-rc
+    ports:
+      - target: 27017
+        published: 27017
