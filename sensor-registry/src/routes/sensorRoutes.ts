@@ -1,5 +1,5 @@
 import express from "express"
-import { allSensors, registerSensor } from "../controllers/sensorController";
+import { allSensors, registerSensor, shutOff } from "../controllers/sensorController";
 
 const sensorRouter = express.Router();
 
@@ -8,5 +8,8 @@ sensorRouter.route("/register")
 
 sensorRouter.route("/all")
     .get(allSensors)
+
+sensorRouter.route("/shutoff")
+    .delete(shutOff);
 
 export { sensorRouter }
