@@ -10,11 +10,11 @@ dotenv.config();
 const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
 const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
 const API_KEY_HEADER = String(process.env.API_KEY_HEADER);
-const API_KEY = String(process.env.API_KEY);
+const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
 
 function isAuthorized(key: string): boolean {
-    return key !== "" && key === API_KEY;
+    return key !== "" && key === SECRET_API_KEY;
 }
 
 const registerSensor = async (request: Request, response: Response) => {
@@ -29,7 +29,7 @@ const registerSensor = async (request: Request, response: Response) => {
                     await saveSensor(ip, port);
                     response.status(HttpStatus.CREATED);
                 }else {
-                    response.status(HttpStatus.NOT_ACCEPTABLE);
+                    response.status(HttpStatus.CONFLICT);
                 }
             }else{ 
                 response.status(HttpStatus.NOT_ACCEPTABLE);
