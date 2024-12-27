@@ -97,7 +97,13 @@ describe("Registering a new Sensor", () => {
             .send(similarSensor)
             .expect(HttpStatus.CREATED);
         await shutOffSensor(app, similarSensor);
-        
+    });
+    it("Delete an existing sensor should be OK", async () => {
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await shutOffSensor(app, sensorInfomration);
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
