@@ -12,7 +12,7 @@ const REGISTER_SENSOR_PATH = "/sensor/register";
 const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
 const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
 const API_KEY_HEADER = String(process.env.API_KEY_HEADER);
-const API_KEY = String(process.env.API_KEY);
+const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
 
 const sensorIp = "0.0.0.0";
@@ -21,7 +21,7 @@ const sensorPort = 1926;
 const sensorInfomration = {
     [SENSOR_IP_HEADER]: sensorIp,
     [SENSOR_PORT_HEADER]: sensorPort,
-    [API_KEY_HEADER]: API_KEY
+    [API_KEY_HEADER]: SECRET_API_KEY
 }
 
 const app = createServer();
@@ -54,6 +54,16 @@ describe("Registering a new Sensor", () => {
             .post(REGISTER_SENSOR_PATH)
             .send(wrongAPI)
             .expect(HttpStatus.UNAUTHORIZED);
+    });
+    it("Registering a sensor with a duplicate pair IP-Port should return an error", async() => {
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CONFLICT);
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
