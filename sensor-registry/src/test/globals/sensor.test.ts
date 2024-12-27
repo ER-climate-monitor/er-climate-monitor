@@ -159,7 +159,7 @@ describe("Registering a new Sensor", () => {
         const ip: string = "0.0.0.0";
         const wrongSensors = [createSensor("localhost", 10)];
         for (let i = 0; i < 4; i++) {
-            const wrongIp = ip.split('.')
+            const wrongIp = ip.split('.');
             wrongIp[i] = "256";
             wrongSensors.push(createSensor(wrongIp.join('.'), 10));
 
