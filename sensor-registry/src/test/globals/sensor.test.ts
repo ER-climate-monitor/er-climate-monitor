@@ -28,7 +28,6 @@ const app = createServer();
 
 describe("Registering a new Sensor", () => {
     before(async () => {
-        // Delete
         await shutOffSensor(app, sensorInfomration);
     })
     it("Registering a new Sensor that does not exists inside the database should be OK", async () =>{
@@ -55,7 +54,6 @@ describe("Registering a new Sensor", () => {
             .post(REGISTER_SENSOR_PATH)
             .send(wrongAPI)
             .expect(HttpStatus.UNAUTHORIZED);
-
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
