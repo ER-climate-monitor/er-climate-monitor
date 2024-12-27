@@ -29,6 +29,14 @@ const sensorInfomration = {
 
 const app = createServer();
 
+function createSensor(ip: string, port: number) {
+    return {
+            [SENSOR_IP_HEADER]: ip,
+            [SENSOR_PORT_HEADER]: port,
+            [API_KEY_HEADER]: SECRET_API_KEY
+    }
+}
+
 describe("Registering a new Sensor", () => {
     before(async () => {
         await shutOffSensor(app, sensorInfomration);
@@ -146,6 +154,22 @@ describe("Registering a new Sensor", () => {
             .post(REGISTER_SENSOR_PATH)
             .send(wrongSensor)
             .expect(HttpStatus.NOT_ACCEPTABLE);
+    });
+    it("Registering a Sensor with a wrong IP should return an error.", async () => {
+        const ip: string = "0.0.0.0";
+        const wrongSensors = [createSensor("localhost", 10)];
+        for (let i = 0; i < 4; i++) {
+            const wrongIp = ip.split('.')
+            wrongIp[i] = "256";
+            wrongSensors.push(createSensor(wrongIp.join('.'), 10));
+
+        }
+        for (const sensor of wrongSensors) {
+            await request(app)
+                .post(REGISTER_SENSOR_PATH)
+                .send(sensor)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+        }
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
