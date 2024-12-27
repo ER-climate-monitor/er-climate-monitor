@@ -4,10 +4,12 @@ import createServer from "../..";
 import dotenv from 'dotenv';
 import HttpStatus from "http-status-codes";
 import { shutOffSensor } from "./utils/sensorUtils";
+import { fail } from "assert";
 
 dotenv.config();
 
 const REGISTER_SENSOR_PATH = "/sensor/register";
+const ALL_SENSORS = "/sensor/all";
 
 const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
 const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
@@ -104,6 +106,23 @@ describe("Registering a new Sensor", () => {
             .send(sensorInfomration)
             .expect(HttpStatus.CREATED);
         await shutOffSensor(app, sensorInfomration);
+    });
+    it("Register a sensor and query for all the sensors should be able to find the registered sensor", async () => {
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .get(ALL_SENSORS)
+            .send({[API_KEY_HEADER]: SECRET_API_KEY})
+            .expect(HttpStatus.OK)
+            .expect(res => {
+                const allSensors: Array<any> = res.body['sensors'];
+                const exist = allSensors.find(sensor => sensor['ip'] == sensorIp && sensor['port'] == sensorPort);
+                if (!exist) {
+                    fail("The sensor is not registered.")
+                };
+            });
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
