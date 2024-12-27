@@ -65,6 +65,23 @@ describe("Registering a new Sensor", () => {
             .send(sensorInfomration)
             .expect(HttpStatus.CONFLICT);
     });
+    it("Registering a sensor with same IP but different port should be OK", async () => {
+        const similarSensor = {
+            [SENSOR_IP_HEADER]: "0.0.0.0",
+            [SENSOR_PORT_HEADER]: 777,
+            [API_KEY_HEADER]: SECRET_API_KEY
+        };
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(similarSensor)
+            .expect(HttpStatus.CREATED);
+        await shutOffSensor(app, similarSensor);
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     })
