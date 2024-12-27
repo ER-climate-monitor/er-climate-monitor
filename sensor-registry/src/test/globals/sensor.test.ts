@@ -130,6 +130,23 @@ describe("Registering a new Sensor", () => {
                 };
             });
     });
+    it("Registering a Sensor with a port < 0 or > MAX_PORT should return an error.", async () => {
+        const wrongSensor = {
+            [SENSOR_IP_HEADER]: sensorIp,
+            [SENSOR_PORT_HEADER]: -1,
+            [API_KEY_HEADER]: SECRET_API_KEY
+
+        };
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(wrongSensor)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+        wrongSensor[SENSOR_PORT_HEADER] = MAX_PORT + 1
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(wrongSensor)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     })
