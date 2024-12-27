@@ -16,3 +16,9 @@ export default function createServer(): Application {
     app.use("/sensor", sensorRouter);
     return app;
 }
+
+const app = createServer();
+
+app.listen(PORT, () => {
+    console.log("Server is listening...");
+});
