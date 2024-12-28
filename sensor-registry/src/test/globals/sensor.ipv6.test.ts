@@ -83,6 +83,23 @@ describe("Registering a new Sensor using IPv6", () => {
                 .expect(HttpStatus.CREATED);
         }
     });
+    it("Registering a sensor with a wrong IPv6 should raise an error.", async() => {
+        const baseIP = "2c56:9a76:aee6:3552:855a:f757:3611:255a"
+        const sensors = Array();
+        for (let i = 0; i < 8; i+= 1) {
+            const ip = baseIP.split(':');
+            ip[i] = "ABCG"
+            const newIp = ip.join(':');
+            sensors.push(createSensor(newIp, sensorPort));
+        }
+        for (const sensor of sensors) {
+            await request(app)
+                .post(REGISTER_SENSOR_PATH)
+                .send(sensor)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
