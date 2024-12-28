@@ -20,6 +20,7 @@
     "http-status-codes": "^2.3.0",
     "mocha": "^11.0.1",
     "mongoose": "^8.9.2",
+    "random-ipv6": "^1.0.2",
     "supertest": "^7.0.0"
   },
   "devDependencies": {
@@ -27,6 +28,7 @@
     "@types/express": "^5.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
+    "@types/random-ipv6": "^1.0.4",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
