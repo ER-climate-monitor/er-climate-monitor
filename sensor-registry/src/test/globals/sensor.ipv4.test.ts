@@ -37,7 +37,7 @@ function createSensor(ip: string, port: number) {
     }
 }
 
-describe("Registering a new Sensor", () => {
+describe("Registering a new Sensor using IPv4", () => {
     before(async () => {
         await shutOffSensor(app, sensorInfomration);
     })
