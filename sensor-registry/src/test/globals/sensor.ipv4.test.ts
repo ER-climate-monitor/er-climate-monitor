@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import HttpStatus from "http-status-codes";
 import { shutOffSensor } from "./utils/sensorUtils";
 import { fail } from "assert";
-import { ISensor, SensorDocument } from "../../model/sensorModel";
+import { ISensor } from "../../model/sensorModel";
 
 dotenv.config();
 
