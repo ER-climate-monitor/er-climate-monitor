@@ -61,6 +61,17 @@ describe("Registering a new Sensor using IPv6", () => {
             .expect(HttpStatus.CREATED)
         await shutOffSensor(app, other);
     });
+    it("Registering a sensor with different IPv6 and same port should be ok.", async () => {
+        const other = createSensor(randomIpv6(), sensorPort);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(other)
+            .expect(HttpStatus.CREATED);
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
