@@ -72,6 +72,17 @@ describe("Registering a new Sensor using IPv6", () => {
             .send(other)
             .expect(HttpStatus.CREATED);
     });
+    it("Registering a sensor with different types of IPv6 should be ok.", async () => {
+        const ips= Array<string>();
+        ips.push(randomIpv6('{token}::1', {padded: true, token:{ min: 0, max: 65535 }}));
+        ips.push(randomIpv6('{token}:0:0:0:0:1:0:0', { compressed: true, token:{ min: 0, max: 65535 }}));
+        for (const ip of ips) {
+            await request(app)
+                .post(REGISTER_SENSOR_PATH)
+                .send(createSensor(ip, sensorPort))
+                .expect(HttpStatus.CREATED);
+        }
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
