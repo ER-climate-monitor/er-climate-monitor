@@ -100,6 +100,22 @@ describe("Registering a new Sensor using IPv6", () => {
         }
 
     });
+    it("After registering a new sensor It should be possible to see It saved.", async () => {   
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .get(ALL_SENSORS)
+            .send({[API_KEY_HEADER]: SECRET_API_KEY})
+            .expect(res => {
+                const sensors: Array<ISensor> = res.body['sensors'];
+                const saved = sensors.find(sensor => sensor.ip == sensorIp && sensor.port == sensorPort);
+                if (!saved) {
+                    fail("The input sensor is not saved.");
+                }
+            });
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
