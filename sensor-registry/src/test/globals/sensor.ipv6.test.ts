@@ -7,6 +7,7 @@ import { shutOffSensor } from "./utils/sensorUtils";
 import { fail } from "assert";
 import { ISensor, SensorDocument } from "../../model/sensorModel";
 import randomIpv6 from "random-ipv6";
+import { deleteSensor } from "../../controllers/utils/sensorUtils";
 
 dotenv.config();
 
@@ -47,6 +48,18 @@ describe("Registering a new Sensor using IPv6", () => {
             .post(REGISTER_SENSOR_PATH)
             .send(sensorInfomration)
             .expect(HttpStatus.CREATED);
+    });
+    it("Registering a sensor with same IPv6 and different port should be ok", async () => {
+        const other = createSensor(sensorIp, 1000);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(other)
+            .expect(HttpStatus.CREATED)
+        await shutOffSensor(app, other);
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
