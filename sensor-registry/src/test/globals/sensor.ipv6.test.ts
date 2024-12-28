@@ -86,6 +86,7 @@ describe("Registering a new Sensor using IPv6", () => {
     it("Registering a sensor with a wrong IPv6 should raise an error.", async() => {
         const baseIP = "2c56:9a76:aee6:3552:855a:f757:3611:255a"
         const sensors = Array();
+        sensors.push(createSensor("fe80:2030:31:24", sensorPort));
         for (let i = 0; i < 8; i+= 1) {
             const ip = baseIP.split(':');
             ip[i] = "ABCG"
