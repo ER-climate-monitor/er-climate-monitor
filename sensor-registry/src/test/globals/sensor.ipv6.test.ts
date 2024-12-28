@@ -116,6 +116,16 @@ describe("Registering a new Sensor using IPv6", () => {
                 }
             });
     });
+    it("Registering a sensor with same Ip and same Port of another sensor should return a conflict", async () => {
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .send(sensorInfomration)
+            .expect(HttpStatus.CONFLICT);
+    });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
