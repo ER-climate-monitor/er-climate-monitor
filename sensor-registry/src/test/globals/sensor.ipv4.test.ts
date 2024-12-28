@@ -3,7 +3,7 @@ import request from "supertest";
 import createServer from "../..";
 import dotenv from 'dotenv';
 import HttpStatus from "http-status-codes";
-import { shutOffSensor } from "./utils/sensorUtils";
+import { shutOffSensor, createSensor } from "./utils/sensorUtils";
 import { fail } from "assert";
 import { ISensor } from "../../model/sensorModel";
 
@@ -28,14 +28,6 @@ const sensorInfomration = {
 }
 
 const app = createServer();
-
-function createSensor(ip: string, port: number) {
-    return {
-            [SENSOR_IP_HEADER]: ip,
-            [SENSOR_PORT_HEADER]: port,
-            [API_KEY_HEADER]: SECRET_API_KEY
-    }
-}
 
 describe("Registering a new Sensor using IPv4", () => {
     before(async () => {

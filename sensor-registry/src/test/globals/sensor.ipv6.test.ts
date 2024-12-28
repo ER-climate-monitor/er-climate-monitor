@@ -3,11 +3,10 @@ import request from "supertest";
 import createServer from "../..";
 import dotenv from 'dotenv';
 import HttpStatus from "http-status-codes";
-import { shutOffSensor } from "./utils/sensorUtils";
+import { shutOffSensor, createSensor } from "./utils/sensorUtils";
 import { fail } from "assert";
-import { ISensor, SensorDocument } from "../../model/sensorModel";
+import { ISensor } from "../../model/sensorModel";
 import randomIpv6 from "random-ipv6";
-import { deleteSensor } from "../../controllers/utils/sensorUtils";
 
 dotenv.config();
 
@@ -31,13 +30,7 @@ const sensorInfomration = {
 
 const app = createServer();
 
-function createSensor(ip: string, port: number) {
-    return {
-            [SENSOR_IP_HEADER]: ip,
-            [SENSOR_PORT_HEADER]: port,
-            [API_KEY_HEADER]: SECRET_API_KEY
-    }
-}
+
 
 describe("Registering a new Sensor using IPv6", () => {
     before(async () => {
