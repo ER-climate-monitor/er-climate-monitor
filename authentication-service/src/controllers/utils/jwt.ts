@@ -1,8 +1,11 @@
 import { userModel } from "../../models/userModel";
 import { jwtSecretKey } from "../userController";
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
 
-const EXPIRATION = String(process.env.EXPIRATION) || "1h";
+dotenv.config();
+
+const EXPIRATION = process.env.EXPIRATION || "1h";
 
 async function createToken(inputEmail: string): Promise<string> {
     const user = await userModel.findOne({email: inputEmail});
