@@ -5,9 +5,9 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const EXPIRATION = process.env.EXPIRATION || "1h";
 
 async function createToken(inputEmail: string): Promise<string> {
+    const EXPIRATION = process.env.EXPIRATION || "1h";
     const user = await userModel.findOne({email: inputEmail});
     const data = { time: Date(), userId: user?.id,};
     const token = jwt.sign(data, jwtSecretKey, {expiresIn: EXPIRATION});
