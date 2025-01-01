@@ -69,6 +69,21 @@ describe("JWT token for registered users", () => {
             .send({[USER_JWT_TOKEN_HEADER]: jwt})
             .expect(HttpStatus.BAD_REQUEST);
     });
+    it("Should return an error if the JWT token is valid but It has expired.", async () => {
+        const expireNow = "0";
+        const oldExpiration = process.env.EXPIRATION;
+        process.env.EXPIRATION = expireNow;
+        const response = await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CREATED);
+        const jwtToken = response.headers[USER_JWT_TOKEN_HEADER.toLowerCase()];
+        await request(app)
+            .post(JWT_AUTHORIZED_ROUTE)
+            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .expect(HttpStatus.UNAUTHORIZED);
+        process.env.EXPIRATION = oldExpiration;
+    });
     afterEach(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
