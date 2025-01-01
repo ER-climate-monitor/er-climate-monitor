@@ -15,7 +15,6 @@ async function createToken(inputEmail: string): Promise<string> {
 }
 
 function verifyToken(token: string): Boolean {
-    const EXPIRATION = process.env.EXPIRATION
     try { 
         const verified  = jwt.verify(token, jwtSecretKey);
         if (verified) {
