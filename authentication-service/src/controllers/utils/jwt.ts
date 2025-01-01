@@ -15,11 +15,20 @@ async function createToken(inputEmail: string): Promise<string> {
 }
 
 function verifyToken(token: string): Boolean {
-    const verified  = jwt.verify(token, jwtSecretKey);
-    if (verified) {
-        return true
+    const EXPIRATION = process.env.EXPIRATION
+    try { 
+        const verified  = jwt.verify(token, jwtSecretKey);
+        if (verified) {
+            return true
+        }
+        return false
     }
-    return false
+    catch(error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            return false;
+        }
+        throw error;
+    }
 };
 
 export { createToken, verifyToken }
