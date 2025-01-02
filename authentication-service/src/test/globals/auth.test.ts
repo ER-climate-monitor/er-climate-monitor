@@ -57,22 +57,24 @@ describe("User Authentication", () => {
             .expect(HttpStatus.CONFLICT);
     });
     it("Should return an error if the input email is not well formatted during the registration, login and delete even if the user is not registered", async () => {
-        const badInformation = {
-            [USER_EMAIL_HEADER]: "notanemail`DROP DATABASE *`@gmail.com",
-            [USER_PASSWORD_HEADER]: password
-        };
-        await request(app)
-            .post(REGISTER_USER_ROUTE)
-            .send(badInformation)
-            .expect(HttpStatus.NOT_ACCEPTABLE);
-        await request(app)
-            .post(LOGIN_USER_ROUTE)
-            .send(badInformation)
-            .expect(HttpStatus.NOT_ACCEPTABLE);
-        await request(app)
-            .delete(DELETE_USER_ROUTE)
-            .send(badInformation)
-            .expect(HttpStatus.NOT_ACCEPTABLE);
+        for (const maliciousEmail in maliciousEmails) {
+            const badInformation = {
+                [USER_EMAIL_HEADER]: maliciousEmail,
+                [USER_PASSWORD_HEADER]: password
+            };
+            await request(app)
+                .post(REGISTER_USER_ROUTE)
+                .send(badInformation)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+            await request(app)
+                .post(LOGIN_USER_ROUTE)
+                .send(badInformation)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+            await request(app)
+                .delete(DELETE_USER_ROUTE)
+                .send(badInformation)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+        }
     });
     it("Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered", async () => {
         for (const maliciousEmail in maliciousEmails) {
