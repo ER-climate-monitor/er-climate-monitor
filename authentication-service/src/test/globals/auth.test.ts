@@ -30,6 +30,8 @@ const adminInformation = {
     [API_KEY_HEADER]: api_key
 };
 
+const maliciousEmails = ['{"$ne": null}', "notanemail`DROP DATABASE *`@gmail.com", '{"$gt": ""}', '{"$regex": ".*", "$options": "i"}']
+
 const app: Application = createServer();
 
 describe("User Authentication", () => {
@@ -73,23 +75,25 @@ describe("User Authentication", () => {
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
     it("Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered", async () => {
-        const badInformation = {
-            [USER_EMAIL_HEADER]: "notanemail`DROP DATABASE *`@gmail.com",
-            [USER_PASSWORD_HEADER]: password,
-            [API_KEY_HEADER]: api_key
-        };
-        await request(app)
-            .post(REGISTER_ADMIN_ROUTE)
-            .send(badInformation)
-            .expect(HttpStatus.NOT_ACCEPTABLE);
-        await request(app)
-            .post(LOGIN_ADMIN_ROUTE )
-            .send(badInformation)
-            .expect(HttpStatus.NOT_ACCEPTABLE);
-        await request(app)
-            .delete(DELETE_ADMIN_ROUTE)
-            .send(badInformation)
-            .expect(HttpStatus.NOT_ACCEPTABLE);
+        for (const maliciousEmail in maliciousEmails) {
+            const badInformation = {
+                [USER_EMAIL_HEADER]: maliciousEmail,
+                [USER_PASSWORD_HEADER]: password,
+                [API_KEY_HEADER]: api_key
+            };
+            await request(app)
+                .post(REGISTER_ADMIN_ROUTE)
+                .send(badInformation)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+            await request(app)
+                .post(LOGIN_ADMIN_ROUTE )
+                .send(badInformation)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+            await request(app)
+                .delete(DELETE_ADMIN_ROUTE)
+                .send(badInformation)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
+        }
     });
     it("should return OK if I register an Admin using the correct API key and using an email that does not exist", async () => {
         await request(app)
