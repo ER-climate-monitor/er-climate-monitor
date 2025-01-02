@@ -56,7 +56,7 @@ describe("User Authentication", () => {
     });
     it("Should return an error if the input email is not well formatted during the registration, login and delete even if the user is not registered", async () => {
         const badInformation = {
-            [USER_EMAIL_HEADER]: "notanemailDROP DATABASE@gmail.com",
+            [USER_EMAIL_HEADER]: "notanemail`DROP DATABASE *`@gmail.com",
             [USER_PASSWORD_HEADER]: password
         };
         await request(app)
