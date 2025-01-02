@@ -30,7 +30,7 @@ const adminInformation = {
     [API_KEY_HEADER]: api_key
 };
 
-const maliciousEmails = ['{"$ne": null}', "notanemail`DROP DATABASE *`@gmail.com", '{"$gt": ""}', '{"$regex": ".*", "$options": "i"}']
+const maliciousEmails: Array<String> = ['{"$ne": null}', "notanemail`DROP DATABASE *`@gmail.com", '{"$gt": ""}', '{"$regex": ".*", "$options": "i"}']
 
 const app: Application = createServer();
 
