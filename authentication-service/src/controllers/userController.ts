@@ -13,6 +13,7 @@ const saltRounds  = Number(process.env.saltRounds) || 10;
 const USER_EMAIL_HEADER = process.env.USER_EMAIL_HEADER || "X-User-Email";
 const USER_PASSWORD_HEADER = process.env.USER_PASSWORD_HEADER || "X-User-Password";
 const USER_JWT_TOKEN_HEADER = process.env.USER_JWT_TOKEN_HEADER || "X-User-Token";
+const USER_JWT_TOKEN_EXPIRATION_HEADER = process.env.USER_JWT_TOKEN_EXPIRATION_HEADER || "X-User-Token-Expiration";
 const NORMAL_USER = process.env.NORMAL_USER || "normal";
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
 
@@ -111,4 +112,4 @@ const checkToken = async (request: Request, response: Response) => {
 };
 
 export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, deleteAdmin, checkToken }
-export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG, jwtSecretKey, saltRounds }
+export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, ERROR_TAG, jwtSecretKey, saltRounds }
