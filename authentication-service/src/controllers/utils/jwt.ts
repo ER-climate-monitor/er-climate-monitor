@@ -10,11 +10,13 @@ dotenv.config();
 async function createToken(inputEmail: string): Promise<Token> {
     const EXPIRATION = process.env.EXPIRATION || "1h";
     const user = await userModel.findOne({email: inputEmail});
+    if (!user || !user.id) {
+        throw new Error("User not found or invalid user ID.");
+    }
     const data = { userId: user?.id,};
     const token = jwt.sign(data, jwtSecretKey, {expiresIn: EXPIRATION});
     const infos: JwtPayload= jwtDecode<JwtPayload>(token);
-    const newToken = new Token(token, new Date((infos.exp || 0) * 1000));
-    return newToken
+    return new Token(token, new Date((infos.exp || 0) * 1000));
 }
 
 function verifyToken(token: string): Boolean {
