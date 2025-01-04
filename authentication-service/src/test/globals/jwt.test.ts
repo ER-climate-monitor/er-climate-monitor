@@ -2,9 +2,10 @@ import request from "supertest"
 import createServer from "../..";
 import { describe, it, afterEach } from "mocha";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userController";
+import { USER_EMAIL_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userController";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
+import { fail } from "assert";
 
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
@@ -33,6 +34,15 @@ describe("JWT token for registered users", () => {
     before(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
+    });
+    it("After creating a JWT token It should be possible to also check the validity of the created token", async () => {
+        const response = await request(app)
+        .post(REGISTER_USER_ROUTE)
+        .send(userInformation)
+        .expect(HttpStatus.CREATED)
+        if (!(USER_JWT_TOKEN_EXPIRATION_HEADER.toLocaleLowerCase() in response.headers)) {
+            fail();
+        }
     });
     it("It should be possible to check the validity of a JWT token of a registered user", async () => {
         const response = await request(app)
