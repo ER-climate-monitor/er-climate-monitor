@@ -1,17 +1,20 @@
 import { userModel } from "../../models/userModel";
 import { jwtSecretKey } from "../userController";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 import dotenv from 'dotenv';
+import { Token } from "../../models/tokenModel";
 
 dotenv.config();
 
-
-async function createToken(inputEmail: string): Promise<string> {
+async function createToken(inputEmail: string): Promise<Token> {
     const EXPIRATION = process.env.EXPIRATION || "1h";
     const user = await userModel.findOne({email: inputEmail});
-    const data = { time: Date(), userId: user?.id,};
+    const data = { userId: user?.id,};
     const token = jwt.sign(data, jwtSecretKey, {expiresIn: EXPIRATION});
-    return token;
+    const infos: JwtPayload= jwtDecode<JwtPayload>(token);
+    const newToken = new Token(token, new Date((infos.exp || 0) * 1000));
+    return newToken
 }
 
 function verifyToken(token: string): Boolean {
