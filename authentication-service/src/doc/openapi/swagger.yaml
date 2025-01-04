@@ -27,6 +27,19 @@ paths:
       responses:
         201:
           description: User registered successfully
+          headers:
+            X-User-Email:
+              schema:
+                type: string
+                description: Admin's email address
+            X-User-Token:
+              schema:
+                type: string
+                description: U  ser's JWT token
+            X-User-Token-Expiration:
+              schema:
+                type: number
+                description: User's JWT token expiration date
         400:
           description: Bad request
 
@@ -52,6 +65,19 @@ paths:
       responses:
         201:
           description: Admin registered successfully
+          headers:
+            X-User-Email:
+              schema:
+                type: string
+                description: Admin's email address
+            X-User-Token:
+              schema:
+                type: string
+                description: U  ser's JWT token
+            X-User-Token-Expiration:
+              schema:
+                type: number
+                description: User's JWT token expiration date
         401:
           description: Unauthorized
 
@@ -74,9 +100,21 @@ paths:
       responses:
         200:
           description: Login successful
+          headers:
+            X-User-Email:
+              schema:
+                type: string
+                description: Admin's email address
+            X-User-Token:
+              schema:
+                type: string
+                description: U  ser's JWT token
+            X-User-Token-Expiration:
+              schema:
+                type: number
+                description: User's JWT token expiration date
         400:
           description: Bad request
-
   /admin/login:
     post:
       summary: Login as an admin
@@ -97,8 +135,22 @@ paths:
                   type: string
                   description: Admin API key
       responses:
+
         200:
           description: Login successful
+          headers:
+            X-User-Email:
+              schema:
+                type: string
+                description: Admin's email address
+            X-User-Token:
+              schema:
+                type: string
+                description: U  ser's JWT token
+            X-User-Token-Expiration:
+              schema:
+                type: number
+                description: User's JWT token expiration date
         401:
           description: Unauthorized
 
