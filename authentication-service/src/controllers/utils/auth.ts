@@ -3,8 +3,9 @@ import { Response } from "express";
 import bcrypt from "bcrypt";
 import { createToken } from "./jwt";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_JWT_TOKEN_HEADER, ERROR_TAG } from "../userController";
+import { USER_EMAIL_HEADER, USER_JWT_TOKEN_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, ERROR_TAG } from "../userController";
 import { checkEmail, checkUser, createUser, deleteOneUser} from "./userUtils";
+import { Token } from "../../models/tokenModel";
 
 async function login(email: string, password: string, response :Response): Promise<Response> {
     try{
@@ -15,8 +16,9 @@ async function login(email: string, password: string, response :Response): Promi
                 if (user) {
                     const samePsw = await bcrypt.compare(password, user.password);
                     if (samePsw) {
-                        const jwtToken: string = await createToken(email);
-                        response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
+                        const jwtToken: Token = await createToken(email);
+                        response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken.token);
+                        response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, jwtToken.expiration.getTime());
                         response.setHeader(USER_EMAIL_HEADER, email);
                     }else{
                         response.status(HttpStatus.CONFLICT);
@@ -47,10 +49,10 @@ async function register(email: string, password: string, role: string, response:
         if (checkEmail(email)) {
             const userExist = await checkUser(email);
             if (!userExist) {
-                const jwtToken: string = await createToken(email);
+                const jwtToken: Token = await createToken(email);
                 const user = await createUser(email, password, role);
-                response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken);
-                response.setHeader(USER_EMAIL_HEADER, email);
+                response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken.token);
+                response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, jwtToken.expiration.getTime());                response.setHeader(USER_EMAIL_HEADER, email);
                 response.status(HttpStatus.CREATED);
             }else{
                 response.status(HttpStatus.CONFLICT);
