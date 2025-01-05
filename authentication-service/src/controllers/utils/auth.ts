@@ -49,8 +49,8 @@ async function register(email: string, password: string, role: string, response:
         if (checkEmail(email)) {
             const userExist = await checkUser(email);
             if (!userExist) {
-                const jwtToken: Token = await createToken(email);
                 const user = await createUser(email, password, role);
+                const jwtToken: Token = await createToken(email);
                 response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken.token);
                 response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, jwtToken.expiration.getTime());                response.setHeader(USER_EMAIL_HEADER, email);
                 response.status(HttpStatus.CREATED);
