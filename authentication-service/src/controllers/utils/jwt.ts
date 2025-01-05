@@ -1,4 +1,4 @@
-import { userModel } from "../../models/userModel";
+import { UserDocument, userModel } from "../../models/userModel";
 import { jwtSecretKey } from "../userController";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { jwtDecode } from "jwt-decode";
@@ -9,11 +9,7 @@ dotenv.config();
 
 async function createToken(inputEmail: string): Promise<Token> {
     const EXPIRATION = process.env.EXPIRATION || "1h";
-    const user = await userModel.findOne({email: inputEmail});
-    if (!user || !user.id) {
-        throw new Error("User not found or invalid user ID.");
-    }
-    const data = { userId: user?.id,};
+    const data = { userEmail:inputEmail,};
     const token = jwt.sign(data, jwtSecretKey, {expiresIn: EXPIRATION});
     const infos: JwtPayload= jwtDecode<JwtPayload>(token);
     return new Token(token, new Date((infos.exp || 0) * 1000));
