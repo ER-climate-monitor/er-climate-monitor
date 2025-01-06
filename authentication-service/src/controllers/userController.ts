@@ -3,7 +3,7 @@ import HttpStatus from "http-status-codes";
 import dotenv from 'dotenv';
 import jwt from "jsonwebtoken";
 import { login, register, deleteInputUser } from "./utils/auth";
-import { verifyToken } from "./utils/jwt";
+import { tokenExpiration, verifyToken } from "./utils/jwt";
 
 dotenv.config();
 
@@ -98,6 +98,7 @@ const checkToken = async (request: Request, response: Response) => {
             const jwtToken: string = fromBody<string>(modelData, USER_JWT_TOKEN_HEADER, "");
             const verified = verifyToken(jwtToken);
             if (verified) {
+                response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, tokenExpiration(jwtToken).getTime());
                 response.status(HttpStatus.ACCEPTED);
             }else{
                 response.status(HttpStatus.UNAUTHORIZED);
