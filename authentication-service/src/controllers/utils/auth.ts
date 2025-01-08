@@ -17,9 +17,12 @@ async function login(email: string, password: string, response :Response): Promi
                     const samePsw = await bcrypt.compare(password, user.password);
                     if (samePsw) {
                         const jwtToken: Token = await createToken(email);
-                        response.setHeader(USER_JWT_TOKEN_HEADER, jwtToken.token);
-                        response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, jwtToken.expiration.getTime());
-                        response.setHeader(USER_EMAIL_HEADER, email);
+                        response.status(HttpStatus.OK)
+                            .send({
+                                [USER_EMAIL_HEADER]: email,
+                                [USER_JWT_TOKEN_EXPIRATION_HEADER]: jwtToken.expiration.getTime(),
+                                [USER_JWT_TOKEN_HEADER]: jwtToken.token
+                            });
                     }else{
                         response.status(HttpStatus.CONFLICT);
                         response.setHeader(ERROR_TAG, "true");
