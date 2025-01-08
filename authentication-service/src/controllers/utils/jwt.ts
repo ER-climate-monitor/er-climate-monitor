@@ -1,4 +1,3 @@
-import { UserDocument, userModel } from "../../models/userModel";
 import { jwtSecretKey } from "../userController";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { jwtDecode } from "jwt-decode";
