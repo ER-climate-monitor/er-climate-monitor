@@ -40,7 +40,7 @@ describe("JWT token for registered users", () => {
         .post(REGISTER_USER_ROUTE)
         .send(userInformation)
         .expect(HttpStatus.CREATED)
-        if (!(USER_JWT_TOKEN_EXPIRATION_HEADER.toLocaleLowerCase() in response.headers)) {
+        if (!(USER_JWT_TOKEN_EXPIRATION_HEADER in response.body)) {
             fail();
         }
     });
@@ -49,7 +49,7 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED)
-        const jwtToken = response.headers[USER_JWT_TOKEN_HEADER.toLowerCase()];
+        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
             .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
@@ -60,7 +60,7 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_ADMIN_ROUTE)
             .send(adminInformation)
             .expect(HttpStatus.CREATED)
-        const jwtToken = response.headers[USER_JWT_TOKEN_HEADER.toLowerCase()];
+        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
             .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
@@ -87,7 +87,7 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED);
-        const jwtToken = response.headers[USER_JWT_TOKEN_HEADER.toLowerCase()];
+        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
             .send({[USER_JWT_TOKEN_HEADER]: jwtToken})

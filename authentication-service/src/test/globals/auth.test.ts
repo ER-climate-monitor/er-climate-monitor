@@ -1,6 +1,7 @@
 import request from "supertest"
 import createServer from "../..";
 import { describe, it, afterEach } from "mocha";
+import { fail, ok } from "node:assert";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../controllers/userController";
 import { Application } from "express";
@@ -44,7 +45,12 @@ describe("User Authentication", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED)
-            .expect(USER_EMAIL_HEADER.toLowerCase(), email)
+            .expect(response => {
+                const responseEmail = response.body[USER_EMAIL_HEADER];
+                if ((responseEmail !== email)){
+                    fail();
+                }
+            });
     });
     it("should return an error if I try to create a new user with an email already registered", async () => {
         await request(app)
@@ -102,7 +108,12 @@ describe("User Authentication", () => {
             .post(REGISTER_ADMIN_ROUTE)
             .send(adminInformation)
             .expect(HttpStatus.CREATED)
-            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
+            .expect(response => {
+                const responseEmail = response.body[USER_EMAIL_HEADER];
+                if ((responseEmail !== email)){
+                    fail();
+                }
+            });
     });
     it("Should return and error if I try to create a new Admin without speciifying the API key", async () => {
         await request(app)
@@ -115,7 +126,12 @@ describe("User Authentication", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED)
-            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
+            .expect(response => {
+                const responseEmail = response.body[USER_EMAIL_HEADER];
+                if ((responseEmail !== email)){
+                    fail();
+                }
+            });
         await request(app)
             .post(LOGIN_USER_ROUTE)
             .send(userInformation)
@@ -127,7 +143,12 @@ describe("User Authentication", () => {
             .post(REGISTER_ADMIN_ROUTE)
             .send(adminInformation)
             .expect(HttpStatus.CREATED)
-            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
+            .expect(response => {
+                const responseEmail = response.body[USER_EMAIL_HEADER];
+                if ((responseEmail !== email)){
+                    fail();
+                }
+            });
         await request(app)
             .post(LOGIN_ADMIN_ROUTE)
             .send(adminInformation)
