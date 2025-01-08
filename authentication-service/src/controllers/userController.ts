@@ -23,8 +23,11 @@ const secretKey = process.env.SECRET_API_KEY || "__"
 const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret"
 
 function isAdmin(data:any): boolean { 
-    const API_KEY: string = data[API_KEY_HEADER]
-    return API_KEY === secretKey
+    if (API_KEY_HEADER in data) {
+        const API_KEY: string = data[API_KEY_HEADER]
+        return API_KEY === secretKey
+    }
+    return false;
 }
 
 function fromBody<X>(body: any, key: string, defaultValue: X): X {
