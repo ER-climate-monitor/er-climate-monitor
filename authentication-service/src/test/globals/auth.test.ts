@@ -136,7 +136,12 @@ describe("User Authentication", () => {
             .post(LOGIN_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.OK)
-            .expect(USER_EMAIL_HEADER.toLowerCase(), email);
+            .expect(response => {
+                const responseEmail = response.body[USER_EMAIL_HEADER];
+                if (responseEmail !== email) {
+                    fail();
+                }
+            })
     });
     it("After admin registration, It should be possible to use the same credentials for the login", async () => {
         await request(app)
