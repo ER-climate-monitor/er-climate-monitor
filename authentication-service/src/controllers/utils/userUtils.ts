@@ -12,7 +12,7 @@ async function checkUser(inputEmail: String): Promise<Boolean> {
 async function createUser(inputEmail: string, password: string, role: string): Promise<UserDocument> {
     const hash: string = await bcrypt.hash(password, saltRounds);
     const newUser: UserDocument = new userModel({email: inputEmail, password: hash, role: role});
-    newUser.save();
+    await newUser.save();
     return newUser
 }
 async function deleteOneUser(email:string): Promise<boolean> {
