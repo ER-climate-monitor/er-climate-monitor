@@ -1,12 +1,16 @@
 import { UserDocument, userModel } from "../../models/userModel";
 import { saltRounds } from "../userController";
 import bcrypt from "bcrypt";
-import { DeleteResult } from "mongoose";
+import { DeleteResult, ObjectId } from "mongoose";
 import mongoSanitize from "mongo-sanitize"
 
 async function checkUser(inputEmail: String): Promise<Boolean> {
     const existingUser: Boolean = await userModel.findOne({email: inputEmail}) || false;
     return existingUser
+}
+
+async function checkUserById(id: ObjectId): Promise<Boolean> {
+    return await userModel.findById(id) !== null
 }
 
 async function createUser(inputEmail: string, password: string, role: string): Promise<UserDocument> {
@@ -27,4 +31,4 @@ function checkEmail(email: string): boolean {
 }
 
 
-export { checkUser, createUser, deleteOneUser, checkEmail }
+export { checkUser, checkUserById, createUser, deleteOneUser, checkEmail }
