@@ -3,8 +3,8 @@ import createServer from "../../..";
 import { describe, it } from "mocha";
 import HttpStatus from "http-status-codes";
 import { Application } from "express";
+import { HEALTH_API_ROUTE } from "./routes/globalRoutes.v0";
 
-const HEALTH_API_ROUTE = "/v0/health/status";
 const app: Application = createServer();
 
 describe("Health status of the server", () => {

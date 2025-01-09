@@ -6,18 +6,12 @@ import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../../controllers/v0/userController";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
+import { REGISTER_ADMIN_ROUTE, REGISTER_USER_ROUTE, DELETE_ADMIN_ROUTE, DELETE_USER_ROUTE, LOGIN_ADMIN_ROUTE, LOGIN_USER_ROUTE } from "./routes/globalRoutes.v0";
 
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
 const api_key = process.env.SECRET_API_KEY || "";
 const API_KEY_HEADER = String(process.env.API_KEY_HEADER)
-
-const REGISTER_USER_ROUTE = "/v0/user/register";
-const REGISTER_ADMIN_ROUTE = "/v0/user/admin/register";
-const LOGIN_USER_ROUTE = "/v0/user/login";
-const LOGIN_ADMIN_ROUTE = "/v0/user/admin/login";
-const DELETE_USER_ROUTE = "/v0/user/delete";
-const DELETE_ADMIN_ROUTE = "/v0/user/admin/delete";
 
 
 const userInformation = {
