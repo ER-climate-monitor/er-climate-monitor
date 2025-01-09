@@ -94,6 +94,18 @@ describe("JWT token for registered users", () => {
             .expect(HttpStatus.UNAUTHORIZED);
         process.env.EXPIRATION = oldExpiration;
     });
+    it("Should return an error if I try verify the JWT token of a deleted user", async () => {
+        const response = await request(app)
+            .post(REGISTER_USER_ROUTE)
+            .send(userInformation)
+            .expect(HttpStatus.CREATED);
+        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
+        await deleteUser(app, userInformation);
+        await request(app)
+            .post(JWT_AUTHORIZED_ROUTE)
+            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .expect(HttpStatus.UNAUTHORIZED);
+    });
     afterEach(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
