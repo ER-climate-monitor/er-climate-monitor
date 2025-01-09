@@ -10,7 +10,7 @@ const REGISTER_ADMIN_ROUTE = "/user/admin/register";
 async function deleteUser(app: Application, userInformation: any) {
     const registered = await isUserRegistered(app, userInformation);
     if (registered) {
-        request(app)
+        await request(app)
             .delete(DELETE_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.OK);
