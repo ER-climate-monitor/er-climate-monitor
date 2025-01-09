@@ -99,7 +99,7 @@ const checkToken = async (request: Request, response: Response) => {
     try {
         if (modelData) {
             const jwtToken: string = fromBody<string>(modelData, USER_JWT_TOKEN_HEADER, "");
-            const verified = verifyToken(jwtToken);
+            const verified = await verifyToken(jwtToken);
             if (verified) {
                 response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, tokenExpiration(jwtToken).getTime());
                 response.status(HttpStatus.ACCEPTED);
