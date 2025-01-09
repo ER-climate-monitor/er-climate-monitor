@@ -1,8 +1,8 @@
 import request from "supertest"
-import createServer from "../..";
+import createServer from "../../..";
 import { describe, it, afterEach } from "mocha";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_PASSWORD_HEADER } from "../../controllers/v0/userController";
+import { USER_EMAIL_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_PASSWORD_HEADER } from "../../../controllers/v0/userController";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
 import { fail } from "assert";
