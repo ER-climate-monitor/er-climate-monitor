@@ -1,10 +1,10 @@
-import { jwtSecretKey } from "../userController";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { jwtSecretKey } from "../userController";
 import { jwtDecode } from "jwt-decode";
 import dotenv from 'dotenv';
-import { Token } from "../../models/tokenModel";
-import { userModel } from "../../models/userModel";
-import { checkUser, checkUserById } from "./userUtils";
+import { Token } from "../../../models/v0/tokenModel";
+import { userModel } from "../../../models/v0/userModel";
+import { checkUserById } from "./userUtils";
 
 dotenv.config();
 

@@ -1,11 +1,11 @@
-import { userModel } from "../../models/userModel";
+import { userModel } from "../../../models/v0/userModel";
 import { Response } from "express";
 import bcrypt from "bcrypt";
 import { createToken } from "./jwt";
 import HttpStatus from "http-status-codes";
 import { USER_EMAIL_HEADER, USER_JWT_TOKEN_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, ERROR_TAG } from "../userController";
 import { checkEmail, checkUser, createUser, deleteOneUser} from "./userUtils";
-import { Token } from "../../models/tokenModel";
+import { Token } from "../../../models/v0/tokenModel";
 
 async function login(email: string, password: string, response :Response): Promise<Response> {
     try{

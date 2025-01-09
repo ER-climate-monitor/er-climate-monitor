@@ -1,4 +1,4 @@
-import { UserDocument, userModel } from "../../models/userModel";
+import { UserDocument, userModel } from "../../../models/v0/userModel";
 import { saltRounds } from "../userController";
 import bcrypt from "bcrypt";
 import { DeleteResult, ObjectId } from "mongoose";

@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
-import { userRouter } from './routes/userRouter';
-import { healthRouter } from './routes/healthRouter';
+import { userRouter } from './routes/v0/userRouter';
+import { healthRouter } from './routes/v0/healthRouter';
 import mongoose from "mongoose"
 import SwaggerUi  from "swagger-ui-express";
 import fs  from "fs";
