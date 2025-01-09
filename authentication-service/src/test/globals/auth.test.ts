@@ -12,12 +12,12 @@ const password = "AVeryStrongPassword1010";
 const api_key = process.env.SECRET_API_KEY || "";
 const API_KEY_HEADER = String(process.env.API_KEY_HEADER)
 
-const REGISTER_USER_ROUTE = "/user/register";
-const REGISTER_ADMIN_ROUTE = "/user/admin/register";
-const LOGIN_USER_ROUTE = "/user/login";
-const LOGIN_ADMIN_ROUTE = "/user/admin/login";
-const DELETE_USER_ROUTE = "/user/delete";
-const DELETE_ADMIN_ROUTE = "/user/admin/delete";
+const REGISTER_USER_ROUTE = "/v0/user/register";
+const REGISTER_ADMIN_ROUTE = "/v0/user/admin/register";
+const LOGIN_USER_ROUTE = "/v0/user/login";
+const LOGIN_ADMIN_ROUTE = "/v0/user/admin/login";
+const DELETE_USER_ROUTE = "/v0/user/delete";
+const DELETE_ADMIN_ROUTE = "/v0/user/admin/delete";
 
 
 const userInformation = {

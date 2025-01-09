@@ -12,9 +12,9 @@ const password = "AVeryStrongPassword1010";
 const USER_JWT_TOKEN_HEADER = process.env.USER_JWT_TOKEN_HEADER || "X-User-Token"
 const api_key = process.env.SECRET_API_KEY || "";
 
-const REGISTER_USER_ROUTE = "/user/register";
-const REGISTER_ADMIN_ROUTE = "/user/admin/register";
-const JWT_AUTHORIZED_ROUTE = "/user/authorized";
+const REGISTER_USER_ROUTE = "/v0/user/register";
+const REGISTER_ADMIN_ROUTE = "/v0/user/admin/register";
+const JWT_AUTHORIZED_ROUTE = "/v0/user/authorized";
 
 
 const userInformation = {

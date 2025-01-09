@@ -25,8 +25,8 @@ export default function createServer(): Application {
         app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
     }
 
-    app.use("/health", healthRouter);
-    app.use("/user", userRouter);
+    app.use("/v0/health", healthRouter);
+    app.use("/v0/user", userRouter);
     return app;
 }
 

@@ -2,10 +2,10 @@ import { Application } from "express";
 import request from "supertest"
 import HttpStatus from "http-status-codes";
 
-const DELETE_USER_ROUTE = "/user/delete";
-const DELETE_ADMIN_ROUTE = "/user/admin/delete";
-const REGISTER_USER_ROUTE = "/user/register";
-const REGISTER_ADMIN_ROUTE = "/user/admin/register";
+const DELETE_USER_ROUTE = "/v0/user/delete";
+const DELETE_ADMIN_ROUTE = "/v0/user/admin/delete";
+const REGISTER_USER_ROUTE = "/v0/user/register";
+const REGISTER_ADMIN_ROUTE = "/v0/user/admin/register";
 
 async function deleteUser(app: Application, userInformation: any) {
     const registered = await isUserRegistered(app, userInformation);
