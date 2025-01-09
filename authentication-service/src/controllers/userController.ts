@@ -101,8 +101,10 @@ const checkToken = async (request: Request, response: Response) => {
             const jwtToken: string = fromBody<string>(modelData, USER_JWT_TOKEN_HEADER, "");
             const verified = await verifyToken(jwtToken);
             if (verified) {
-                response.setHeader(USER_JWT_TOKEN_EXPIRATION_HEADER, tokenExpiration(jwtToken).getTime());
-                response.status(HttpStatus.ACCEPTED);
+                response.status(HttpStatus.ACCEPTED)
+                    .send({
+                        [USER_JWT_TOKEN_EXPIRATION_HEADER]: tokenExpiration(jwtToken).getTime()
+                    });
             }else{
                 response.status(HttpStatus.UNAUTHORIZED);
             }
