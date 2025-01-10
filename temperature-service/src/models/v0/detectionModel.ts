@@ -33,13 +33,20 @@ class Detection implements IDetection {
     latitude: number;
     value: number;
     constructor(sensorId: string, sensorName: string, unit: string, timestamp: number, longitude: number, latitude: number, value: number) {
-        this.sensorId = sensorId;
-        this.sensorName = sensorName;
-        this.unit = unit;
-        this.timestamp = timestamp;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.value = value;
+        this.sensorId = this.checkInput(sensorId, "");
+        this.sensorName = this.checkInput(sensorName, "");
+        this.unit = this.checkInput(unit, "");
+        this.timestamp = this.checkInput(timestamp, -1);
+        this.longitude = this.checkInput(longitude, -1);
+        this.latitude = this.checkInput(latitude, -1);
+        this.value = this.checkInput(value, -1);
+    }
+
+    private checkInput<X>(input:X, wrongValue: X): X {
+        if (input !== wrongValue) {
+            return input;
+        }
+        throw new Error("Illegal argument error, the input value: " + input + " is not correct");
     }
 };
 
