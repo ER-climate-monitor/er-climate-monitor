@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
-import dotenv from "dotenv";
 import { saveDetectionModel } from "./utils/detectionUtils";
-import { request } from "http";
+import { sensorIdParameter } from "../../routes/v0/paths/detection.paths";
+
 
 function fromBody<X>(body: any, key: string, defaultValue: X) {
     return body && key in body ? body[key] : defaultValue;
@@ -33,7 +33,16 @@ const saveDetection = async (request: Request, response: Response) => {
 }
 
 const getDetectionsFromSensor = async (request: Request, response: Response) => {
-
+    if (sensorIdParameter in request.params) {
+        const sensorId: string = request.params.sensorId;
+        
+    }else{
+        response.status(HttpStatus.NOT_ACCEPTABLE)
+            .send({
+                [String(process.env.ERROR_TAG)]: "Missing the sensorId parameter from the input request"
+            });
+    }
+    response.end();
 }
 
 export { saveDetection, getDetectionsFromSensor }
