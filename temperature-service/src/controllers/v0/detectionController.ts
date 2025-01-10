@@ -8,7 +8,7 @@ function fromBody<X>(body: any, key: string, defaultValue: X) {
 }
 
 
-const saveDetection = async (request: Request, response: Response) {
+const saveDetection = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
         try{
@@ -29,5 +29,6 @@ const saveDetection = async (request: Request, response: Response) {
         }
     }
     response.end();
-
 }
+
+export { saveDetection }
