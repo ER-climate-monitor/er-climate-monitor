@@ -11,4 +11,5 @@ API Structure:
 1. POST: v0/sensor/detection (save the sensor's detection);
 2. GET: v0/sensor/detections?last={Number} (get the last 5 detections from a sensor, set an upper bound for this value);
 3. GET: v0/sensor/positions (get all the different lat/lon of each sensor);
-4. GET: v0/sensor/detections?from={timestamp}&to={timestamp) (get all the detections in a specific interval).
+4. GET: v0/sensor/detections?from={timestamp}&to={timestamp) (get all the detections in a specific interval);
+5. GET: v0/service/alerts (get a list of all possible alerts from the current system, this will be used by the notify-service).
