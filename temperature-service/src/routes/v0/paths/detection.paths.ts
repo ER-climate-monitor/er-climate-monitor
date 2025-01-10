@@ -1,3 +1,3 @@
 const SAVE_DETECTION_PATH = "/detection";
-
-export { SAVE_DETECTION_PATH }
+const DETECTIONS_FROM_SENSOR_PATH = "/{sensorId}/detections";
+export { SAVE_DETECTION_PATH, DETECTIONS_FROM_SENSOR_PATH }
