@@ -1,15 +1,35 @@
-import express from 'express';
+import express, { Application } from 'express';
 import dotenv from 'dotenv';
+import mongoose from "mongoose"
+// import SwaggerUi  from "swagger-ui-express";
+import fs  from "fs";
+// import YAML from "yaml";
+
 
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+export default function createServer(): Application {
+    const app = express();
+    const URL: string = process.env.DB_URL || "";
+    mongoose.connect(URL, { dbName: "authorization-database" });
 
-app.get('/', (_, res) => {
-    res.send(`Running in ${process.env.NODE_ENV} mode`);
-});
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    // if (!process.env.CI || (process.env.CI == "False")) {
+    //     const file: string = fs.readFileSync("src/doc/openapi/swagger.yaml", "utf8");
+    //     const swaggerDocument = YAML.parse(file);
+    //     app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
+    // }
 
-app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
+    app.use("/v0/sensor", );
+    app.use("/v0/health", );
+    return app;
+}
+
+const app = createServer();
+
+app.listen(PORT, () => {
+    console.log("listening", PORT);
+})
