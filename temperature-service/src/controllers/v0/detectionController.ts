@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 import dotenv from "dotenv";
 import { saveDetectionModel } from "./utils/detectionUtils";
+import { request } from "http";
 
 function fromBody<X>(body: any, key: string, defaultValue: X) {
     return body && key in body ? body[key] : defaultValue;
@@ -31,4 +32,8 @@ const saveDetection = async (request: Request, response: Response) => {
     response.end();
 }
 
-export { saveDetection }
+const getDetectionsFromSensor = async (request: Request, response: Response) => {
+
+}
+
+export { saveDetection, getDetectionsFromSensor }
