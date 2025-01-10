@@ -11,3 +11,5 @@ async function saveDetectionModel(sensorId: string, sensorName: string, unit: st
     await newDetection.save();
     return newDetection
 }
+
+export { saveDetectionModel }
