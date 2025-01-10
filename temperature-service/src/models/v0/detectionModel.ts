@@ -10,7 +10,7 @@ interface IDetection {
     value: number
 }
 
-interface DetectionDocument extends IDetection, Document {}
+interface DetectionDocument extends IDetection, Document {};
 
 const detectionSchema = new mongoose.Schema({
     sensorId: {type: String, required: true, unique: true},
@@ -24,4 +24,23 @@ const detectionSchema = new mongoose.Schema({
 
 const detectionModel: Model<DetectionDocument> = mongoose.model<DetectionDocument>("Detections", detectionSchema);
 
-export { detectionModel, DetectionDocument }
+class Detection implements IDetection {
+    sensorId: string;
+    sensorName: string;
+    unit: string;
+    timestamp: number;
+    longitude: number;
+    latitude: number;
+    value: number;
+    constructor(sensorId: string, sensorName: string, unit: string, timestamp: number, longitude: number, latitude: number, value: number) {
+        this.sensorId = sensorId;
+        this.sensorName = sensorName;
+        this.unit = unit;
+        this.timestamp = timestamp;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.value = value;
+    }
+};
+
+export { detectionModel, DetectionDocument, Detection }
