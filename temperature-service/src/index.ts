@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import mongoose from "mongoose"
 // import SwaggerUi  from "swagger-ui-express";
 import fs  from "fs";
+import { detectionRouter } from './routes/v0/detectionRouter';
 // import YAML from "yaml";
 
 
@@ -23,7 +24,7 @@ export default function createServer(): Application {
     //     app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
     // }
 
-    app.use("/v0/sensor", );
+    app.use("/v0/sensor", detectionRouter);
     app.use("/v0/health", );
     return app;
 }
