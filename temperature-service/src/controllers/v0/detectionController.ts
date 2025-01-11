@@ -35,25 +35,34 @@ const saveDetection = async (request: Request, response: Response) => {
 const getDetectionsFromSensor = async (request: Request, response: Response) => {
     if (sensorIdParameter in request.params) {
         const sensorId: string = request.params.sensorId;
-        if (await checkSensorID(sensorId)) {
-            if (LAST_DETECTION_QUERY_VARIABLE in request.query){
-                const days = Number(request.query[LAST_DETECTION_QUERY_VARIABLE]);
-                response.status(HttpStatus.OK)
-                    .send({
-                        [String(process.env.SENSOR_DETECTIONS_HEADER)]: await getLastXDetections(sensorId, days)
-                });
-            }else if(FROM_TIMESTAMP_QUERY_VALUE in request.query && TO_TIMESTAMP_QUERY_VALUE in request.query){
-                
+        try {
+            if (await checkSensorID(sensorId)) {
+                if (LAST_DETECTION_QUERY_VARIABLE in request.query){
+                    const days = Number(request.query[LAST_DETECTION_QUERY_VARIABLE]);
+                    response.status(HttpStatus.OK)
+                        .send({
+                            [String(process.env.SENSOR_DETECTIONS_HEADER)]: await getLastXDetections(sensorId, days)
+                    });
+                }else if(FROM_TIMESTAMP_QUERY_VALUE in request.query && TO_TIMESTAMP_QUERY_VALUE in request.query){
+                    
+                }else{
+                    response.status(HttpStatus.NOT_ACCEPTABLE)
+                        .send({
+                            [String(process.env.ERROR_TAG)]: "Missing the query variable"
+                        });
+                }
             }else{
-                response.status(HttpStatus.NOT_ACCEPTABLE)
+                response.status(HttpStatus.NOT_FOUND)
                     .send({
-                        [String(process.env.ERROR_TAG)]: "Missing the query variable"
+                        [String(process.env.ERROR_TAG)]: "The input sensor ID does not exists"
                     });
             }
-        }else{
-            response.status(HttpStatus.NOT_FOUND)
+        }catch(error) {
+            var message = "";
+            if (error instanceof Error) {message = error.message;}
+            response.status(HttpStatus.BAD_REQUEST)
                 .send({
-                    [String(process.env.ERROR_TAG)]: "The input sensor ID does not exists"
+                    [String(process.env.ERROR_TAG)]: message
                 });
         }
     }else{
@@ -62,6 +71,7 @@ const getDetectionsFromSensor = async (request: Request, response: Response) => 
                 [String(process.env.ERROR_TAG)]: "Missing the sensorId parameter from the input request"
             });
     }
+            
     response.end();
 }
 
