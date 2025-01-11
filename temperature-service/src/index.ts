@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 export default function createServer(): Application {
     const app = express();
     const URL: string = process.env.DB_URL || "";
-    mongoose.connect(URL, { dbName: "authorization-database" });
+    mongoose.connect(URL, { dbName: "temperature-database" });
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -25,7 +25,6 @@ export default function createServer(): Application {
     // }
 
     app.use("/v0/sensor", detectionRouter);
-    app.use("/v0/health", );
     return app;
 }
 
