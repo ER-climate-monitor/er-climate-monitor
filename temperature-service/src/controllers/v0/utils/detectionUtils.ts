@@ -12,4 +12,9 @@ async function saveDetectionModel(sensorId: string, sensorName: string, unit: st
     return newDetection
 }
 
-export { saveDetectionModel }
+async function checkSensorID(sensorId: string): Promise<Boolean> {
+    const exists = await detectionModel.exists({sensorId: sensorId});
+    return exists !== null;
+}
+
+export { saveDetectionModel, checkSensorID }
