@@ -17,8 +17,8 @@ interface DetectionDocument extends IDetection, Document {};
 
 const detectionSchema = new mongoose.Schema({
     sensorId: {type: String, required: true, unique: true, validate: {validator: validateString}},
-    sensorName: {type: String, required: true},
-    unit: {type: String, required: true},
+    sensorName: {type: String, required: true, validate: {validator: validateString}},
+    unit: {type: String, required: true, validate: {validator: validateString}},
     timeStamp: {type: Number, required: true},
     longitude: {type: Number, required: true},
     latitude: {type: Number, required: true},
