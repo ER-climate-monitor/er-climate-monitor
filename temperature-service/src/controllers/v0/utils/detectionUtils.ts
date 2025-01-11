@@ -1,6 +1,9 @@
 import { Detection } from "../../../models/v0/detectionModel";
 import { detectionModel, DetectionDocument } from "../../../models/v0/detectionModel";
 
+const LOWER_BOUND = 0;
+const UPPER_BOUND = 100;
+
 function createDetection(sensorId: string, sensorName: string, unit: string, timestamp: number, longitude: number, latitude: number, value: number): Detection {
     return new Detection(sensorId, sensorName, unit, timestamp, longitude, latitude, value);
 }
@@ -26,6 +29,9 @@ async function checkSensorID(sensorId: string): Promise<Boolean> {
 }
 
 async function getLastXDetections(sensorId: string, last: number): Promise<Array<Detection>> {
+    if (last <= LOWER_BOUND || last > UPPER_BOUND) {
+        throw new Error(`The query prameter last, must be in the interval: [${LOWER_BOUND}, ${UPPER_BOUND}]`);
+    }
     return (await detectionModel.find({sensorId: sensorId})
         .sort({_id: -1})
         .limit(last))
