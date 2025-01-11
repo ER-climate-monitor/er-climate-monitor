@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 export default function createServer(): Application {
     const app = express();
     const URL: string = process.env.DB_URL || "";
-    mongoose.connect(URL, { dbName: "temperature-database" });
+    mongoose.connect(URL, { dbName: "temperature-database", autoIndex: false });
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
