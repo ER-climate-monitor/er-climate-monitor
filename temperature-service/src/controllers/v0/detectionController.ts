@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
-import { saveDetectionModel } from "./utils/detectionUtils";
+import { checkSensorID, saveDetectionModel } from "./utils/detectionUtils";
 import { FROM_TIMESTAMP_QUERY_VALUE, LAST_DETECTION_QUERY_VARIABLE, sensorIdParameter, TO_TIMESTAMP_QUERY_VALUE } from "../../routes/v0/paths/detection.paths";
 
 
@@ -35,14 +35,21 @@ const saveDetection = async (request: Request, response: Response) => {
 const getDetectionsFromSensor = async (request: Request, response: Response) => {
     if (sensorIdParameter in request.params) {
         const sensorId: string = request.params.sensorId;
-        if (LAST_DETECTION_QUERY_VARIABLE in request.query){
-
-        }else if(FROM_TIMESTAMP_QUERY_VALUE in request.query && TO_TIMESTAMP_QUERY_VALUE in request.query){
-            
+        if (await checkSensorID(sensorId)) {
+            if (LAST_DETECTION_QUERY_VARIABLE in request.query){
+                const days = Number(request.query[LAST_DETECTION_QUERY_VARIABLE]);
+            }else if(FROM_TIMESTAMP_QUERY_VALUE in request.query && TO_TIMESTAMP_QUERY_VALUE in request.query){
+                
+            }else{
+                response.status(HttpStatus.NOT_ACCEPTABLE)
+                    .send({
+                        [String(process.env.ERROR_TAG)]: "Missing the query variable"
+                    });
+            }
         }else{
-            response.status(HttpStatus.NOT_ACCEPTABLE)
+            response.status(HttpStatus.NOT_FOUND)
                 .send({
-                    [String(process.env.ERROR_TAG)]: "Missing the query variable"
+                    [String(process.env.ERROR_TAG)]: "The input sensor ID does not exists"
                 });
         }
     }else{
