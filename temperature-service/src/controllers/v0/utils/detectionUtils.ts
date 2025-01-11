@@ -7,7 +7,15 @@ function createDetection(sensorId: string, sensorName: string, unit: string, tim
 
 async function saveDetectionModel(sensorId: string, sensorName: string, unit: string, timestamp: number, longitude: number, latitude: number, value: number): Promise<DetectionDocument> {
     const detection: Detection = createDetection(sensorId, sensorName, unit, timestamp, longitude, latitude, value);
-    const newDetection: DetectionDocument = new detectionModel(detectionModel);
+    const newDetection: DetectionDocument = new detectionModel({
+        sensorId: detection.sensorId,
+        sensorName: detection.sensorName,
+        unit: detection.unit,
+        timeStamp: detection.timestamp,
+        longitude: detection.longitude,
+        latitude: detection.latitude,
+        value: detection.value
+    });
     await newDetection.save();
     return newDetection
 }
