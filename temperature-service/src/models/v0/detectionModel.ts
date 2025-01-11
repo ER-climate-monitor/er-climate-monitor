@@ -1,5 +1,8 @@
 import mongoose, { Document, Model } from "mongoose"
 
+function validateString(input: string) {
+    return input.trim().length > 0
+}
 interface IDetection {
     sensorId: string,
     sensorName: string,
@@ -13,7 +16,7 @@ interface IDetection {
 interface DetectionDocument extends IDetection, Document {};
 
 const detectionSchema = new mongoose.Schema({
-    sensorId: {type: String, required: true, unique: true},
+    sensorId: {type: String, required: true, unique: true, validate: {validator: validateString}},
     sensorName: {type: String, required: true},
     unit: {type: String, required: true},
     timeStamp: {type: Number, required: true},
@@ -21,6 +24,7 @@ const detectionSchema = new mongoose.Schema({
     latitude: {type: Number, required: true},
     value: {type: Number, required: true}
 });
+
 
 const detectionModel: Model<DetectionDocument> = mongoose.model<DetectionDocument>("Detections", detectionSchema);
 
