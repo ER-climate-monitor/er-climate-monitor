@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
-import { checkSensorID, saveDetectionModel } from "./utils/detectionUtils";
+import { checkSensorID, getLastXDetections, saveDetectionModel } from "./utils/detectionUtils";
 import { FROM_TIMESTAMP_QUERY_VALUE, LAST_DETECTION_QUERY_VARIABLE, sensorIdParameter, TO_TIMESTAMP_QUERY_VALUE } from "../../routes/v0/paths/detection.paths";
 
 
@@ -20,7 +20,7 @@ const saveDetection = async (request: Request, response: Response) => {
                 fromBody(modelData, String(process.env.SENSOR_DETECTION_TIMESTAMP_HEADER), 0),
                 fromBody(modelData, String(process.env.SENSOR_DETECTION_LONGITUDE_HEADER), 0),
                 fromBody(modelData, String(process.env.SENSOR_DETECTION_LATITUDE_HEADER), 0),
-                fromBody(modelData, String(process.env.SENSOR_DETECTION_VALUE), 0));
+                fromBody(modelData, String(process.env.SENSOR_DETECTION_VALUE_HEADER), 0));
             response.status(HttpStatus.CREATED);
         }catch(error) {
             response.status(HttpStatus.BAD_REQUEST)
@@ -38,6 +38,10 @@ const getDetectionsFromSensor = async (request: Request, response: Response) => 
         if (await checkSensorID(sensorId)) {
             if (LAST_DETECTION_QUERY_VARIABLE in request.query){
                 const days = Number(request.query[LAST_DETECTION_QUERY_VARIABLE]);
+                response.status(HttpStatus.OK)
+                    .send({
+                        [String(process.env.SENSOR_DETECTIONS_HEADER)]: await getLastXDetections(sensorId, days)
+                });
             }else if(FROM_TIMESTAMP_QUERY_VALUE in request.query && TO_TIMESTAMP_QUERY_VALUE in request.query){
                 
             }else{
