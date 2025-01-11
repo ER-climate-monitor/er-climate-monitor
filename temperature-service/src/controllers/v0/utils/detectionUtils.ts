@@ -25,4 +25,19 @@ async function checkSensorID(sensorId: string): Promise<Boolean> {
     return exists !== null;
 }
 
-export { saveDetectionModel, checkSensorID }
+async function getLastXDetections(sensorId: string, last: number): Promise<Array<Detection>> {
+    return (await detectionModel.find({sensorId: sensorId})
+        .sort({_id: -1})
+        .limit(last))
+        .map(detection => { 
+            return new Detection(detection.sensorId, 
+                detection.sensorName, 
+                detection.unit, 
+                detection.timestamp, 
+                detection.longitude,
+                detection.latitude,
+                detection.value)
+            });
+}
+
+export { saveDetectionModel, checkSensorID, getLastXDetections }
