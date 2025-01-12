@@ -47,7 +47,7 @@ class Detection implements IDetection {
         if (input !== wrongValue) {
             return input;
         }
-        throw new Error("Illegal argument error, the input value: " + input + " is not correct");
+        throw new Error(`Illegal argument error, the input value: ${input} is not correct`);
     }
 };
 
