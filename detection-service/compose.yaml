@@ -1,5 +1,5 @@
 services:
-  temperature-db:
+  detections-db:
     image: arm64v8/mongo:6.0-rc
     ports:
       - target: 27017
