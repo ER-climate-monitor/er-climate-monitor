@@ -9,7 +9,6 @@ function fromBody<X>(body: any, key: string, defaultValue: X) {
 }
 
 async function handleSaveDetection(model: Model<DetectionDocument>, data: any) {
-    console.log(data);
     const newDetection = await saveDetectionModel(model,
         fromBody(data, String(process.env.SENSOR_ID_HEADER), ""),
         fromBody(data, String(process.env.SENSOR_NAME_HEADER), ""),

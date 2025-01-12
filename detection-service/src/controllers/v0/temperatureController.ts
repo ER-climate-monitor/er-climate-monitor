@@ -17,7 +17,6 @@ const saveDetection = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
         try{
-            console.log(modelData);
             const newDetection = await handleSaveDetection(temperatureDetections, modelData);
             response.status(HttpStatus.CREATED);
         }catch(error) {
