@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import mongoose from "mongoose"
 // import SwaggerUi  from "swagger-ui-express";
 import fs  from "fs";
-import { detectionRouter } from './routes/v0/detectionRouter';
+import { temperatureRouter } from './routes/v0/temperatureRouter';
+import { TEMPERATURE_PATH_V0 } from './routes/v0/paths/detection.paths';
 // import YAML from "yaml";
 
 
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 export default function createServer(): Application {
     const app = express();
     const URL: string = process.env.DB_URL || "";
-    mongoose.connect(URL, { dbName: "temperature-database", autoIndex: false });
+    mongoose.connect(URL, { dbName: "detections-database", autoIndex: false });
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -24,7 +25,7 @@ export default function createServer(): Application {
     //     app.use("/api-docs", SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
     // }
 
-    app.use("/v0/sensor", detectionRouter);
+    app.use(TEMPERATURE_PATH_V0, temperatureRouter);
     return app;
 }
 
