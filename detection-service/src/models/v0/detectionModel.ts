@@ -25,9 +25,6 @@ const detectionSchema = new mongoose.Schema({
     value: {type: Number, required: true}
 }, { autoIndex: false });
 
-
-const detectionModel: Model<DetectionDocument> = mongoose.model<DetectionDocument>("Detections", detectionSchema);
-
 class Detection implements IDetection {
     sensorId: string;
     sensorName: string;
@@ -54,4 +51,6 @@ class Detection implements IDetection {
     }
 };
 
-export { detectionModel, DetectionDocument, Detection }
+const temperatureDetections: Model<DetectionDocument> = mongoose.model<DetectionDocument>("Temperatures", detectionSchema);
+
+export { temperatureDetections, DetectionDocument, Detection }
