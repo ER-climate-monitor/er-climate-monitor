@@ -1,12 +1,14 @@
 import { UserDocument, userModel } from "../../../models/v0/userModel";
-import { saltRounds } from "../userController";
 import bcrypt from "bcrypt";
 import { DeleteResult, ObjectId } from "mongoose";
 import mongoSanitize from "mongo-sanitize"
 
+const saltRounds  = Number(process.env.saltRounds) || 10;
+
+
 async function checkUser(inputEmail: String): Promise<Boolean> {
-    const existingUser: Boolean = await userModel.findOne({email: inputEmail}) || false;
-    return existingUser
+    const existingUser = await userModel.exists({email: inputEmail});
+    return existingUser !== null;
 }
 
 async function checkUserById(id: ObjectId): Promise<Boolean> {
