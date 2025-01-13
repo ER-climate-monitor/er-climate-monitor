@@ -1,12 +1,12 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
-import mongoose from "mongoose"
+import mongoose from 'mongoose';
 // import SwaggerUi  from "swagger-ui-express";
-import fs  from "fs";
+import fs from 'fs';
 import { temperatureRouter } from './routes/v0/temperatureRouter';
-import { TEMPERATURE_PATH_V0 } from './routes/v0/paths/detection.paths';
+import { HYDRO_PATH_V0, TEMPERATURE_PATH_V0 } from './routes/v0/paths/detection.paths';
+import { hydroRouter } from './routes/v0/hydroRouter';
 // import YAML from "yaml";
-
 
 dotenv.config();
 
@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 3000;
 
 export default function createServer(): Application {
     const app = express();
-    const URL: string = process.env.DB_URL || "";
-    mongoose.connect(URL, { dbName: "detections-database", autoIndex: false });
+    const URL: string = process.env.DB_URL || '';
+    mongoose.connect(URL, { dbName: 'detections-database', autoIndex: false });
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -26,11 +26,13 @@ export default function createServer(): Application {
     // }
 
     app.use(TEMPERATURE_PATH_V0, temperatureRouter);
+    app.use(HYDRO_PATH_V0, hydroRouter);
     return app;
 }
 
 const app = createServer();
 
 app.listen(PORT, () => {
-    console.log("listening", PORT);
-})
+    console.log('listening', PORT);
+});
+

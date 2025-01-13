@@ -1,5 +1,6 @@
 const GENERIC_SENSOR_PATH = '/v0/sensor';
 const TEMPERATURE_PATH_V0 = GENERIC_SENSOR_PATH + '/temperature';
+const HYDRO_PATH_V0 = GENERIC_SENSOR_PATH + '/hydro';
 
 const sensorIdParameter: string = 'sensorId';
 const LAST_DETECTION_QUERY_VARIABLE = 'last';
@@ -16,5 +17,6 @@ export {
     SAVE_DETECTION_PATH,
     DETECTIONS_FROM_SENSOR_PATH,
     TEMPERATURE_PATH_V0,
+    HYDRO_PATH_V0,
 };
 
