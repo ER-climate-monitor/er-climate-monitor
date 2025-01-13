@@ -1,5 +1,4 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { jwtSecretKey } from "../userController";
 import { jwtDecode } from "jwt-decode";
 import dotenv from 'dotenv';
 import { Token } from "../../../models/v0/tokenModel";
@@ -7,6 +6,8 @@ import { userModel } from "../../../models/v0/userModel";
 import { checkUserById } from "./userUtils";
 
 dotenv.config();
+
+const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret"
 
 function decodeToken(token: string): JwtPayload { 
     return jwtDecode(token);
@@ -34,10 +35,7 @@ async function verifyToken(token: string): Promise<Boolean> {
         const verified = jwt.verify(token, jwtSecretKey);
         const id = decodeToken(token).userId;
         const exists = await checkUserById(id);
-        if (verified && id && exists) {
-            return true
-        }
-        return false
+        return verified && id && exists
     }
     catch(error) {
         if (error instanceof jwt.TokenExpiredError) {
