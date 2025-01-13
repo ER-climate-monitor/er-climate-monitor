@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
-import { Detection } from '../../../models/v0/detectionModel';
+import { Detection, hydroLevelDetections } from '../../../models/v0/detectionModel';
 import { temperatureDetections, DetectionDocument } from '../../../models/v0/detectionModel';
-import { TEMPERATURE } from '../../../models/v0/detectionTypes';
+import { HYDRO, TEMPERATURE } from '../../../models/v0/detectionTypes';
 
 const LOWER_BOUND = 0;
 const UPPER_BOUND = 100;
@@ -10,6 +10,9 @@ function getModelFromDetectionType(type: string): Model<DetectionDocument> {
     switch (type) {
         case TEMPERATURE: {
             return temperatureDetections;
+        }
+        case HYDRO: {
+            return hydroLevelDetections;
         }
     }
     throw new Error('Illegal Argument Exception, the input parameter type is wrong');
