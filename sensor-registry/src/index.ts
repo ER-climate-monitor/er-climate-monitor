@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import { sensorRouter } from './routes/v0/sensorRoutes';
 import mongoose from 'mongoose';
+import { BASE_SENSOR_PATH_V0 } from './routes/v0/paths/sensorPaths';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ export default function createServer(): Application {
     const app: Application = express();
     mongoose.connect(URL, { dbName: "sensor-database" });
     app.use(express.json());
-    app.use("/sensor", sensorRouter);
+    app.use(BASE_SENSOR_PATH_V0, sensorRouter);
     return app;
 }
 
