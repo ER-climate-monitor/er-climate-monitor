@@ -8,12 +8,13 @@ import { fail } from "assert";
 import { ISensor } from "../../../model/v0/sensorModel";
 import randomIpv6 from "random-ipv6";
 import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from "../../../model/v0/headers/sensorHeaders";
+import { ALL_ROUTE, REGISTER_ROUTE } from "../../../routes/v0/paths/sensorPaths";
 
 
 dotenv.config();
 
-const REGISTER_SENSOR_PATH = "/sensor/register";
-const ALL_SENSORS = "/sensor/all";
+const REGISTER_SENSOR_PATH = REGISTER_ROUTE
+const ALL_SENSORS = ALL_ROUTE
 
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
