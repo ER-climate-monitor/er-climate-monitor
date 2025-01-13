@@ -1,21 +1,20 @@
 import { describe } from "mocha"
 import request from "supertest";
-import createServer from "../..";
+import createServer from "../../..";
 import dotenv from 'dotenv';
 import HttpStatus from "http-status-codes";
 import { shutOffSensor, createSensor } from "./utils/sensorUtils";
 import { fail } from "assert";
-import { ISensor } from "../../model/sensorModel";
+import { ISensor } from "../../../model/v0/sensorModel";
+import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from "../../../model/v0/headers/sensorHeaders";
 
 dotenv.config();
+
+const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 
 const REGISTER_SENSOR_PATH = "/sensor/register";
 const ALL_SENSORS = "/sensor/all";
 
-const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
-const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
-const API_KEY_HEADER = String(process.env.API_KEY_HEADER);
-const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
 
 const sensorIp = "0.0.0.0";
