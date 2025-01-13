@@ -2,14 +2,12 @@ import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 import { isIpValid } from "./utils/ipUtils";
 import { deleteSensor, exists, findAllSensors, saveSensor } from "./utils/sensorUtils";
+import { API_KEY_HEADER, SENSOR_IP_HEADER, SENSOR_PORT_HEADER } from "../../model/v0/headers/sensorHeaders";
 import dotenv from 'dotenv';
 import { fromBody } from "./utils/requestUtils";
 
 dotenv.config();
 
-const SENSOR_PORT_HEADER = String(process.env.SENSOR_PORT_HEADER);
-const SENSOR_IP_HEADER = String(process.env.SENSOR_IP_HEADER);
-const API_KEY_HEADER = String(process.env.API_KEY_HEADER);
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
 

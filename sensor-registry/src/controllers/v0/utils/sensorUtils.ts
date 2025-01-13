@@ -1,4 +1,4 @@
-import { ISensor, sensorModel } from "../../model/sensorModel"
+import { ISensor, sensorModel } from "../../../model/v0/sensorModel";
 
 async function exists(ip: string, port: number): Promise<boolean> { 
     return await sensorModel.exists( {ip: ip, port: port} ) !== null;
