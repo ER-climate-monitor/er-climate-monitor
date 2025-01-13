@@ -4,21 +4,11 @@ import dotenv from 'dotenv';
 import jwt from "jsonwebtoken";
 import { login, register, deleteInputUser } from "./utils/auth";
 import { tokenExpiration, verifyToken } from "./utils/jwt";
+import { API_KEY_HEADER, USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_JWT_TOKEN_HEADER, ADMIN_USER, NORMAL_USER, ERROR_TAG } from "../../models/v0/headers/userHeaders";
 
 dotenv.config();
 
-
 const saltRounds  = Number(process.env.saltRounds) || 10;
-
-const USER_EMAIL_HEADER = process.env.USER_EMAIL_HEADER || "X-User-Email";
-const USER_PASSWORD_HEADER = process.env.USER_PASSWORD_HEADER || "X-User-Password";
-const USER_JWT_TOKEN_HEADER = process.env.USER_JWT_TOKEN_HEADER || "X-User-Token";
-const USER_JWT_TOKEN_EXPIRATION_HEADER = process.env.USER_JWT_TOKEN_EXPIRATION_HEADER || "X-User-Token-Expiration";
-const NORMAL_USER = process.env.NORMAL_USER || "normal";
-const ADMIN_USER = process.env.ADMIN_USER || "admin";
-
-const ERROR_TAG = process.env.ERROR_TAG || "X-Error-Message";
-const API_KEY_HEADER = process.env.API_KEY_HEADER || "X-Api-Key"
 const secretKey = process.env.SECRET_API_KEY || "__"
 const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret"
 
