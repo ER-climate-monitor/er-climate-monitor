@@ -34,16 +34,10 @@ class MessageBroker<T> {
                 this.reconnect();
             });
 
-            this.connection.on('close', () => {
-                Logger.warn('Connection closed, attempting to reconnect...');
-                this.connected = false;
-                this.reconnect();
-            });
-
             this.connected = true;
             Logger.info('✅ Succesfully connected to broker!');
         } catch (error) {
-            Logger.error('❌ ' + error);
+            Logger.error(`❌ An error occurred when attempting to connect to ${this.connectionUrl}: ` + error);
         }
     }
 

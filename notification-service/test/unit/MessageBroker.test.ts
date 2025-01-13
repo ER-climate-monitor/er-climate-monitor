@@ -1,7 +1,6 @@
 import { jest, test, expect, describe, beforeEach, afterEach } from '@jest/globals';
 import { MessageBroker, NotificationCallback } from '../../src/messageBroker';
 import { Channel, Connection, connect } from 'amqplib';
-import { mock } from 'node:test';
 import Logger from 'js-logger';
 
 jest.mock('amqplib', () => ({
@@ -53,7 +52,6 @@ describe('MessageBroker - Unit Tests', () => {
         await broker.connect();
         expect(connect).toHaveBeenCalledWith('amqp://localhost');
         expect(mockConnection.on).toHaveBeenCalledWith('error', expect.any(Function));
-        expect(mockConnection.on).toHaveBeenCalledWith('close', expect.any(Function));
     });
 
     test('should create topic and set up subscription', async () => {
