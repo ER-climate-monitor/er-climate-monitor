@@ -1,3 +1,5 @@
-const TEMPERATURE = "TEMPERATURE";
+const TEMPERATURE = 'TEMPERATURE';
+const HYDRO = 'HYDRO';
 
-export { TEMPERATURE }
+export { TEMPERATURE, HYDRO };
+
