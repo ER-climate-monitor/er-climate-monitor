@@ -8,9 +8,7 @@ import { API_KEY_HEADER, USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN
 
 dotenv.config();
 
-const saltRounds  = Number(process.env.saltRounds) || 10;
 const secretKey = process.env.SECRET_API_KEY || "__"
-const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret"
 
 function isAdmin(data:any): boolean { 
     if (API_KEY_HEADER in data) {
@@ -108,4 +106,3 @@ const checkToken = async (request: Request, response: Response) => {
 };
 
 export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, deleteAdmin, checkToken }
-export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, ERROR_TAG, jwtSecretKey, saltRounds }
