@@ -3,15 +3,18 @@ import createServer from "../../..";
 import { describe, it, afterEach } from "mocha";
 import { fail, ok } from "node:assert";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER } from "../../../controllers/v0/userController";
+import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, API_KEY_HEADER } from "../../../models/v0/headers/userHeaders";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
 import { REGISTER_ADMIN_ROUTE, REGISTER_USER_ROUTE, DELETE_ADMIN_ROUTE, DELETE_USER_ROUTE, LOGIN_ADMIN_ROUTE, LOGIN_USER_ROUTE } from "./routes/globalRoutes.v0";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
 const api_key = process.env.SECRET_API_KEY || "";
-const API_KEY_HEADER = String(process.env.API_KEY_HEADER)
 
 
 const userInformation = {

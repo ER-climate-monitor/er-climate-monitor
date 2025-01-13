@@ -2,7 +2,7 @@ import request from "supertest"
 import createServer from "../../..";
 import { describe, it, afterEach } from "mocha";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_PASSWORD_HEADER } from "../../../controllers/v0/userController";
+import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, API_KEY_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_JWT_TOKEN_HEADER } from "../../../models/v0/headers/userHeaders";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
 import { fail } from "assert";
@@ -10,7 +10,6 @@ import { REGISTER_ADMIN_ROUTE, REGISTER_USER_ROUTE, JWT_AUTHORIZED_ROUTE } from 
 
 const email = "testemail1@gmail.com";
 const password = "AVeryStrongPassword1010";
-const USER_JWT_TOKEN_HEADER = process.env.USER_JWT_TOKEN_HEADER || "X-User-Token"
 const api_key = process.env.SECRET_API_KEY || "";
 
 const userInformation = {
@@ -21,13 +20,13 @@ const userInformation = {
 const adminInformation = {
     [USER_EMAIL_HEADER]: email,
     [USER_PASSWORD_HEADER]: password,
-    [String(process.env.API_KEY_HEADER)]: api_key
+    [API_KEY_HEADER]: api_key
 };
 
 const app: Application = createServer();
 
 describe("JWT token for registered users", () => {
-    before(async () => {
+    beforeEach(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
     });
@@ -101,9 +100,5 @@ describe("JWT token for registered users", () => {
             .post(JWT_AUTHORIZED_ROUTE)
             .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
             .expect(HttpStatus.UNAUTHORIZED);
-    });
-    afterEach(async () => {
-        await deleteUser(app, userInformation);
-        await deleteAdmin(app, adminInformation);
     });
 });
