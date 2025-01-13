@@ -7,7 +7,7 @@
     "build": "tsc",
     "test": "jest --silent",
     "test:unit": "jest test/unit",
-    "test:integration": "jest tests/integration",
+    "test:integration": "jest test/integration",
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'"
