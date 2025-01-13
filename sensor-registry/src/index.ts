@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
-import { sensorRouter } from './routes/sensorRoutes';
+import { sensorRouter } from './routes/v0/sensorRoutes';
 import mongoose from 'mongoose';
 
 dotenv.config();
