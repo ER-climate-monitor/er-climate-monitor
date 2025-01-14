@@ -24,7 +24,6 @@
     "mongo-sanitize": "^1.1.0",
     "mongoose": "^8.9.2",
     "swagger-ui-express": "^5.0.1",
-    "tsc": "^2.0.4",
     "yaml": "^2.6.1"
   },
   "devDependencies": {
