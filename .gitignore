@@ -2,6 +2,8 @@
 **/weekly_data/
 **/uv.lock
 
+.package-lock.json
+
 # Logs
 logs
 *.log
