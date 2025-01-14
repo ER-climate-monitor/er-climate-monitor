@@ -24,10 +24,12 @@
     "http-status-codes": "^2.3.0",
     "js-logger": "^1.6.1",
     "mongoose": "^8.9.4",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "tsc": "^2.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@jest-mock/express": "^2.1.0",
     "@types/amqplib": "^0.10.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
@@ -44,7 +46,7 @@
     "testcontainers": "^10.16.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "typescript-eslint": "^8.18.1"
   }
 }
