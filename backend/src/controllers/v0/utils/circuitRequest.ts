@@ -1,6 +1,6 @@
 import CircuitBreaker from "opossum";
-import axios from "axios"
-import { GET } from "./httpMethods";
+import axios, { AxiosResponse } from "axios"
+import { DELETE, GET, POST, PUT } from "./httpMethods";
 
 const options = {
     timeout: 3000, // If our function takes longer than 3 seconds, trigger a failure
@@ -8,23 +8,36 @@ const options = {
     resetTimeout: 30000 // After 30 seconds, try again.
 };
 
-async function makeRequest(service: string, method: string,  path: string, headers: any, body: any) {
+const breaker = new CircuitBreaker(makeRequest, options);
+
+async function makeRequest(service: string, method: string,  path: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
     const endpoint = service + path;
     switch (method) {
         case (GET): {
-            return getRequest(endpoint, headers, body)
+            return getRequest(endpoint, headers);
         }
+        case (POST): {
+            // TODO
+        }
+        case (PUT): {
+            // TODO
+        }
+        case (DELETE): {
+            // TODO
+        }
+    }
+    throw Error();
+}
+
+async function getRequest(endpoint: string, headers: any): Promise<AxiosResponse<any, any>> {
+    try {
+        return axios.get(endpoint, headers);
+    }catch(error) {
+        breaker.fallback(() => "Error, out of service. Try again later.");
+        throw error;
     }
 }
 
-async function getRequest(endpoint: string, headers: any, body: string) {
-    console.log(endpoint);
-    console.log(headers);
-    console.log(body);
-    // return axios.get(endpoint, {data});
-    return null;
-}
 
-const breaker = new CircuitBreaker(makeRequest, options);
 
 export { breaker }
