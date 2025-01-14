@@ -2,15 +2,19 @@ import { describe, beforeEach, afterEach, test, expect } from '@jest/globals';
 import { Server as HttpServer } from 'http';
 import { createServer } from 'http';
 import { io as ClientIO } from 'socket.io-client';
-import { createSocketNotificationCallback, SocketManager } from '../../src/socketManager';
+import { SocketManager } from '../../src/socketManager';
 import { AddressInfo } from 'net';
-import { jest } from '@jest/globals';
+import Logger from 'js-logger';
+
+Logger.useDefaults();
 
 describe('SocketManager - Unit tests', () => {
     let httpServer: HttpServer;
     let socketManager: SocketManager;
     let clientSocket: any;
     let port: number;
+    const testTopic = 'test-topic';
+    const notificationPrefix = 'notification';
 
     beforeEach((done) => {
         httpServer = createServer().listen();
@@ -32,110 +36,52 @@ describe('SocketManager - Unit tests', () => {
     });
 
     describe('connection and registration', () => {
-        test('should successfully register a new user', (done) => {
-            const userId = 1;
+        test('should not permit subscription to not subscribed users', (done) => {
             clientSocket.connect();
             clientSocket.on('connect', () => {
-                clientSocket.emit('register', userId);
+                clientSocket.emit('register', 'aaaaaa', 'eeeeee');
             });
 
-            clientSocket.on('registered', (response: { success: boolean }) => {
-                expect(response.success).toBeTruthy();
+            clientSocket.on('registered', (result: { success: boolean; error: string }) => {
+                expect(result.success).toBeFalsy();
                 done();
             });
         });
 
-        test('should not allow multiple connections from same user', (done) => {
+        test('should successfully let a user to be registered', (done) => {
             const userId = 1;
-
-            const secondConn = ClientIO(`http://localhost:${port}`, {
-                transports: ['websocket'],
-                autoConnect: false,
-            });
-
+            const subInfo = socketManager.registerUser(userId, testTopic);
             clientSocket.connect();
+
             clientSocket.on('connect', () => {
-                clientSocket.emit('register', userId);
+                clientSocket.emit('register', subInfo.uid, subInfo.topicAddr);
             });
 
-            clientSocket.on('registered', () => {
-                secondConn.connect();
-                secondConn.on('connect', () => {
-                    secondConn.emit('register', userId);
-                });
-            });
-
-            secondConn.on('registered', (response: { success: boolean }) => {
-                expect(response.success).toBeTruthy();
-                expect(clientSocket.connected).toBeFalsy();
-                secondConn.close();
+            clientSocket.on('registered', (result: { success: boolean }) => {
+                expect(result.success).toBeTruthy();
                 done();
             });
         });
     });
 
-    describe('notification sending', () => {
-        test('should successfully send notification to registered user', (done) => {
+    describe('topic subscription messages', () => {
+        test('should send messages to user subscribed to topic', (done) => {
             const userId = 1;
-            const testTopic = 'test-topic';
-            const testData = { message: 'test message' };
-
+            const subInfo = socketManager.registerUser(userId, testTopic);
             clientSocket.connect();
+
             clientSocket.on('connect', () => {
-                clientSocket.emit('register', userId);
+                clientSocket.emit('register', subInfo.uid, subInfo.topicAddr);
             });
 
-            clientSocket.on('registered', async () => {
-                const result = await socketManager.sendToUser(userId, testTopic, testData);
-                expect(result).toBeTruthy();
-            });
-
-            clientSocket.on('notification', (data: any) => {
-                expect(data.topic).toBe(testTopic);
-                expect(data.data).toEqual(testData);
-                done();
-            });
-        });
-
-        test('should return false when sending to a non-registered user', async () => {
-            const res = await socketManager.sendToUser(9999, 'test-topic', { data: "i'm not being sent!" });
-            expect(res).toBeFalsy();
-        });
-    });
-
-    describe('disconnection handling', () => {
-        test('should properly clean up on user disconnect', (done) => {
-            const userId = 1;
-            clientSocket.connect();
-            clientSocket.on('connect', () => {
-                clientSocket.emit('register', userId);
-            });
-
-            clientSocket.on('registered', async () => {
-                clientSocket.disconnect();
-
-                setTimeout(async () => {
-                    const res = await socketManager.sendToUser(userId, 'topic', { data: "i'm not being sent" });
-                    expect(res).toBeFalsy();
+            clientSocket.on('registered', (_: { success: boolean }) => {
+                const msg = { data: 'okeee' };
+                clientSocket.on(subInfo.topicAddr, (res: { data: string }) => {
+                    expect(res.data).toBe(msg.data);
                     done();
-                }, 100);
+                });
+                socketManager.sendToTopicSubscribers(testTopic, msg, notificationPrefix);
             });
-        });
-    });
-
-    describe('Create Socket Notification Callback', () => {
-        test('should create callback properly', async () => {
-            const userId = 1;
-            const topic = 'test-topic';
-            const notification = { messag: 'test' };
-
-            const senToUserSpy = jest.spyOn(socketManager, 'sendToUser');
-            senToUserSpy.mockResolvedValue(true);
-
-            const callback = createSocketNotificationCallback(socketManager);
-            await callback(userId, topic, notification);
-
-            expect(senToUserSpy).toHaveBeenCalledWith(userId, topic, notification);
-        });
+        }, 2000);
     });
 });

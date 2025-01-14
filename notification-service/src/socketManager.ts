@@ -1,30 +1,29 @@
-import { NotificationCallback } from './messageBroker';
-import { Server as HttpServer } from 'http';
-import { Server, Socket } from 'socket.io';
 import Logger from 'js-logger';
+import { Socket, Server } from 'socket.io';
+import { Server as HttpServer } from 'http';
+import { NotificationCallback } from './messageBroker';
 
 Logger.useDefaults();
 
-interface SocketConnection {
+const generateUID = (): string => crypto.randomUUID();
+
+interface NotificationConnection {
     socket: Socket;
-    userId: number;
+    uid: string;
+    topic: string;
     lastConnected: Date;
 }
 
-/**
- * Mangaes client side notifications though a series of
- * web socket communications with this server.
- * From a server side perspective, this component is
- * implementing the callback needed when a new event is
- * pushed in the message broker inside the baackend
- * architecture.
- */
 class SocketManager {
     private io: Server;
-    private userSockets: Map<number, SocketConnection>;
+    usersUIDs: Map<number, string>;
+    subscriptionsToUID: Map<string, Set<string>>;
+    usersConnections: Map<string, NotificationConnection>;
 
     constructor(httpServer: HttpServer) {
-        this.userSockets = new Map();
+        this.usersUIDs = new Map();
+        this.usersConnections = new Map();
+        this.subscriptionsToUID = new Map();
         this.io = new Server(httpServer, {
             cors: {
                 origin: '*',
@@ -34,17 +33,26 @@ class SocketManager {
         this.configureSocket();
     }
 
-    private configureSocket(): void {
-        this.io.on('connection', (socket: Socket) => {
-            Logger.info(`New client connection: ${socket.id}`);
-            socket.on('register', async (userId: number) => {
+    private configureSocket() {
+        this.io.on('connection', (socket) => {
+            Logger.info(`New client connection ${socket.id}`);
+            socket.on('register', async (uid: string, topicAddr: string) => {
                 try {
-                    await this.registerUserSocket(userId, socket);
+                    const topicRegex = /^notification\.([A-Za-z0-9-]+)$/;
+                    const match = topicAddr.match(topicRegex);
+                    if (!match) {
+                        throw new Error(`Unrecognized topic name: ${topicAddr}`);
+                    }
+                    const topic = match[1];
+                    if (!this.subscriptionsToUID.get(topic)?.has(uid)) {
+                        throw new Error(`User ${uid} is not subscribed for topic: ${topic}`);
+                    }
+                    this.registerUserSocket(uid, topic, socket);
                     socket.emit('registered', { success: true });
-                    Logger.info(`User ${userId} registerd with socketId: ${socket.id}`);
+                    Logger.info('User successfuly registered!');
                 } catch (error) {
                     socket.emit('registered', { success: false, error: (error as Error).message });
-                    Logger.error(`Failed to register user ${userId}: ${error}`);
+                    Logger.error(`Failed to register user ${uid}: ${error}`);
                 }
             });
 
@@ -54,67 +62,91 @@ class SocketManager {
         });
     }
 
-    private async registerUserSocket(userId: number, socket: Socket): Promise<void> {
-        const existingConnection = this.userSockets.get(userId);
+    private registerUserSocket(uid: string, topic: string, socket: Socket) {
+        const existingConnection = this.usersConnections.get(uid);
         if (existingConnection) {
             try {
                 existingConnection.socket.disconnect(true);
             } catch (error) {
-                Logger.warn(`Error disconnecting existing socket for user ${userId}: ${error}`);
+                Logger.warn(`Error disconnecting existing socket for user ${uid}: ${error}`);
             }
         }
 
-        this.userSockets.set(userId, {
+        this.usersConnections.set(uid, {
             socket,
-            userId,
+            uid,
+            topic,
             lastConnected: new Date(),
         });
 
         socket.on('disconnect', () => {
-            if (this.userSockets.get(userId)?.socket.id === socket.id) {
-                this.userSockets.delete(userId);
-                Logger.info(`User ${userId} disconnected and removed from socket registry.`);
+            if (this.usersConnections.get(uid)?.socket.id == socket.id) {
+                this.usersConnections.delete(uid);
+                Logger.info(`User ${uid} disconnected and removed from socket registry.`);
             }
         });
     }
 
     private handleDisconnect(socket: Socket) {
-        for (const [userId, connection] of this.userSockets.entries()) {
+        for (const [uid, connection] of this.usersConnections.entries()) {
             if (connection.socket.id === socket.id) {
-                this.userSockets.delete(userId);
-                Logger.info(`User ${userId} successuflly disconnected and cleaned up.`);
+                this.usersConnections.delete(uid);
+                Logger.info(`User ${uid} successfully disonnected and cleaned up.`);
             }
         }
     }
 
-    async sendToUser<T>(userId: number, topic: string, data: T): Promise<boolean> {
-        const connection = this.userSockets.get(userId);
-        if (!connection) {
-            Logger.warn(`No active connections found for user: ${userId}`);
-            return false;
-        }
-
+    sendToTopicSubscribers<T>(topic: string, data: T, prefix: string | null = null): boolean {
         try {
-            connection.socket.emit('notification', { topic, data });
+            if (prefix) prefix = prefix + '.';
+            else prefix = '';
+
+            this.io.emit(`${prefix}${topic}`, data);
+            Logger.info(`Sent ${JSON.stringify(data)} to subscribers of topic ${topic}`);
             return true;
         } catch (error) {
-            Logger.error(`Failed to send message to user ${userId}: ${error}`);
+            Logger.error(`Failed to send message to topic ${topic} subscribers:  ${error}`);
             return false;
         }
     }
 
+    /**
+     * This function adds a user and a topic to the private collections.
+     * If the topic is not present, it saves it considering that the source
+     * of topic names is always the MessageBroker, and thus the only source
+     * of truth of topic names.
+     */
+    registerUser(userId: number, topic: string) {
+        let uid = this.usersUIDs.get(userId);
+        if (uid) return { uid: uid, topicAddr: `notification.${topic}` };
+
+        uid = generateUID();
+        this.usersUIDs.set(userId, uid);
+        const topicSubs = this.subscriptionsToUID.get(topic) ?? new Set();
+        topicSubs.add(uid);
+        this.subscriptionsToUID.set(topic, topicSubs);
+        return { uid: uid, topicAddr: `notification.${topic}` };
+    }
+
     close() {
-        Array.from(this.userSockets.values()).map((conn) => conn.socket.disconnect(true));
+        Array.from(this.usersConnections.values()).forEach((conn) => conn.socket.disconnect(true));
         this.io.close();
     }
 }
 
 function createSocketNotificationCallback<T>(socketManager: SocketManager): NotificationCallback<T> {
-    return async (userId, topic, notification) => {
-        if (!(await socketManager.sendToUser(userId, topic, notification))) {
-            Logger.warn(`Notification to user ${userId} could not be delivered...`);
-        }
+    return async (userIds, topic, notification) => {
+        const usersToCheck = socketManager.subscriptionsToUID.get(topic)!;
+        // The following check is not really necessary and can be removed, but
+        // it provides a way to show to engineers if this compoenent and
+        // `MessageBroker` are not properly synced in which are the subscribers.
+        Array.from(userIds).forEach((user) => {
+            const uid = socketManager.usersUIDs.get(user)!;
+            if (!usersToCheck.has(uid)) {
+                Logger.warn(`Sending data to user ${uid} which does not appear to be subscribed to ${topic}`);
+            }
+        });
+        socketManager.sendToTopicSubscribers(topic, notification, 'notification');
     };
 }
-
-export { SocketManager, createSocketNotificationCallback };
+export { createSocketNotificationCallback, SocketManager };

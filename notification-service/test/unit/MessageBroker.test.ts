@@ -101,7 +101,9 @@ describe('MessageBroker - Unit Tests', () => {
             content: Buffer.from(JSON.stringify(message)),
         });
 
-        expect(mockCallback).toHaveBeenCalledWith(1, testTopicName, message);
+        const expectedUserIds = new Set<number>();
+        expectedUserIds.add(1);
+        expect(mockCallback).toHaveBeenCalledWith(expectedUserIds, testTopicName, message);
         expect(mockChannel.ack).toHaveBeenCalled();
     });
 });
