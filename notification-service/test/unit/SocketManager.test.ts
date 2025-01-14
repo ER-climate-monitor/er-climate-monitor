@@ -1,6 +1,5 @@
 import { describe, beforeEach, afterEach, test, expect } from '@jest/globals';
 import { Server as HttpServer } from 'http';
-import { Server as SocketServer, Socket } from 'socket.io';
 import { createServer } from 'http';
 import { io as ClientIO } from 'socket.io-client';
 import { createSocketNotificationCallback, SocketManager } from '../../src/socketManager';
