@@ -10,7 +10,7 @@ const authenticationGetHandler = async (request: Request, response: Response) =>
     const url = request.url
     const data = request.body + request.headers
     const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, url);
-    breaker.fire(AUTHENTICATION_ENDPOINT, GET, endpointPath, data);
+    breaker.fire(AUTHENTICATION_ENDPOINT, GET, endpointPath, request.headers, request.body);
     response.end();
 }
 
