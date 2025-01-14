@@ -4,7 +4,7 @@ import Logger from 'js-logger';
 
 Logger.useDefaults();
 
-type NotificationCallback<T> = (userId: number, message: T) => Promise<void>;
+type NotificationCallback<T> = (userId: number, topic: string, message: T) => Promise<void>;
 
 interface Subscription {
     userIds: Set<number>;
@@ -109,7 +109,7 @@ class MessageBroker<T> {
 
                 if (this.notificationCallback) {
                     const promises = Array.from(userIds).map((userId) =>
-                        this.notificationCallback!(userId, content).catch((err) =>
+                        this.notificationCallback!(userId, topic, content).catch((err) =>
                             Logger.error(`Failed to notify user ${userId}: `, err)
                         )
                     );

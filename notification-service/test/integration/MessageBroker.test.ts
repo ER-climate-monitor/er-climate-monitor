@@ -29,7 +29,7 @@ describe('MessageBroker - Integration Tests', () => {
 
     test('should handle complete message flow', async () => {
         const receivedMessages: any[] = [];
-        const mockCallback = async (userId: number, message: string) => {
+        const mockCallback = async (userId: number, topic: string, message: string) => {
             receivedMessages.push({ userId, message });
         };
 
@@ -58,7 +58,7 @@ describe('MessageBroker - Integration Tests', () => {
 
     test('should handle user unsubscribe', async () => {
         const receivedMessages: any[] = [];
-        const mockCallback = async (userId: number, message: string) => {
+        const mockCallback = async (userId: number, topic: string, message: string) => {
             receivedMessages.push({ userId, message });
         };
 

@@ -82,10 +82,12 @@ describe('MessageBroker - Unit Tests', () => {
     });
 
     test('should deliver messages to subscribed users', async () => {
-        const mockCallback: NotificationCallback<string> = jest.fn().mockImplementation(async (userId, message) => {
-            Logger.info(`Sending ${message} to ${userId}`);
-            return Promise.resolve();
-        }) as NotificationCallback<string>;
+        const mockCallback: NotificationCallback<string> = jest
+            .fn()
+            .mockImplementation(async (userId, topic, message) => {
+                Logger.info(`Sending ${message} to ${userId} with topic ${topic}`);
+                return Promise.resolve();
+            }) as NotificationCallback<string>;
 
         await broker.connect();
         await broker.createTopic('test-topic');
@@ -99,7 +101,7 @@ describe('MessageBroker - Unit Tests', () => {
             content: Buffer.from(JSON.stringify(message)),
         });
 
-        expect(mockCallback).toHaveBeenCalledWith(1, message);
+        expect(mockCallback).toHaveBeenCalledWith(1, testTopicName, message);
         expect(mockChannel.ack).toHaveBeenCalled();
     });
 });
