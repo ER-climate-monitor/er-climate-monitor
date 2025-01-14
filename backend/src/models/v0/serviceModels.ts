@@ -1,1 +1,3 @@
 const AUTHENTICATION_SERVICE = "http://localhost:8888";
+
+export { AUTHENTICATION_SERVICE }
