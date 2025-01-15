@@ -17,10 +17,13 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Email:
+                action:
+                  type: string
+                  description: User's actions (Register)
+                userEmail:
                   type: string
                   description: User's email address
-                X-User-Password:
+                userPassword:
                   type: string
                   description: User's password
       responses:
@@ -31,13 +34,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  X-User-Email:
+                  userEmail:
                     type: string
                     description: Admin's email address
-                  X-User-Token:
+                  userToken:
                     type: string
-                    description: U  ser's JWT token
-                  X-User-Token-Expiration:
+                    description: User's JWT token
+                  userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
         400:
@@ -53,13 +56,16 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Email:
+                action:
+                  type: string
+                  description: User's actions (Register)
+                userEmail:
                   type: string
                   description: Admin's email address
-                X-User-Password:
+                userPassword:
                   type: string
                   description: Admin's password
-                X-Api-Key:
+                apiKey:
                   type: string
                   description: Admin API key
       responses:
@@ -70,13 +76,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  X-User-Email:
+                  userEmail:
                     type: string
                     description: Admin's email address
-                  X-User-Token:
+                  userToken:
                     type: string
                     description: U  ser's JWT token
-                  X-User-Token-Expiration:
+                  userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
         401:
@@ -92,10 +98,13 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Email:
+                action:
+                  type: string
+                  description: User's actions (Login)
+                userEmail:
                   type: string
                   description: User's email address
-                X-User-Password:
+                userPassword:
                   type: string
                   description: User's password
       responses:
@@ -106,13 +115,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  X-User-Email:
+                  userEmail:
                     type: string
                     description: Admin's email address
-                  X-User-Token:
+                  userToken:
                     type: string
                     description: U  ser's JWT token
-                  X-User-Token-Expiration:
+                  userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
         400:
@@ -127,13 +136,16 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Email:
+                action:
+                  type: string
+                  description: User's actions (Login)
+                userEmail:
                   type: string
                   description: Admin's email address
-                X-User-Password:
+                userPassword:
                   type: string
                   description: Admin's password
-                X-Api-Key:
+                apiKey:
                   type: string
                   description: Admin API key
       responses:
@@ -145,13 +157,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  X-User-Email:
+                  userEmail:
                     type: string
                     description: Admin's email address
-                  X-User-Token:
+                  userToken:
                     type: string
                     description: U  ser's JWT token
-                  X-User-Token-Expiration:
+                  userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
         401:
@@ -167,7 +179,10 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Token:
+                action:
+                  type: string
+                  description: User's actions (Authenticate)
+                userToken:
                   type: string
                   description: JWT token
       responses:
@@ -178,7 +193,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  X-User-Token-Expiration:
+                  userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
         401:
@@ -196,7 +211,7 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Email:
+                userEmail:
                   type: string
                   description: User's email address
       responses:
@@ -215,10 +230,10 @@ paths:
             schema:
               type: object
               properties:
-                X-User-Email:
+                userEmail:
                   type: string
                   description: Admin's email address
-                X-Api-Key:
+                apiKey:
                   type: string
                   description: Admin API key
       responses:
