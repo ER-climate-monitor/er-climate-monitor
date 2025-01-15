@@ -53,4 +53,4 @@ class Detection implements IDetection {
 
 const temperatureDetections: Model<DetectionDocument> = mongoose.model<DetectionDocument>("Temperatures", detectionSchema);
 
-export { temperatureDetections, DetectionDocument, Detection }
+export { temperatureDetections, DetectionDocument, Detection, IDetection };
