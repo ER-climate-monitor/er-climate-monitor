@@ -3,7 +3,7 @@ import createServer from "../../..";
 import { describe, it, afterEach } from "mocha";
 import { fail, ok } from "node:assert";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, API_KEY_HEADER } from "../../../models/v0/headers/userHeaders";
+import { USER_EMAIL_FIELD, USER_PASSWORD_FIELD, API_KEY_FIELD } from "../../../models/v0/headers/userHeaders";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
 import { REGISTER_ADMIN_ROUTE, REGISTER_USER_ROUTE, DELETE_ADMIN_ROUTE, DELETE_USER_ROUTE, LOGIN_ADMIN_ROUTE, LOGIN_USER_ROUTE } from "./routes/globalRoutes.v0";
@@ -18,14 +18,14 @@ const api_key = process.env.SECRET_API_KEY || "";
 
 
 const userInformation = {
-    [USER_EMAIL_HEADER]: email,
-    [USER_PASSWORD_HEADER]: password,
+    [USER_EMAIL_FIELD]: email,
+    [USER_PASSWORD_FIELD]: password,
 };
 
 const adminInformation = {
-    [USER_EMAIL_HEADER]: email,
-    [USER_PASSWORD_HEADER]: password,
-    [API_KEY_HEADER]: api_key
+    [USER_EMAIL_FIELD]: email,
+    [USER_PASSWORD_FIELD]: password,
+    [API_KEY_FIELD]: api_key
 };
 
 const maliciousEmails: Array<String> = ['{"$ne": null}', "notanemail`DROP DATABASE *`@gmail.com", '{"$gt": ""}', '{"$regex": ".*", "$options": "i"}']
@@ -43,7 +43,7 @@ describe("User Authentication", () => {
             .send(userInformation)
             .expect(HttpStatus.CREATED)
             .expect(response => {
-                const responseEmail = response.body[USER_EMAIL_HEADER];
+                const responseEmail = response.body[USER_EMAIL_FIELD];
                 if ((responseEmail !== email)){
                     fail();
                 }
@@ -62,8 +62,8 @@ describe("User Authentication", () => {
     it("Should return an error if the input email is not well formatted during the registration, login and delete even if the user is not registered", async () => {
         for (const maliciousEmail in maliciousEmails) {
             const badInformation = {
-                [USER_EMAIL_HEADER]: maliciousEmail,
-                [USER_PASSWORD_HEADER]: password
+                [USER_EMAIL_FIELD]: maliciousEmail,
+                [USER_PASSWORD_FIELD]: password
             };
             await request(app)
                 .post(REGISTER_USER_ROUTE)
@@ -82,9 +82,9 @@ describe("User Authentication", () => {
     it("Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered", async () => {
         for (const maliciousEmail in maliciousEmails) {
             const badInformation = {
-                [USER_EMAIL_HEADER]: maliciousEmail,
-                [USER_PASSWORD_HEADER]: password,
-                [API_KEY_HEADER]: api_key
+                [USER_EMAIL_FIELD]: maliciousEmail,
+                [USER_PASSWORD_FIELD]: password,
+                [API_KEY_FIELD]: api_key
             };
             await request(app)
                 .post(REGISTER_ADMIN_ROUTE)
@@ -106,7 +106,7 @@ describe("User Authentication", () => {
             .send(adminInformation)
             .expect(HttpStatus.CREATED)
             .expect(response => {
-                const responseEmail = response.body[USER_EMAIL_HEADER];
+                const responseEmail = response.body[USER_EMAIL_FIELD];
                 if ((responseEmail !== email)){
                     fail();
                 }
@@ -124,7 +124,7 @@ describe("User Authentication", () => {
             .send(userInformation)
             .expect(HttpStatus.CREATED)
             .expect(response => {
-                const responseEmail = response.body[USER_EMAIL_HEADER];
+                const responseEmail = response.body[USER_EMAIL_FIELD];
                 if ((responseEmail !== email)){
                     fail();
                 }
@@ -134,7 +134,7 @@ describe("User Authentication", () => {
             .send(userInformation)
             .expect(HttpStatus.OK)
             .expect(response => {
-                const responseEmail = response.body[USER_EMAIL_HEADER];
+                const responseEmail = response.body[USER_EMAIL_FIELD];
                 if (responseEmail !== email) {
                     fail();
                 }
@@ -146,7 +146,7 @@ describe("User Authentication", () => {
             .send(adminInformation)
             .expect(HttpStatus.CREATED)
             .expect(response => {
-                const responseEmail = response.body[USER_EMAIL_HEADER];
+                const responseEmail = response.body[USER_EMAIL_FIELD];
                 if ((responseEmail !== email)){
                     fail();
                 }

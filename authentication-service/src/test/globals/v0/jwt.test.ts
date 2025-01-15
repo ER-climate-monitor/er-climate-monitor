@@ -1,8 +1,8 @@
 import request from "supertest"
 import createServer from "../../..";
-import { describe, it, afterEach } from "mocha";
+import { describe, it } from "mocha";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, API_KEY_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, USER_JWT_TOKEN_HEADER } from "../../../models/v0/headers/userHeaders";
+import { API_KEY_FIELD, USER_EMAIL_FIELD, USER_PASSWORD_FIELD, USER_JWT_TOKEN_EXPIRATION_FIELD, USER_JWT_TOKEN_FIELD, ADMIN_USER, NORMAL_USER, ERROR_HEADER } from "../../../models/v0/headers/userHeaders";
 import { Application } from "express";
 import { deleteAdmin, deleteUser } from "./utils/userUtils";
 import { fail } from "assert";
@@ -13,14 +13,14 @@ const password = "AVeryStrongPassword1010";
 const api_key = process.env.SECRET_API_KEY || "";
 
 const userInformation = {
-    [USER_EMAIL_HEADER]: email,
-    [USER_PASSWORD_HEADER]: password,
+    [USER_EMAIL_FIELD]: email,
+    [USER_PASSWORD_FIELD]: password,
 };
 
 const adminInformation = {
-    [USER_EMAIL_HEADER]: email,
-    [USER_PASSWORD_HEADER]: password,
-    [API_KEY_HEADER]: api_key
+    [USER_EMAIL_FIELD]: email,
+    [USER_PASSWORD_FIELD]: password,
+    [API_KEY_FIELD]: api_key
 };
 
 const app: Application = createServer();
@@ -35,7 +35,7 @@ describe("JWT token for registered users", () => {
         .post(REGISTER_USER_ROUTE)
         .send(userInformation)
         .expect(HttpStatus.CREATED)
-        if (!(USER_JWT_TOKEN_EXPIRATION_HEADER in response.body)) {
+        if (!(USER_JWT_TOKEN_EXPIRATION_FIELD in response.body)) {
             fail();
         }
     });
@@ -44,10 +44,10 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED)
-        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
+        const jwtToken = response.body[USER_JWT_TOKEN_FIELD];
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
-            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .send({[USER_JWT_TOKEN_FIELD]: jwtToken})
             .expect(HttpStatus.ACCEPTED);
     });
     it("It should be possible to check the validity of a JWT token of a registered admin", async () => {
@@ -55,23 +55,23 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_ADMIN_ROUTE)
             .send(adminInformation)
             .expect(HttpStatus.CREATED)
-        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
+        const jwtToken = response.body[USER_JWT_TOKEN_FIELD];
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
-            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .send({[USER_JWT_TOKEN_FIELD]: jwtToken})
             .expect(HttpStatus.ACCEPTED);
     });
     it("It should return an error if I try to verify a token that does not exists and also It is bad formatted", async () => {
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
-            .send({[USER_JWT_TOKEN_HEADER]: "TOKEForzaNapoliKvichaKvaraskelia"})
+            .send({[USER_JWT_TOKEN_FIELD]: "TOKEForzaNapoliKvichaKvaraskelia"})
             .expect(HttpStatus.BAD_REQUEST);
     });
     it("It should return an error if I try to verify a token well formatted but that It is not created by this server", async () => {
         const jwt = "qyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0aW1lIjoiVHVlIERlYyAyNCAyMDI0IDE2OjA0OjM2IEdNVCswMTAwIChDZW50cmFsIEV1cm9wZWFuIFN0YW5kYXJkIFRpbWUpIiwiaWF0IjoxNzM1MDUyNjc2fQ.0z5NC4qn2566V9uwtLeWuwffRoM3lbtr6JCJA3Jp5Gs";
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
-            .send({[USER_JWT_TOKEN_HEADER]: jwt})
+            .send({[USER_JWT_TOKEN_FIELD]: jwt})
             .expect(HttpStatus.BAD_REQUEST);
     });
     it("Should return an error if the JWT token is valid but It has expired.", async () => {
@@ -82,10 +82,10 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED);
-        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
+        const jwtToken = response.body[USER_JWT_TOKEN_FIELD];
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
-            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .send({[USER_JWT_TOKEN_FIELD]: jwtToken})
             .expect(HttpStatus.UNAUTHORIZED);
         process.env.EXPIRATION = oldExpiration;
     });
@@ -94,11 +94,11 @@ describe("JWT token for registered users", () => {
             .post(REGISTER_USER_ROUTE)
             .send(userInformation)
             .expect(HttpStatus.CREATED);
-        const jwtToken = response.body[USER_JWT_TOKEN_HEADER];
+        const jwtToken = response.body[USER_JWT_TOKEN_FIELD];
         await deleteUser(app, userInformation);
         await request(app)
             .post(JWT_AUTHORIZED_ROUTE)
-            .send({[USER_JWT_TOKEN_HEADER]: jwtToken})
+            .send({[USER_JWT_TOKEN_FIELD]: jwtToken})
             .expect(HttpStatus.UNAUTHORIZED);
     });
 });
