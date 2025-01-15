@@ -10,8 +10,14 @@ class AuthenticationClient {
         this.authenticationRedisClient = createClient(options);
     }
 
-    public async setToken(token: string, expiration: number | string) {
-        this.authenticationRedisClient.set
+    public async setToken(token: string, expiration: string) {
+        if (this.checkInput(token) && this.checkInput(expiration)) {
+            this.authenticationRedisClient.set(token, String(expiration));
+        }
+    }
+
+    private checkInput(input: string): boolean {
+        return input !== undefined && input.trim().length > 0;
     }
 }
 
