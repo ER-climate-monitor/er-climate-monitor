@@ -18,8 +18,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http-status-codes": "^2.3.0",
-    "opossum": "^5.0.1",
-    "redis": "^4.7.0"
+    "ioredis": "^5.4.2",
+    "js-logger": "^1.6.1",
+    "opossum": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
