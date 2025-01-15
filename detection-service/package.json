@@ -14,9 +14,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/amqplib": "^0.10.6",
+    "amqplib": "^0.10.5",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http-status-codes": "^2.3.0",
+    "js-logger": "^1.6.1",
     "mongoose": "^8.9.4"
   },
   "devDependencies": {
