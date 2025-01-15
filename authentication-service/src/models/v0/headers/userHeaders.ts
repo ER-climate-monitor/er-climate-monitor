@@ -1,12 +1,27 @@
+// Fields for values inside the request body
+const USER_EMAIL_FIELD = "userEmail";
+const USER_PASSWORD_FIELD = "userPassword";
+const USER_JWT_TOKEN_FIELD = "userToken";
+const USER_JWT_TOKEN_EXPIRATION_FIELD = "userTokenExpiration";
+const API_KEY_FIELD = "apiKey";
+const ERROR_FIELD = "error";
 
-const USER_EMAIL_HEADER = "X-User-Email";
-const USER_PASSWORD_HEADER = "X-User-Password";
-const USER_JWT_TOKEN_HEADER = "X-User-Token";
-const USER_JWT_TOKEN_EXPIRATION_HEADER = "X-User-Token-Expiration";
+
+// User roles
 const NORMAL_USER = "normal";
 const ADMIN_USER = "admin";
 
-const ERROR_TAG = "X-Error-Message";
-const API_KEY_HEADER = "X-Api-Key";
+// HTTP header constants
+const ERROR_HEADER = "X-Error-Message";
 
-export { USER_EMAIL_HEADER, USER_PASSWORD_HEADER, USER_JWT_TOKEN_HEADER, USER_JWT_TOKEN_EXPIRATION_HEADER, NORMAL_USER, ADMIN_USER, ERROR_TAG, API_KEY_HEADER }
+export {
+    USER_EMAIL_FIELD,
+    USER_PASSWORD_FIELD,
+    USER_JWT_TOKEN_FIELD,
+    USER_JWT_TOKEN_EXPIRATION_FIELD,
+    NORMAL_USER,
+    ADMIN_USER,
+    ERROR_HEADER,
+    API_KEY_FIELD,
+    ERROR_FIELD
+};
