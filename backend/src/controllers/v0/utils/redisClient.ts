@@ -1,13 +1,13 @@
-import { createClient } from "redis";
+import Redis from "ioredis"
 
-const options = {
-    url: process.env.REDIS_URL
-}
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 class AuthenticationClient {
     authenticationRedisClient: any
-    constructor(options: {}) {
-        this.authenticationRedisClient = createClient(options);
+    constructor() {
+        this.authenticationRedisClient = new Redis(String(process.env.REDIS_URL));
     }
 
     public async setToken(token: string, expiration: string) {
@@ -21,6 +21,6 @@ class AuthenticationClient {
     }
 }
 
-const authenticationRedisClient = new AuthenticationClient(options);
+const authenticationRedisClient = new AuthenticationClient();
 
 export { authenticationRedisClient }
