@@ -9,7 +9,7 @@
 # https://github.com/docker/awesome-compose
 services:
   server:
-    image: matteoiorio/authentication-service:0.0.1
+    image: matteoiorio/authentication-service:0.0.2
     environment:
       NODE_ENV: production
     env_file: ".env"
