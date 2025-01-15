@@ -3,7 +3,7 @@ import { Response } from "express";
 import bcrypt from "bcrypt";
 import { createToken } from "./jwt";
 import HttpStatus from "http-status-codes";
-import { USER_EMAIL_FIELD, USER_JWT_TOKEN_EXPIRATION_FIELD, USER_JWT_TOKEN_FIELD, USER_PASSWORD_FIELD, ERROR_FIELD } from "../../../models/v0/headers/userHeaders";
+import { USER_EMAIL_FIELD, USER_JWT_TOKEN_EXPIRATION_FIELD, USER_JWT_TOKEN_FIELD, ERROR_FIELD } from "../../../models/v0/headers/userHeaders";
 import { checkEmail, checkUser, createUser, deleteOneUser} from "./userUtils";
 import { Token } from "../../../models/v0/tokenModel";
 
