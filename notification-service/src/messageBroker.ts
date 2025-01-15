@@ -74,6 +74,7 @@ class MessageBroker<T> {
             }
 
             await this.setupSubscription(topic);
+            Logger.info(`Topic ${topic} successfully created!`);
             return true;
         } catch (error) {
             Logger.error(`Failed to create topic ${topic}: `, error);
@@ -164,6 +165,10 @@ class MessageBroker<T> {
             Logger.error(`Failed to publish to ${topic} message:  ${message}. Got error: `, error);
             return false;
         }
+    }
+
+    getTopics(): string[] {
+        return Array.from(this.subscriptions.keys());
     }
 
     async close(): Promise<void> {
