@@ -1,6 +1,5 @@
-import { AxiosHeaders, AxiosResponse, AxiosResponseHeaders } from "axios";
+import { AxiosResponse } from "axios";
 import { Response } from "express";
-import { json } from "node:stream/consumers";
 
 function fromAxiosToResponse(axiosResponse: AxiosResponse<any, any>, response: Response): Response {
     for(const header in axiosResponse.headers) {
