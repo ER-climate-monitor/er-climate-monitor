@@ -1,6 +1,6 @@
 import CircuitBreaker from "opossum";
 import axios, { AxiosError, AxiosResponse } from "axios"
-import { DELETE, GET, POST, PUT } from "./httpMethods";
+import { DELETE, GET, POST, PUT } from "../api/httpMethods";
 
 const defaultOptions = {
     timeout: 6000, // If our function takes longer than 3 seconds, trigger a failure
