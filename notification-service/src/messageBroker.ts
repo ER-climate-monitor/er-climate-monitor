@@ -38,6 +38,7 @@ class MessageBroker<T> {
             Logger.info('✅ Succesfully connected to broker!');
         } catch (error) {
             Logger.error(`❌ An error occurred when attempting to connect to ${this.connectionUrl}: ` + error);
+            this.reconnect();
         }
     }
 
