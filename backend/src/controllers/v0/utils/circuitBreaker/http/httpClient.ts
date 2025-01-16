@@ -1,8 +1,8 @@
 interface HttpClient<X> {
-    get(endpoint: string, headers: any): X
-    post(endpoint: string, headers: any, body: any): X
-    put(endpoint: string, headers: any, body: any): X
-    delete(endpoint: string, headers: any, body: any): X 
+    httpGet(endpoint: string, headers: any): Promise<X>
+    httpPost(endpoint: string, headers: any, body: any): Promise<X>
+    httpPut(endpoint: string, headers: any, body: any): Promise<X>
+    httpDelete(endpoint: string, headers: any, body: any): Promise<X>
 }
 
 abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
@@ -11,7 +11,7 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         this.clientTechnology = clientTechnology;
     }
 
-    private makeRequest(request: () => X): X {
+    private makeRequest(request: () => Promise<X> ): Promise<X> {
         try {
             return request();
         }catch(error) {
@@ -19,18 +19,18 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         }
     }
 
-    getRequest(endpoint: string, headers: any): X {
-        return this.makeRequest(() => this.clientTechnology.get(endpoint, headers));
+    async getRequest(endpoint: string, headers: any): Promise<X> {
+        return this.makeRequest(() => this.clientTechnology.httpGet(endpoint, headers));
     }
-    postRequest(endpoint: string, headers: any, body: any): X {
-        return this.clientTechnology.put(endpoint, headers, body);
+    async postRequest(endpoint: string, headers: any, body: any): Promise<X> {
+        return this.makeRequest(() => this.clientTechnology.httpPost(endpoint, headers, body));
     }
-    putRequest(endpoint: string, headers: any, body: any): X {
-
+    async putRequest(endpoint: string, headers: any, body: any): Promise<X> {
+        return this.makeRequest(() => this.clientTechnology.httpPut(endpoint, headers, body));
     }
-    deleteRequest(endpoint: string, headers: any, body: any): X {
-
+    async deleteRequest(endpoint: string, headers: any, body: any): Promise<X> {
+        return this.makeRequest(() => this.clientTechnology.httpDelete(endpoint, headers, body));
     }
 }
 
-export { HttpClient }
+export { AbstractHttpClient, HttpClient }
