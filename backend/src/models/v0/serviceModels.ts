@@ -1,3 +1,3 @@
-const AUTHENTICATION_ENDPOINT = "http://localhost:8888/v0";
+const AUTHENTICATION_ENDPOINT = 'http://localhost:8888/v0';
 
-export { AUTHENTICATION_ENDPOINT }
+export { AUTHENTICATION_ENDPOINT };

@@ -1,8 +1,8 @@
 interface HttpClient<X> {
-    httpGet(endpoint: string, headers: any): Promise<X>
-    httpPost(endpoint: string, headers: any, body: any): Promise<X>
-    httpPut(endpoint: string, headers: any, body: any): Promise<X>
-    httpDelete(endpoint: string, headers: any, body: any): Promise<X>
+    httpGet(endpoint: string, headers: any): Promise<X>;
+    httpPost(endpoint: string, headers: any, body: any): Promise<X>;
+    httpPut(endpoint: string, headers: any, body: any): Promise<X>;
+    httpDelete(endpoint: string, headers: any, body: any): Promise<X>;
 }
 
 abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
@@ -11,10 +11,10 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         this.clientTechnology = clientTechnology;
     }
 
-    private makeRequest(request: () => Promise<X> ): Promise<X> {
+    private makeRequest(request: () => Promise<X>): Promise<X> {
         try {
             return request();
-        }catch(error) {
+        } catch (error) {
             throw error;
         }
     }
@@ -33,4 +33,4 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
     }
 }
 
-export { AbstractHttpClient, HttpClient }
+export { AbstractHttpClient, HttpClient };

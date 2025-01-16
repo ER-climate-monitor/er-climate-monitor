@@ -14,6 +14,6 @@ app.get(BASE_PATH_V0, (_, res) => {
     res.send(`Running in ${process.env.NODE_ENV} mode`);
 });
 
-app.use(BASE_PATH_V0, gatewayRouter)
+app.use(BASE_PATH_V0, gatewayRouter);
 
 app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));

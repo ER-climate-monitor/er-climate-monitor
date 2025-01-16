@@ -1,5 +1,5 @@
-import axios, { Axios, AxiosResponse } from "axios";
-import { AbstractHttpClient, HttpClient } from "../httpClient";
+import axios, { Axios, AxiosResponse } from 'axios';
+import { AbstractHttpClient, HttpClient } from '../httpClient';
 
 class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     axiosClient: Axios;
@@ -20,7 +20,7 @@ class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     }
 
     public httpDelete(endpoint: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
-        throw Error("TODO");
+        throw Error('TODO');
     }
 }
 
@@ -30,8 +30,8 @@ class AxiosService extends AbstractHttpClient<AxiosHttpClient, AxiosResponse> {
     constructor() {
         const axiosC = new AxiosHttpClient();
         super(axiosC);
-        this.axiosClient = axiosC
+        this.axiosClient = axiosC;
     }
 }
 
-export { AxiosService }
+export { AxiosService };
