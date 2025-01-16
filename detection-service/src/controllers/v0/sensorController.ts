@@ -19,8 +19,8 @@ async function saveDetection(req: Request, res: Response) {
         .finally(() => res.end());
 }
 
-async function getDetectionFromSensor(req: Request, res: Response) {
-    if (sensorIdParameter! in req.params) {
+async function getDetectionsFromSensor(req: Request, res: Response) {
+    if (!(sensorIdParameter in req.params)) {
         res.status(HttpStatus.NOT_ACCEPTABLE).send({
             [String(process.env.ERROR_TAG)]: `Missing "sensorId" parameter from the input request`,
         });
@@ -50,4 +50,4 @@ async function getDetectionFromSensor(req: Request, res: Response) {
     res.send();
 }
 
-export { saveDetection, getDetectionFromSensor };
+export { saveDetection, getDetectionsFromSensor };
