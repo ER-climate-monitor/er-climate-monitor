@@ -10,7 +10,7 @@ import { fromAxiosToResponse } from "./utils/api/responseUtils"
 import { USER_ACTION_BODY, USER_JWT_TOKEN_BODY, USER_JWT_TOKEN_EXPIRATION_BODY } from "../../models/v0/headers/authenticationHeaders"
 import Logger from "js-logger"
 
-const breaker = BreakerFactory.breakerWithDefaultOptions();
+const breaker = BreakerFactory.axiosBreakerWithDefaultOptions();
 
 const authenticationGetHandler = async (request: Request, response: Response) => {
     try {
