@@ -17,7 +17,6 @@ const authenticationGetHandler = async (request: Request, response: Response) =>
         const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
         breaker.fireRequest(AUTHENTICATION_ENDPOINT, GET, endpointPath, request.headers, request.body)
             .then(axiosResponse => {
-                console.log("ao");
                 Logger.info("Received a new GET requesto for the Authentication service.");
                 fromAxiosToResponse(axiosResponse, response)
                     .send(axiosResponse.data)
