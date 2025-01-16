@@ -10,16 +10,26 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
     protected constructor(clientTechnology: T) {
         this.clientTechnology = clientTechnology;
     }
+
+    private makeRequest(request: () => X): X {
+        try {
+            return request();
+        }catch(error) {
+            throw error;
+        }
+    }
+
     getRequest(endpoint: string, headers: any): X {
+        return this.makeRequest(() => this.clientTechnology.get(endpoint, headers));
     }
     postRequest(endpoint: string, headers: any, body: any): X {
-
+        return this.clientTechnology.put(endpoint, headers, body);
     }
     putRequest(endpoint: string, headers: any, body: any): X {
 
     }
     deleteRequest(endpoint: string, headers: any, body: any): X {
-        
+
     }
 }
 
