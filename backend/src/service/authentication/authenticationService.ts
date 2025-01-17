@@ -5,6 +5,7 @@ import { HttpClient } from '../../controllers/v0/utils/circuitBreaker/http/httpC
 interface AuthenticationOperations<X> {
     registerOperation(endpointPath: string, headers: any, body: any): Promise<X>;
     loginOperation(endpointPath: string, headers: any, body: any): Promise<X>;
+    authenticateTokenOperation(endpointPath: string, headers: any, body: any): Promise<X>;
 }
 
 class AuthenticationService<T extends HttpClient<X>, X> implements AuthenticationOperations<X> {
@@ -21,6 +22,10 @@ class AuthenticationService<T extends HttpClient<X>, X> implements Authenticatio
     }
 
     public loginOperation(endpointPath: string, headers: any, body: any): Promise<X> {
+        return this.circuitBreaker.fireRequest(this.authenticationEndpoint, POST, endpointPath, headers, body);
+    }
+
+    public authenticateTokenOperation(endpointPath: string, headers: any, body: any): Promise<X> {
         return this.circuitBreaker.fireRequest(this.authenticationEndpoint, POST, endpointPath, headers, body);
     }
 }
