@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import sensorRouter from './routes/v0/sensorRoutes';
 import { API_ROUTES } from './routes/v0/paths/detection.paths';
 // import YAML from "yaml";
+import cors from 'cors';
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -12,8 +13,9 @@ const PORT = process.env.PORT || 3000;
 export default function createServer(): Application {
     const app = express();
     const URL: string = process.env.DB_URL || '';
-    mongoose.connect(URL, { dbName: 'detections-database', autoIndex: false });
+    mongoose.connect("mongodb+srv://fabiovincenzi2001:Gszz1ORmQ7QwOigJ@cluster0.qd8ak.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", { dbName: 'detections-database', autoIndex: false });
 
+    app.options('*', cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     // if (!process.env.CI || (process.env.CI == "False")) {
