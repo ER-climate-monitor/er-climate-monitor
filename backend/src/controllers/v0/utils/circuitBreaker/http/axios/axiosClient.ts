@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
