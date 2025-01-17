@@ -24,12 +24,13 @@ const authenticationService = new AuthenticationService(breaker, AUTHENTICATION_
 async function saveToken(response: Response) {
     authenticationRedisClient.setToken(
         String(response.getHeader(USER_JWT_TOKEN_BODY)),
-        String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),);
+        String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),
+    );
 }
 
 function handleError(error: AxiosError<any, any>, response: Response) {
     if (error.response !== undefined) {
-        response = fromAxiosToResponse(error.response, response)
+        response = fromAxiosToResponse(error.response, response);
         response.send(error.response.data);
     }
     return response;
@@ -54,46 +55,57 @@ const authenticationGetHandler = async (request: Request, response: Response) =>
 const authentiationPostHandler = async (request: Request, response: Response) => {
     const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
     const action = request.body[USER_ACTION_BODY];
-    switch(action) {
-        case(REGISTER_ACTION): {
+    switch (action) {
+        case REGISTER_ACTION: {
             try {
-                const axiosResponse = await authenticationService.registerOperation(endpointPath, request.headers, request.body);  
+                const axiosResponse = await authenticationService.registerOperation(
+                    endpointPath,
+                    request.headers,
+                    request.body,
+                );
                 response = fromAxiosToResponse(axiosResponse, response);
                 if (response.statusCode === HttpStatusCode.Created) {
                     Logger.info('User registered correctly, saving the token and Its expiration.');
                     saveToken(response);
                 }
                 response.send(axiosResponse.data);
-            }catch(error){
-                    Logger.error("Error during user's registration " + error);
-                    if (error instanceof AxiosError) {
-                        response = handleError(error, response);
-                    }
-            }finally {
+            } catch (error) {
+                Logger.error("Error during user's registration " + error);
+                if (error instanceof AxiosError) {
+                    response = handleError(error, response);
+                }
+            } finally {
                 response.end();
             }
             return;
-        }case(LOGIN_ACTION): {
-            authenticationService.loginOperation(endpointPath, request.headers, request.body)
+        }
+        case LOGIN_ACTION: {
+            authenticationService
+                .loginOperation(endpointPath, request.headers, request.body)
                 .then(async (axiosResponse: AxiosResponse<any, any>) => {
                     response = fromAxiosToResponse(axiosResponse, response);
                     if (response.statusCode === HttpStatusCode.Ok) {
-                        Logger.info("User correctly logged in. Saving the token and Its expiration");
+                        Logger.info('User correctly logged in. Saving the token and Its expiration');
                         saveToken(response);
                     }
                     response.send(axiosResponse.data);
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     Logger.error("Error during user's login " + error);
                     if (error instanceof AxiosError) {
                         response = handleError(error, response);
                     }
-                }).finally(() => {response.end();});
+                })
+                .finally(() => {
+                    response.end();
+                });
             return;
-        }default: {
+        }
+        default: {
             Logger.error("Error, the request's actions has not been found");
             response.status(HttpStatusCode.BadRequest).end();
         }
     }
-}
+};
 
 export { authenticationGetHandler, authentiationPostHandler };

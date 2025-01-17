@@ -1,13 +1,12 @@
 import axios, { Axios, AxiosError, AxiosResponse } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 
-function axiosCheckServerError(error: AxiosError<unknown, any>): Boolean {
+function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
 }
 
 class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
-    constructor() {
-    }
+    constructor() {}
 
     public httpGet(endpoint: string, headers: any): Promise<AxiosResponse<any, any>> {
         return axios.get(endpoint, headers);

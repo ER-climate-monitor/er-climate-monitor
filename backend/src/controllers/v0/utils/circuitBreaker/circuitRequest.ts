@@ -10,7 +10,7 @@ const defaultOptions = {
     resetTimeout: 30000, // After 30 seconds, try again.
 };
 
-const ERROR_FILTER = "errorFilter";
+const ERROR_FILTER = 'errorFilter';
 
 class CircuitBreakerClient<T extends HttpClient<X>, X> {
     private breaker: CircuitBreaker;
@@ -50,7 +50,7 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
 
 class BreakerFactory {
     static axiosBreakerWithDefaultOptions() {
-        let options:{ [key: string]: any } = defaultOptions;
+        let options: { [key: string]: any } = defaultOptions;
         options[ERROR_FILTER] = axiosCheckServerError;
         return new CircuitBreakerClient(options, new AxiosService());
     }
