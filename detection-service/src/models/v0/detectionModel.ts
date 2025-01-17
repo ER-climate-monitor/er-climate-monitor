@@ -3,6 +3,7 @@ import mongoose, { Document, Model } from 'mongoose';
 function validateString(input: string) {
     return input.trim().length > 0;
 }
+
 interface IDetection {
     sensorId: string;
     sensorName: string;
@@ -20,7 +21,7 @@ const detectionSchema = new mongoose.Schema(
         sensorId: { type: String, required: true, validate: { validator: validateString } },
         sensorName: { type: String, required: true, validate: { validator: validateString } },
         unit: { type: String, required: true, validate: { validator: validateString } },
-        timeStamp: { type: Number, required: true },
+        timestamp: { type: Number, required: true },
         longitude: { type: Number, required: true },
         latitude: { type: Number, required: true },
         value: { type: Number, required: true },
@@ -62,13 +63,15 @@ class Detection implements IDetection {
     }
 }
 
-const temperatureDetections: Model<DetectionDocument> = mongoose.model<DetectionDocument>(
-    'Temperatures',
-    detectionSchema,
-);
-const hydroLevelDetections: Model<DetectionDocument> = mongoose.model<DetectionDocument>(
-    'HydroLevels',
-    detectionSchema,
-);
+function getModelForSensorType(sensorType: string): Model<DetectionDocument> {
+    switch (sensorType.toLowerCase()) {
+        case 'temperature':
+            return mongoose.model<DetectionDocument>('Temperatures', detectionSchema);
+        case 'hydro':
+            return mongoose.model<DetectionDocument>('HydroLevels', detectionSchema);
+        default:
+            throw new Error(`Unsupported sensor type: ${sensorType}`);
+    }
+}
 
-export { DetectionDocument, Detection, temperatureDetections, hydroLevelDetections };
+export { DetectionDocument, Detection, getModelForSensorType };
