@@ -53,6 +53,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                     }
                     response.send(axiosResponse.data);
                 }).catch((error) => {
+                    Logger.error("Error during user's registration " + error);
                     if (error instanceof AxiosError && error.response !== undefined) {
                         response = fromAxiosToResponse(error.response, response)
                         response.send(error.response.data);
