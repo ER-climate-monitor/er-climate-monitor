@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { BreakerFactory } from '../utils/circuitBreaker/circuitRequest';
-import { AUTHENTICATION_ENDPOINT } from '../../../models/v0/serviceModels';
-import { GET, POST } from '../utils/api/httpMethods';
-import { removeServiceFromUrl } from '../utils/api/urlUtils';
-import { AUTHENTICATION_SERVICE } from '../../../routes/v0/paths/gatewayPaths';
+import { BreakerFactory } from '../../utils/circuitBreaker/circuitRequest';
+import { AUTHENTICATION_ENDPOINT } from '../../../../models/v0/serviceModels';
+import { GET, POST } from '../../utils/api/httpMethods';
+import { removeServiceFromUrl } from '../../utils/api/urlUtils';
+import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
 import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
-import { authenticationRedisClient } from '../utils/redis/redisClient';
-import { fromAxiosToResponse } from '../utils/api/responseUtils';
+import { authenticationRedisClient } from '../../utils/redis/redisClient';
+import { fromAxiosToResponse } from '../../utils/api/responseUtils';
 import {
     AUTHENTICATE_ACTION,
     LOGIN_ACTION,
@@ -14,9 +14,9 @@ import {
     USER_ACTION_BODY,
     USER_JWT_TOKEN_BODY,
     USER_JWT_TOKEN_EXPIRATION_BODY,
-} from '../../../models/v0/authentication/headers/authenticationHeaders';
+} from '../../../../models/v0/authentication/headers/authenticationHeaders';
 import Logger from 'js-logger';
-import { AuthenticationService } from '../../../service/authentication/authenticationService';
+import { AuthenticationService } from '../../../../service/authentication/authenticationService';
 
 Logger.useDefaults();
 const breaker = BreakerFactory.axiosBreakerWithDefaultOptions();
