@@ -70,6 +70,9 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 }).catch((error) => {
 
                 })
+        }default: {
+            Logger.error("Error, the request's actions has not been found");
+            response.status(HttpStatusCode.BadRequest).end();
         }
     }
 }
