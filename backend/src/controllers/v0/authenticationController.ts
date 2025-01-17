@@ -21,6 +21,12 @@ Logger.useDefaults();
 const breaker = BreakerFactory.axiosBreakerWithDefaultOptions();
 const authenticationService = new AuthenticationService(breaker, AUTHENTICATION_ENDPOINT);
 
+async function saveToken(response: Response) {
+    authenticationRedisClient.setToken(
+        String(response.getHeader(USER_JWT_TOKEN_BODY)),
+        String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),);
+}
+
 const authenticationGetHandler = async (request: Request, response: Response) => {
     try {
         const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
@@ -47,9 +53,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                     response = fromAxiosToResponse(axiosResponse, response);
                     if (response.statusCode === HttpStatusCode.Created) {
                         Logger.info('User registered correctly, saving the token and Its expiration.');
-                        await authenticationRedisClient.setToken(
-                            String(response.getHeader(USER_JWT_TOKEN_BODY)),
-                            String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),);
+                        saveToken(response);
                     }
                     response.send(axiosResponse.data);
                 }).catch((error) => {
@@ -66,6 +70,10 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
             authenticationService.loginOperation(endpointPath, request.headers, request.body)
                 .then(async (axiosResponse: AxiosResponse<any, any>) => {
                     response = fromAxiosToResponse(axiosResponse, response);
+                    if (response.statusCode === HttpStatusCode.Ok) {
+                        Logger.info("User correctly logged in. Saving the token and Its expiration");
+                        saveToken(response);
+                    }
                     
                 }).catch((error) => {
 
