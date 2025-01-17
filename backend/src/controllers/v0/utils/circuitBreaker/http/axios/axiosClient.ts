@@ -1,5 +1,9 @@
-import axios, { Axios, AxiosResponse } from 'axios';
+import axios, { Axios, AxiosError, AxiosResponse } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
+
+function axiosCheckServerError(error: AxiosError<unknown, any>): Boolean {
+    return error.status !== undefined && error.status < 500;
+}
 
 class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     constructor() {
@@ -32,4 +36,4 @@ class AxiosService extends AbstractHttpClient<AxiosHttpClient, AxiosResponse> {
     }
 }
 
-export { AxiosService };
+export { AxiosService, axiosCheckServerError };
