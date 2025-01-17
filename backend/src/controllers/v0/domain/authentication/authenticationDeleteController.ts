@@ -30,3 +30,5 @@ const authenticationDeleteHandler = async (request: Request, response: Response)
         response.end();
     }
 };
+
+export { authenticationDeleteHandler };
