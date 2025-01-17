@@ -3,9 +3,9 @@ import { CircuitBreakerClient } from '../../controllers/v0/utils/circuitBreaker/
 import { HttpClient } from '../../controllers/v0/utils/circuitBreaker/http/httpClient';
 
 interface AuthenticationOperations<X> {
-    registerOperation(endpointPath: string, headers: any, body: any): Promise<X>;
-    loginOperation(endpointPath: string, headers: any, body: any): Promise<X>;
-    authenticateTokenOperation(endpointPath: string, headers: any, body: any): Promise<X>;
+    registerOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
+    loginOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
+    authenticateTokenOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
 }
 
 class AuthenticationService<T extends HttpClient<X>, X> implements AuthenticationOperations<X> {
