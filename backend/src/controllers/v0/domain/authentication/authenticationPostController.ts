@@ -5,7 +5,7 @@ import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
 import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
 import { authenticationRedisClient } from '../../utils/redis/redisClient';
-import { fromAxiosToResponse } from '../../utils/api/responseUtils';
+import { fromAxiosToResponse, handleAxiosError } from '../../utils/api/responseUtils';
 import {
     AUTHENTICATE_ACTION,
     LOGIN_ACTION,
@@ -26,14 +26,6 @@ async function saveToken(response: AxiosResponse) {
         String(response.data[USER_JWT_TOKEN_BODY]),
         String(response.data[USER_JWT_TOKEN_EXPIRATION_BODY]),
     );
-}
-
-function handleError(error: AxiosError<unknown, unknown>, response: Response) {
-    if (error.response !== undefined) {
-        response = fromAxiosToResponse(error.response, response);
-        response.send(error.response.data);
-    }
-    return response;
 }
 
 function isExpired(expiration: number, response: Response) {
@@ -66,7 +58,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
             } catch (error) {
                 Logger.error("Error during user's registration " + error);
                 if (error instanceof AxiosError) {
-                    response = handleError(error, response);
+                    response = handleAxiosError(error, response);
                 }
             } finally {
                 response.end();
@@ -89,7 +81,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
             } catch (error) {
                 Logger.error("Error during user's login " + error);
                 if (error instanceof AxiosError) {
-                    response = handleError(error, response);
+                    response = handleAxiosError(error, response);
                 }
             } finally {
                 response.end();
@@ -118,7 +110,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
             } catch (error) {
                 Logger.error('Error during Token validation');
                 if (error instanceof AxiosError) {
-                    response = handleError(error, response);
+                    response = handleAxiosError(error, response);
                 }
             } finally {
                 response.end();

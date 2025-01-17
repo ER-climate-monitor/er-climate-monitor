@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, AxiosError } from 'axios';
 import { Response } from 'express';
 
 function fromAxiosToResponse(axiosResponse: AxiosResponse<any, any>, response: Response): Response {
@@ -9,4 +9,12 @@ function fromAxiosToResponse(axiosResponse: AxiosResponse<any, any>, response: R
     return response;
 }
 
-export { fromAxiosToResponse };
+function handleAxiosError(error: AxiosError<unknown, unknown>, response: Response) {
+    if (error.response !== undefined) {
+        response = fromAxiosToResponse(error.response, response);
+        response.send(error.response.data);
+    }
+    return response;
+}
+
+export { fromAxiosToResponse, handleAxiosError };
