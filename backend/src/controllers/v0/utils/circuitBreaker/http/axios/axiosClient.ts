@@ -21,7 +21,7 @@ class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     }
 
     public httpDelete(endpoint: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
-        throw Error('TODO');
+        throw axios.delete(endpoint, { headers: headers, data: body });
     }
 }
 
