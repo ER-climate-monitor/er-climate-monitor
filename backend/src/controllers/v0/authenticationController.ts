@@ -37,6 +37,16 @@ function handleError(error: AxiosError<any, any>, response: Response) {
     return response;
 }
 
+function isExpired(expiration: Number, response: Response) {
+    const now = new Date().getTime();
+    if (now >= Number(expiration)) {
+        response.status(HttpStatusCode.Unauthorized);
+    } else {
+        response.status(HttpStatusCode.Accepted);
+    }
+    return response;
+}
+
 const authenticationGetHandler = async (request: Request, response: Response) => {
     try {
         const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
@@ -105,18 +115,28 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         }
         case AUTHENTICATE_ACTION: {
             try {
+                Logger.info('Checking the validation of the input token');
                 const expiration = await authenticationRedisClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
                 if (expiration !== null) {
+                    Logger.info('Token found, checking for the expiration');
+                    response = isExpired(Number(expiration), response);
                 } else {
+                    Logger.info('Token not found, checking using the authentication service.');
                     const axiosResponse = await authenticationService.authenticateTokenOperation(
                         endpointPath,
                         request.headers,
                         request.body,
                     );
-
-                    response = fromAxiosToResponse(axiosResponse, response);
+                    const expiration = axiosResponse.data[USER_JWT_TOKEN_EXPIRATION_BODY];
+                    Logger.info('Caching the Token');
+                    saveToken(axiosResponse);
+                    response = isExpired(Number(expiration), response);
                 }
             } catch (error) {
+                Logger.error('Error during Token validation');
+                if (error instanceof AxiosError) {
+                    response = handleError(error, response);
+                }
             } finally {
                 response.end();
             }
