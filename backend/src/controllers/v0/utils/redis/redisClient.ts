@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 class AuthenticationClient {
-    authenticationRedisClient: Redis;
+    private authenticationRedisClient: Redis;
     constructor() {
         this.authenticationRedisClient = new Redis(String(process.env.REDIS_URL));
     }
@@ -21,7 +21,7 @@ class AuthenticationClient {
     }
 
     private checkInput(input: string): boolean {
-        return input !== undefined && input.trim().length > 0;
+        return input !== undefined && input.trim().length > 0 && input !== null;
     }
 }
 
