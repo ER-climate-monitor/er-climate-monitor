@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { BreakerFactory } from '../../utils/circuitBreaker/circuitRequest';
 import { AUTHENTICATION_ENDPOINT } from '../../../../models/v0/serviceModels';
-import { GET, POST } from '../../utils/api/httpMethods';
 import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
 import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
@@ -29,7 +28,7 @@ async function saveToken(response: AxiosResponse) {
     );
 }
 
-function handleError(error: AxiosError<any, any>, response: Response) {
+function handleError(error: AxiosError<unknown, unknown>, response: Response) {
     if (error.response !== undefined) {
         response = fromAxiosToResponse(error.response, response);
         response.send(error.response.data);
@@ -37,7 +36,7 @@ function handleError(error: AxiosError<any, any>, response: Response) {
     return response;
 }
 
-function isExpired(expiration: Number, response: Response) {
+function isExpired(expiration: number, response: Response) {
     const now = new Date().getTime();
     if (now >= Number(expiration)) {
         response.status(HttpStatusCode.Unauthorized);
