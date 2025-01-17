@@ -56,22 +56,22 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
     const action = request.body[USER_ACTION_BODY];
     switch(action) {
         case(REGISTER_ACTION): {
-            authenticationService.registerOperation(endpointPath, request.headers, request.body)
-                .then(async (axiosResponse: AxiosResponse<any, any>) => {
-                    response = fromAxiosToResponse(axiosResponse, response);
-                    if (response.statusCode === HttpStatusCode.Created) {
-                        Logger.info('User registered correctly, saving the token and Its expiration.');
-                        saveToken(response);
-                    }
-                    response.send(axiosResponse.data);
-                }).catch((error) => {
+            try {
+                const axiosResponse = await authenticationService.registerOperation(endpointPath, request.headers, request.body);  
+                response = fromAxiosToResponse(axiosResponse, response);
+                if (response.statusCode === HttpStatusCode.Created) {
+                    Logger.info('User registered correctly, saving the token and Its expiration.');
+                    saveToken(response);
+                }
+                response.send(axiosResponse.data);
+            }catch(error){
                     Logger.error("Error during user's registration " + error);
                     if (error instanceof AxiosError) {
                         response = handleError(error, response);
                     }
-                }).finally(() => {
-                    response.end();
-                });
+            }finally {
+                response.end();
+            }
             return;
         }case(LOGIN_ACTION): {
             authenticationService.loginOperation(endpointPath, request.headers, request.body)
