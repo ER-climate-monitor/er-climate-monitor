@@ -52,4 +52,4 @@ class BreakerFactory {
     }
 }
 
-export { BreakerFactory, defaultOptions };
+export { BreakerFactory, defaultOptions, CircuitBreakerClient };
