@@ -22,7 +22,7 @@ class AuthenticationService<T extends HttpClient<X>, X> implements Authenticatio
     }
 
     public loginOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        throw new Error("TODO");
+        return this.circuitBreaker.fireRequest(this.authenticationEndpoint, POST, endpointPath, headers, body);
     }
     
 }
