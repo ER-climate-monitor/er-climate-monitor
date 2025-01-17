@@ -27,6 +27,14 @@ async function saveToken(response: Response) {
         String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),);
 }
 
+function handleError(error: AxiosError<any, any>, response: Response) {
+    if (error.response !== undefined) {
+        response = fromAxiosToResponse(error.response, response)
+        response.send(error.response.data);
+    }
+    return response;
+}
+
 const authenticationGetHandler = async (request: Request, response: Response) => {
     try {
         const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
@@ -58,9 +66,8 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                     response.send(axiosResponse.data);
                 }).catch((error) => {
                     Logger.error("Error during user's registration " + error);
-                    if (error instanceof AxiosError && error.response !== undefined) {
-                        response = fromAxiosToResponse(error.response, response)
-                        response.send(error.response.data);
+                    if (error instanceof AxiosError) {
+                        response = handleError(error, response);
                     }
                 }).finally(() => {
                     response.end();
@@ -74,10 +81,14 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                         Logger.info("User correctly logged in. Saving the token and Its expiration");
                         saveToken(response);
                     }
-                    
+                    response.send(axiosResponse.data);
                 }).catch((error) => {
-
-                })
+                    Logger.error("Error during user's login " + error);
+                    if (error instanceof AxiosError) {
+                        response = handleError(error, response);
+                    }
+                }).finally(() => {response.end();});
+            return;
         }default: {
             Logger.error("Error, the request's actions has not been found");
             response.status(HttpStatusCode.BadRequest).end();
