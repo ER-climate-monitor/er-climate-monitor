@@ -21,6 +21,8 @@ export default [
         rules: {
             ...tsEslintPlugin.configs.recommended.rules, // Import TypeScript rules
             'prettier/prettier': 'error', // Enable Prettier formatting rules
+            "@typescript-eslint/no-explicit-any": ["off"]
+
         },
     },
     {
