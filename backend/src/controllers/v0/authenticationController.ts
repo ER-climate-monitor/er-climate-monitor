@@ -4,7 +4,7 @@ import { AUTHENTICATION_ENDPOINT } from '../../models/v0/serviceModels';
 import { GET, POST } from './utils/api/httpMethods';
 import { removeServiceFromUrl } from './utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../routes/v0/paths/gatewayPaths';
-import { AxiosResponse, HttpStatusCode } from 'axios';
+import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
 import { authenticationRedisClient } from './utils/redis/redisClient';
 import { fromAxiosToResponse } from './utils/api/responseUtils';
 import {
@@ -51,15 +51,24 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                             String(response.getHeader(USER_JWT_TOKEN_BODY)),
                             String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),);
                     }
-                    response.send(axiosResponse.data).end();
+                    response.send(axiosResponse.data);
                 }).catch((error) => {
-                    Logger.error(error);
-                    response.status(HttpStatusCode.BadRequest);
+                    if (error instanceof AxiosError && error.response !== undefined) {
+                        response = fromAxiosToResponse(error.response, response)
+                        response.send(error.response.data);
+                    }
+                }).finally(() => {
                     response.end();
                 });
-
+            return;
         }case(LOGIN_ACTION): {
+            authenticationService.loginOperation(endpointPath, request.headers, request.body)
+                .then(async (axiosResponse: AxiosResponse<any, any>) => {
+                    response = fromAxiosToResponse(axiosResponse, response);
+                    
+                }).catch((error) => {
 
+                })
         }
     }
 }
