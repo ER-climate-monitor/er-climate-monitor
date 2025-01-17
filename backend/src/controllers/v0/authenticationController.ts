@@ -8,6 +8,7 @@ import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
 import { authenticationRedisClient } from './utils/redis/redisClient';
 import { fromAxiosToResponse } from './utils/api/responseUtils';
 import {
+    AUTHENTICATE_ACTION,
     LOGIN_ACTION,
     REGISTER_ACTION,
     USER_ACTION_BODY,
@@ -21,10 +22,10 @@ Logger.useDefaults();
 const breaker = BreakerFactory.axiosBreakerWithDefaultOptions();
 const authenticationService = new AuthenticationService(breaker, AUTHENTICATION_ENDPOINT);
 
-async function saveToken(response: Response) {
+async function saveToken(response: AxiosResponse) {
     authenticationRedisClient.setToken(
-        String(response.getHeader(USER_JWT_TOKEN_BODY)),
-        String(response.getHeader(USER_JWT_TOKEN_EXPIRATION_BODY)),
+        String(response.data[USER_JWT_TOKEN_BODY]),
+        String(response.data[USER_JWT_TOKEN_EXPIRATION_BODY]),
     );
 }
 
@@ -66,7 +67,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 response = fromAxiosToResponse(axiosResponse, response);
                 if (response.statusCode === HttpStatusCode.Created) {
                     Logger.info('User registered correctly, saving the token and Its expiration.');
-                    saveToken(response);
+                    saveToken(axiosResponse);
                 }
                 response.send(axiosResponse.data);
             } catch (error) {
@@ -89,7 +90,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 response = fromAxiosToResponse(axiosResponse, response);
                 if (response.statusCode === HttpStatusCode.Ok) {
                     Logger.info('User correctly logged in. Saving the token and Its expiration');
-                    saveToken(response);
+                    saveToken(axiosResponse);
                 }
                 response.send(axiosResponse.data);
             } catch (error) {
@@ -97,6 +98,25 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 if (error instanceof AxiosError) {
                     response = handleError(error, response);
                 }
+            } finally {
+                response.end();
+            }
+            return;
+        }
+        case AUTHENTICATE_ACTION: {
+            try {
+                const expiration = await authenticationRedisClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
+                if (expiration !== null) {
+                } else {
+                    const axiosResponse = await authenticationService.authenticateTokenOperation(
+                        endpointPath,
+                        request.headers,
+                        request.body,
+                    );
+
+                    response = fromAxiosToResponse(axiosResponse, response);
+                }
+            } catch (error) {
             } finally {
                 response.end();
             }
