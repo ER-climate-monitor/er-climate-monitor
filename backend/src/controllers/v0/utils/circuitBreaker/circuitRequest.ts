@@ -2,13 +2,15 @@ import CircuitBreaker from 'opossum';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { DELETE, GET, POST, PUT } from '../api/httpMethods';
 import { AbstractHttpClient, HttpClient } from './http/httpClient';
-import { AxiosService } from './http/axios/axiosClient';
+import { AxiosService, axiosCheckServerError } from './http/axios/axiosClient';
 
 const defaultOptions = {
     timeout: 6000, // If our function takes longer than 3 seconds, trigger a failure
     errorThresholdPercentage: 50, // When 50% of requests fail, trip the circuit
     resetTimeout: 30000, // After 30 seconds, try again.
 };
+
+const ERROR_FILTER = "errorFilter";
 
 class CircuitBreakerClient<T extends HttpClient<X>, X> {
     private breaker: CircuitBreaker;
@@ -40,7 +42,7 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
                 }
             }
         } catch (error) {
-            this.breaker.fallback(() => 'Error, the service is out. Try again later.');
+            throw error;
         }
         throw new Error('Error, connection refused');
     }
@@ -48,7 +50,9 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
 
 class BreakerFactory {
     static axiosBreakerWithDefaultOptions() {
-        return new CircuitBreakerClient(defaultOptions, new AxiosService());
+        let options:{ [key: string]: any } = defaultOptions;
+        options[ERROR_FILTER] = axiosCheckServerError;
+        return new CircuitBreakerClient(options, new AxiosService());
     }
 }
 
