@@ -21,14 +21,17 @@ export default [
         rules: {
             ...tsEslintPlugin.configs.recommended.rules, // Import TypeScript rules
             'prettier/prettier': 'error', // Enable Prettier formatting rules
+            // note you must disable the base rule
+            // as it can report incorrect errors
             "@typescript-eslint/no-explicit-any": ["off"],
-            '@typescript-eslint/no-unused-vars': [
-                'warn', // You can change this to 'error' for stricter linting
+            'no-unused-vars': [
+                'warn', // or "error"
                 {
-                    argsIgnorePattern: '^_', // Ignore unused variables prefixed with _
-                    varsIgnorePattern: '^_', // Ignore unused variables prefixed with _
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
                 },
-            ]
+            ],
         },
     },
     {
