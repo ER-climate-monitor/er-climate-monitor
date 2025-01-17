@@ -1,6 +1,12 @@
 interface Topic {
     name: string;
     desc: string;
+    queries?: Query[];
 }
 
-export { Topic };
+interface Query {
+    name: string;
+    desc: string;
+}
+
+export { Topic, Query };

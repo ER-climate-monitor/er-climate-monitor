@@ -1,15 +1,21 @@
 import { Connection, Channel, connect } from 'amqplib';
 import 'dotenv/config';
 import Logger from 'js-logger';
+import { Topic } from './models/notificationModel';
 
 Logger.useDefaults();
 
-type NotificationCallback<T> = (userIds: Set<number>, topic: string, message: T) => Promise<void>;
+type NotificationCallback<T> = (userIds: Set<number>, topic: SubscriptionTopic, message: T) => Promise<void>;
 
 interface Subscription {
     userIds: Set<number>;
     channel: Channel;
     exchange: string;
+}
+
+interface SubscriptionTopic {
+    topicName: string;
+    queryName: string;
 }
 
 class MessageBroker<T> {
@@ -57,7 +63,7 @@ class MessageBroker<T> {
 
             // re-establish all subscriptions
             for (const [topic, _] of this.subscriptions.entries()) {
-                await this.setupSubscription(topic);
+                await this.setupSubscription(JSON.parse(topic));
             }
         } catch (error) {
             Logger.error(`Reconnection attempt ${attempt} failed: `, error);
@@ -65,17 +71,25 @@ class MessageBroker<T> {
         }
     }
 
-    async createTopic(topic: string): Promise<boolean> {
+    async createTopic(topic: Topic): Promise<boolean> {
         if (!this.ensureConnection()) return false;
 
         try {
-            if (this.subscriptions.has(topic)) {
-                Logger.warn(`Topic '${topic} already exists'`);
-                return true;
+            let subTopics = topic.queries?.length ?? 0;
+
+            for (let i = 0; i < subTopics; i++) {
+                const subTopic: SubscriptionTopic = { topicName: topic.name, queryName: topic.queries![i].name };
+                if (this.subscriptions.has(JSON.stringify(subTopic))) {
+                    Logger.warn(`Topic '${JSON.stringify(subTopic)} already exists'`);
+                    continue;
+                }
+
+                await this.setupSubscription(subTopic);
+                Logger.info(`SubTopic ${JSON.stringify(subTopic)} successfully created!`);
             }
 
-            await this.setupSubscription(topic);
-            Logger.info(`Topic ${topic} successfully created!`);
+            // Maybe add also full topic? or use wildcards...
+
             return true;
         } catch (error) {
             Logger.error(`Failed to create topic ${topic}: `, error);
@@ -83,21 +97,21 @@ class MessageBroker<T> {
         }
     }
 
-    private async setupSubscription(topic: string): Promise<void> {
+    private async setupSubscription(topic: SubscriptionTopic): Promise<void> {
         if (!this.ensureConnection()) throw new Error('No connection available');
 
         const channel = await (this.connection as Connection).createChannel();
-        const exchange = `notifications.${topic}`;
+        const exchange = `notifications.${topic.topicName}.${topic.queryName}`;
         await channel.assertExchange(exchange, 'fanout', { durable: false });
         const queue = await channel.assertQueue('', { exclusive: true });
 
         await channel.bindQueue(queue.queue, exchange, '');
 
         // restore/create subscriptions
-        const existingSubscriptions = this.subscriptions.get(topic);
+        const existingSubscriptions = this.subscriptions.get(JSON.stringify(topic));
         const userIds = existingSubscriptions?.userIds ?? new Set<number>();
 
-        this.subscriptions.set(topic, {
+        this.subscriptions.set(JSON.stringify(topic), {
             userIds,
             channel,
             exchange,
@@ -121,13 +135,13 @@ class MessageBroker<T> {
         });
     }
 
-    async subscribeUser(userId: number, topic: string): Promise<boolean> {
+    async subscribeUser(userId: number, topic: SubscriptionTopic): Promise<boolean> {
         if (!this.ensureConnection()) return false;
 
-        const subscription = this.subscriptions.get(topic);
+        const subscription = this.subscriptions.get(JSON.stringify(topic));
 
         if (!subscription) {
-            Logger.error(`Topic '${topic}' does not exist!`);
+            Logger.error(`Topic '${JSON.stringify(topic)}' does not exist!`);
             return false;
         }
 
@@ -136,8 +150,8 @@ class MessageBroker<T> {
         return true;
     }
 
-    async unsubscribeUser(userId: number, topic: string): Promise<boolean> {
-        const subscription = this.subscriptions.get(topic);
+    async unsubscribeUser(userId: number, topic: SubscriptionTopic): Promise<boolean> {
+        const subscription = this.subscriptions.get(JSON.stringify(topic));
 
         if (!subscription) return false;
 
@@ -146,11 +160,11 @@ class MessageBroker<T> {
         return true;
     }
 
-    async publish<T>(topic: string, message: T): Promise<boolean> {
+    async publish<T>(topic: SubscriptionTopic, message: T): Promise<boolean> {
         if (!this.ensureConnection()) return false;
-        const subscription = this.subscriptions.get(topic);
+        const subscription = this.subscriptions.get(JSON.stringify(topic));
         if (!subscription) {
-            Logger.error(`Topic '${topic}' does not exist!`);
+            Logger.error(`Topic '${JSON.stringify(topic)}' does not exist!`);
             return false;
         }
 
@@ -168,8 +182,8 @@ class MessageBroker<T> {
         }
     }
 
-    getTopics(): string[] {
-        return Array.from(this.subscriptions.keys());
+    getTopics(): SubscriptionTopic[] {
+        return Array.from(this.subscriptions.keys()).map((k) => JSON.parse(k));
     }
 
     async close(): Promise<void> {
@@ -195,4 +209,4 @@ class MessageBroker<T> {
 
 const notificationBroker = new MessageBroker();
 
-export { NotificationCallback, MessageBroker, notificationBroker };
+export { SubscriptionTopic, NotificationCallback, MessageBroker, notificationBroker };

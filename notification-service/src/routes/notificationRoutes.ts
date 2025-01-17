@@ -3,6 +3,7 @@ import express from 'express';
 import { MessageBroker } from '../messageBroker';
 import { SocketManager } from '../socketManager';
 import { HttpStatusCode } from 'axios';
+import { Topic } from '../models/notificationModel';
 const router = express.Router();
 
 let messageBroker: MessageBroker<any> | undefined;
@@ -14,16 +15,17 @@ router
         res.send(messageBroker?.getTopics() ?? []);
     })
     .put((req, res) => {
-        const { name, _ } = req.body;
-        messageBroker?.createTopic(name)?.then((success) => {
-            if (success) res.status(HttpStatusCode.Ok).json({ message: `Topic ${name} successfully created!` });
+        const topic: Topic = req.body;
+        messageBroker?.createTopic(topic)?.then((success) => {
+            if (success)
+                res.status(HttpStatusCode.Ok).json({ message: `Topic ${JSON.stringify(topic)} successfully created!` });
             else res.status(HttpStatusCode.InternalServerError).json({ error: 'maremma scalza' });
         });
     });
 
 router.route('/sub').post((req, res) => {
-    const { userId, topic } = req.body;
-    subUser(userId, topic)
+    const { userId, topic, query } = req.body;
+    subUser(userId, topic, query)
         ?.then((subInfo) => {
             if (subInfo) res.status(HttpStatusCode.Ok).json(subInfo);
             else throw new Error('Something went wrong during subscription');
@@ -31,9 +33,13 @@ router.route('/sub').post((req, res) => {
         .catch((err) => res.status(HttpStatusCode.BadRequest).json({ error: `something went wrong: ${err}` }));
 });
 
-async function subUser(userId: number, topic: string): Promise<{ uid: string; topicAddr: string } | null | undefined> {
-    return messageBroker?.subscribeUser(userId, topic)?.then((success) => {
-        if (success) return socketManager?.registerUser(userId, topic);
+async function subUser(
+    userId: number,
+    topic: string,
+    query: string
+): Promise<{ uid: string; topicAddr: string } | null | undefined> {
+    return messageBroker?.subscribeUser(userId, { topicName: topic, queryName: query })?.then((success) => {
+        if (success) return socketManager?.registerUser(userId, topic, query);
         else return null;
     });
 }

@@ -5,6 +5,7 @@ import { io as ClientIO } from 'socket.io-client';
 import { SocketManager } from '../../src/socketManager';
 import { AddressInfo } from 'net';
 import Logger from 'js-logger';
+import { SubscriptionTopic } from '../../src/messageBroker';
 
 Logger.useDefaults();
 
@@ -14,6 +15,7 @@ describe('SocketManager - Unit tests', () => {
     let clientSocket: any;
     let port: number;
     const testTopic = 'test-topic';
+    const testQuery = 'test-query';
     const notificationPrefix = 'notification';
 
     beforeEach((done) => {
@@ -50,7 +52,7 @@ describe('SocketManager - Unit tests', () => {
 
         test('should successfully let a user to be registered', (done) => {
             const userId = 1;
-            const subInfo = socketManager.registerUser(userId, testTopic);
+            const subInfo = socketManager.registerUser(userId, testTopic, testQuery);
             clientSocket.connect();
 
             clientSocket.on('connect', () => {
@@ -61,13 +63,13 @@ describe('SocketManager - Unit tests', () => {
                 expect(result.success).toBeTruthy();
                 done();
             });
-        });
+        }, 2000);
     });
 
     describe('topic subscription messages', () => {
         test('should send messages to user subscribed to topic', (done) => {
             const userId = 1;
-            const subInfo = socketManager.registerUser(userId, testTopic);
+            const subInfo = socketManager.registerUser(userId, testTopic, testQuery);
             clientSocket.connect();
 
             clientSocket.on('connect', () => {
@@ -80,7 +82,11 @@ describe('SocketManager - Unit tests', () => {
                     expect(res.data).toBe(msg.data);
                     done();
                 });
-                socketManager.sendToTopicSubscribers(testTopic, msg, notificationPrefix);
+                const sub: SubscriptionTopic = {
+                    topicName: testTopic,
+                    queryName: testQuery,
+                };
+                socketManager.sendToTopicSubscribers(sub, msg, notificationPrefix);
             });
         }, 2000);
     });
