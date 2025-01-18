@@ -1,4 +1,3 @@
-import { describe } from 'mocha';
 import request from 'supertest';
 import createServer from '../../..';
 import dotenv from 'dotenv';
@@ -9,6 +8,7 @@ import { ISensor } from '../../../model/v0/sensorModel';
 import randomIpv6 from 'random-ipv6';
 import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from '../../../model/v0/headers/sensorHeaders';
 import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
+import { beforeEach, it, describe } from 'mocha';
 
 dotenv.config();
 
