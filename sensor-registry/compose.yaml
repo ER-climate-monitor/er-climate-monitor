@@ -1,6 +1,8 @@
 services:
-  sensor-database:
-    image: arm64v8/mongo:6.0-rc
+  sensor-registry:
+    image: matteoiorio/sensor-registry:0.0.1
+    env_file:
+      .env
     ports:
-      - target: 27017
-        published: 27017
+      - target: 7777
+        published: 7777
