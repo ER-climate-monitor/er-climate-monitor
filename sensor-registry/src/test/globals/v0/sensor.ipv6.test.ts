@@ -30,7 +30,7 @@ const sensorInfomration = {
 const app = createServer();
 
 describe('Registering a new Sensor using IPv6', () => {
-    before(async () => {
+    beforeEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
     it('Registering a new Sensor using an IPv6 and using a PORT that are not used should be OK', async () => {
@@ -57,7 +57,7 @@ describe('Registering a new Sensor using IPv6', () => {
     });
     it('Registering a sensor with a wrong IPv6 should raise an error.', async () => {
         const baseIP = '2c56:9a76:aee6:3552:855a:f757:3611:255a';
-        const sensors = Array();
+        const sensors = [];
         sensors.push(createSensor('fe80:2030:31:24', sensorPort));
         for (let i = 0; i < 8; i += 1) {
             const ip = baseIP.split(':');
@@ -85,8 +85,5 @@ describe('Registering a new Sensor using IPv6', () => {
     it('Registering a sensor with same Ip and same Port of another sensor should return a conflict', async () => {
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CONFLICT);
-    });
-    afterEach(async () => {
-        await shutOffSensor(app, sensorInfomration);
     });
 });

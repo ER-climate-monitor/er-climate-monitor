@@ -30,7 +30,7 @@ const sensorInfomration = {
 const app = createServer();
 
 describe('Registering a new Sensor using IPv4', () => {
-    before(async () => {
+    beforeEach(async () => {
         await shutOffSensor(app, sensorInfomration);
     });
     it('Registering a new Sensor that does not exists inside the database should be OK', async () => {
@@ -116,8 +116,5 @@ describe('Registering a new Sensor using IPv4', () => {
         for (const sensor of wrongSensors) {
             await request(app).post(REGISTER_SENSOR_PATH).send(sensor).expect(HttpStatus.NOT_ACCEPTABLE);
         }
-    });
-    afterEach(async () => {
-        await shutOffSensor(app, sensorInfomration);
     });
 });
