@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import HttpStatus from "http-status-codes";
-import { isIpValid } from "./utils/ipUtils";
-import { deleteSensor, exists, findAllSensors, saveSensor } from "./utils/sensorUtils";
-import { API_KEY_HEADER, SENSOR_IP_HEADER, SENSOR_PORT_HEADER } from "../../model/v0/headers/sensorHeaders";
+import { Request, Response } from 'express';
+import HttpStatus from 'http-status-codes';
+import { isIpValid } from './utils/ipUtils';
+import { deleteSensor, exists, findAllSensors, saveSensor } from './utils/sensorUtils';
+import { API_KEY_HEADER, SENSOR_IP_HEADER, SENSOR_PORT_HEADER } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
-import { fromBody } from "./utils/requestUtils";
+import { fromBody } from './utils/requestUtils';
 
 dotenv.config();
 
@@ -12,30 +12,30 @@ const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
 
 function isAuthorized(key: string): boolean {
-    return key !== "" && key === SECRET_API_KEY;
+    return key !== '' && key === SECRET_API_KEY;
 }
 
 const registerSensor = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromBody(modelData, API_KEY_HEADER, "");
+        const apikey = fromBody(modelData, API_KEY_HEADER, '');
         if (isAuthorized(apikey)) {
-            const ip = fromBody(modelData, SENSOR_IP_HEADER, "");
+            const ip = fromBody(modelData, SENSOR_IP_HEADER, '');
             const port = fromBody(modelData, SENSOR_PORT_HEADER, -1);
-            if ((port >= 0 && port <= MAX_PORT) && (ip != "" && isIpValid(ip))) {
+            if (port >= 0 && port <= MAX_PORT && ip != '' && isIpValid(ip)) {
                 if (!(await exists(ip, port))) {
                     await saveSensor(ip, port);
                     response.status(HttpStatus.CREATED);
-                }else {
+                } else {
                     response.status(HttpStatus.CONFLICT);
                 }
-            }else{ 
+            } else {
                 response.status(HttpStatus.NOT_ACCEPTABLE);
             }
-        }else {
+        } else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
-    }else {
+    } else {
         response.status(HttpStatus.BAD_REQUEST);
     }
     response.end();
@@ -43,35 +43,34 @@ const registerSensor = async (request: Request, response: Response) => {
 
 const allSensors = async (request: Request, response: Response) => {
     const modelData = request.body;
-        const apikey = fromBody(modelData, API_KEY_HEADER, "");
-        if (isAuthorized(apikey)){
-            response.send({sensors: await findAllSensors()});
-        }
-        else{
-            response.status(HttpStatus.UNAUTHORIZED);
-        }
+    const apikey = fromBody(modelData, API_KEY_HEADER, '');
+    if (isAuthorized(apikey)) {
+        response.send({ sensors: await findAllSensors() });
+    } else {
+        response.status(HttpStatus.UNAUTHORIZED);
+    }
     response.end();
 };
 
 const shutOff = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromBody(modelData, API_KEY_HEADER, "");
-        if(isAuthorized(apikey)) {
-            const ip = fromBody(modelData, SENSOR_IP_HEADER, "");
+        const apikey = fromBody(modelData, API_KEY_HEADER, '');
+        if (isAuthorized(apikey)) {
+            const ip = fromBody(modelData, SENSOR_IP_HEADER, '');
             const port = fromBody(modelData, SENSOR_PORT_HEADER, -1);
-            if (await exists(ip, port) && await deleteSensor(ip, port)){
+            if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
                 response.status(HttpStatus.OK);
-            }else{
+            } else {
                 response.status(HttpStatus.NOT_FOUND);
             }
-        }else{
+        } else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
-    }else{
+    } else {
         response.status(HttpStatus.BAD_REQUEST);
     }
     response.end();
 };
 
-export { registerSensor, allSensors, shutOff }
+export { registerSensor, allSensors, shutOff };

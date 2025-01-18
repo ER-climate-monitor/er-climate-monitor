@@ -8,11 +8,11 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-const URL: string = process.env.DB_URL || "";
+const URL: string = process.env.DB_URL || '';
 
 export default function createServer(): Application {
     const app: Application = express();
-    mongoose.connect(URL, { dbName: "sensor-database" });
+    mongoose.connect(URL, { dbName: 'sensor-database' });
     app.use(express.json());
     app.use(BASE_SENSOR_PATH_V0, sensorRouter);
     return app;
@@ -21,5 +21,5 @@ export default function createServer(): Application {
 const app = createServer();
 
 app.listen(PORT, () => {
-    console.log("Server is listening...");
+    console.log('Server is listening...');
 });
