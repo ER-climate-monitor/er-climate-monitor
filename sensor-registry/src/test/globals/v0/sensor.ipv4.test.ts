@@ -5,7 +5,7 @@ import HttpStatus from 'http-status-codes';
 import { shutOffSensor, createSensor } from './utils/sensorUtils';
 import { fail } from 'assert';
 import { ISensor } from '../../../model/v0/sensorModel';
-import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from '../../../model/v0/headers/sensorHeaders';
+import { SENSOR_IP_FIELD, SENSOR_PORT_FIELD, API_KEY_FIELD } from '../../../model/v0/headers/sensorHeaders';
 import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
 import { beforeEach, it, describe } from 'mocha';
 
@@ -22,9 +22,9 @@ const sensorIp = '0.0.0.0';
 const sensorPort = 1926;
 
 const sensorInfomration = {
-    [SENSOR_IP_HEADER]: sensorIp,
-    [SENSOR_PORT_HEADER]: sensorPort,
-    [API_KEY_HEADER]: SECRET_API_KEY,
+    [SENSOR_IP_FIELD]: sensorIp,
+    [SENSOR_PORT_FIELD]: sensorPort,
+    [API_KEY_FIELD]: SECRET_API_KEY,
 };
 
 const app = createServer();
@@ -38,13 +38,13 @@ describe('Registering a new Sensor using IPv4', () => {
     });
     it('Registering a new Sensor without specifying an API KEY or by using a wrong API Key should return an error', async () => {
         const noAPI = {
-            [SENSOR_IP_HEADER]: sensorIp,
-            [SENSOR_PORT_HEADER]: sensorPort,
+            [SENSOR_IP_FIELD]: sensorIp,
+            [SENSOR_PORT_FIELD]: sensorPort,
         };
         const wrongAPI = {
-            [SENSOR_IP_HEADER]: sensorIp,
-            [SENSOR_PORT_HEADER]: sensorPort,
-            [API_KEY_HEADER]: '',
+            [SENSOR_IP_FIELD]: sensorIp,
+            [SENSOR_PORT_FIELD]: sensorPort,
+            [API_KEY_FIELD]: '',
         };
         await request(app).post(REGISTER_SENSOR_PATH).send(noAPI).expect(HttpStatus.UNAUTHORIZED);
         await request(app).post(REGISTER_SENSOR_PATH).send(wrongAPI).expect(HttpStatus.UNAUTHORIZED);
@@ -55,9 +55,9 @@ describe('Registering a new Sensor using IPv4', () => {
     });
     it('Registering a sensor with same IP but different port should be OK', async () => {
         const similarSensor = {
-            [SENSOR_IP_HEADER]: sensorIp,
-            [SENSOR_PORT_HEADER]: 777,
-            [API_KEY_HEADER]: SECRET_API_KEY,
+            [SENSOR_IP_FIELD]: sensorIp,
+            [SENSOR_PORT_FIELD]: 777,
+            [API_KEY_FIELD]: SECRET_API_KEY,
         };
         await shutOffSensor(app, similarSensor);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
@@ -66,9 +66,9 @@ describe('Registering a new Sensor using IPv4', () => {
     });
     it('Registering a sensor with same Port but differnt IP should be OK', async () => {
         const similarSensor = {
-            [SENSOR_IP_HEADER]: '1.0.0.0',
-            [SENSOR_PORT_HEADER]: 777,
-            [API_KEY_HEADER]: SECRET_API_KEY,
+            [SENSOR_IP_FIELD]: '1.0.0.0',
+            [SENSOR_PORT_FIELD]: 777,
+            [API_KEY_FIELD]: SECRET_API_KEY,
         };
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(similarSensor).expect(HttpStatus.CREATED);
@@ -85,7 +85,7 @@ describe('Registering a new Sensor using IPv4', () => {
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app)
             .get(ALL_SENSORS)
-            .send({ [API_KEY_HEADER]: SECRET_API_KEY })
+            .send({ [API_KEY_FIELD]: SECRET_API_KEY })
             .expect(HttpStatus.OK)
             .expect((res) => {
                 const allSensors: Array<ISensor> = res.body['sensors'];
@@ -97,12 +97,12 @@ describe('Registering a new Sensor using IPv4', () => {
     });
     it('Registering a Sensor with a port < 0 or > MAX_PORT should return an error.', async () => {
         const wrongSensor = {
-            [SENSOR_IP_HEADER]: sensorIp,
-            [SENSOR_PORT_HEADER]: -1,
-            [API_KEY_HEADER]: SECRET_API_KEY,
+            [SENSOR_IP_FIELD]: sensorIp,
+            [SENSOR_PORT_FIELD]: -1,
+            [API_KEY_FIELD]: SECRET_API_KEY,
         };
         await request(app).post(REGISTER_SENSOR_PATH).send(wrongSensor).expect(HttpStatus.NOT_ACCEPTABLE);
-        wrongSensor[SENSOR_PORT_HEADER] = MAX_PORT + 1;
+        wrongSensor[SENSOR_PORT_FIELD] = MAX_PORT + 1;
         await request(app).post(REGISTER_SENSOR_PATH).send(wrongSensor).expect(HttpStatus.NOT_ACCEPTABLE);
     });
     it('Registering a Sensor with a wrong IP should return an error.', async () => {

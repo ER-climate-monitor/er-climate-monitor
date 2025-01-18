@@ -1,7 +1,7 @@
 import request from 'supertest';
 import dotenv from 'dotenv';
 import { Application } from 'express';
-import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from '../../../../model/v0/headers/sensorHeaders';
+import { SENSOR_IP_FIELD, SENSOR_PORT_FIELD, API_KEY_FIELD } from '../../../../model/v0/headers/sensorHeaders';
 import { SHUT_OFF_ROUTE } from '../../../../routes/v0/paths/sensorPaths';
 
 dotenv.config();
@@ -16,9 +16,9 @@ async function shutOffSensor(app: Application, data: any) {
 
 function createSensor(ip: string, port: number) {
     return {
-        [SENSOR_IP_HEADER]: ip,
-        [SENSOR_PORT_HEADER]: port,
-        [API_KEY_HEADER]: SECRET_API_KEY,
+        [SENSOR_IP_FIELD]: ip,
+        [SENSOR_PORT_FIELD]: port,
+        [API_KEY_FIELD]: SECRET_API_KEY,
     };
 }
 

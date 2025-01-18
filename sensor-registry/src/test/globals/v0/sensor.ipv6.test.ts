@@ -6,7 +6,7 @@ import { shutOffSensor, createSensor } from './utils/sensorUtils';
 import { fail } from 'assert';
 import { ISensor } from '../../../model/v0/sensorModel';
 import randomIpv6 from 'random-ipv6';
-import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from '../../../model/v0/headers/sensorHeaders';
+import { SENSOR_IP_FIELD, SENSOR_PORT_FIELD, API_KEY_FIELD } from '../../../model/v0/headers/sensorHeaders';
 import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
 import { beforeEach, it, describe } from 'mocha';
 
@@ -22,9 +22,9 @@ const sensorIp = '2001:db8:3333:4444:5555:6666:7777:8888';
 const sensorPort = 1926;
 
 const sensorInfomration = {
-    [SENSOR_IP_HEADER]: sensorIp,
-    [SENSOR_PORT_HEADER]: sensorPort,
-    [API_KEY_HEADER]: SECRET_API_KEY,
+    [SENSOR_IP_FIELD]: sensorIp,
+    [SENSOR_PORT_FIELD]: sensorPort,
+    [API_KEY_FIELD]: SECRET_API_KEY,
 };
 
 const app = createServer();
@@ -84,7 +84,7 @@ describe('Registering a new Sensor using IPv6', () => {
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app)
             .get(ALL_SENSORS)
-            .send({ [API_KEY_HEADER]: SECRET_API_KEY })
+            .send({ [API_KEY_FIELD]: SECRET_API_KEY })
             .expect((res) => {
                 const sensors: Array<ISensor> = res.body['sensors'];
                 const saved = sensors.find((sensor) => sensor.ip == sensorIp && sensor.port == sensorPort);

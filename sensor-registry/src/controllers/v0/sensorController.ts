@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 import { isIpValid } from './utils/ipUtils';
 import { deleteSensor, exists, findAllSensors, saveSensor } from './utils/sensorUtils';
-import { API_KEY_HEADER, SENSOR_IP_HEADER, SENSOR_PORT_HEADER } from '../../model/v0/headers/sensorHeaders';
+import { API_KEY_FIELD, SENSOR_IP_FIELD, SENSOR_PORT_FIELD } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody } from './utils/requestUtils';
 
@@ -18,10 +18,10 @@ function isAuthorized(key: string): boolean {
 const registerSensor = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromBody(modelData, API_KEY_HEADER, '');
+        const apikey = fromBody(modelData, API_KEY_FIELD, '');
         if (isAuthorized(apikey)) {
-            const ip = fromBody(modelData, SENSOR_IP_HEADER, '');
-            const port = fromBody(modelData, SENSOR_PORT_HEADER, -1);
+            const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
+            const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
             if (port >= 0 && port <= MAX_PORT && ip != '' && isIpValid(ip)) {
                 if (!(await exists(ip, port))) {
                     await saveSensor(ip, port);
@@ -43,7 +43,7 @@ const registerSensor = async (request: Request, response: Response) => {
 
 const allSensors = async (request: Request, response: Response) => {
     const modelData = request.body;
-    const apikey = fromBody(modelData, API_KEY_HEADER, '');
+    const apikey = fromBody(modelData, API_KEY_FIELD, '');
     if (isAuthorized(apikey)) {
         response.send({ sensors: await findAllSensors() });
     } else {
@@ -55,10 +55,10 @@ const allSensors = async (request: Request, response: Response) => {
 const shutOff = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromBody(modelData, API_KEY_HEADER, '');
+        const apikey = fromBody(modelData, API_KEY_FIELD, '');
         if (isAuthorized(apikey)) {
-            const ip = fromBody(modelData, SENSOR_IP_HEADER, '');
-            const port = fromBody(modelData, SENSOR_PORT_HEADER, -1);
+            const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
+            const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
                 response.status(HttpStatus.OK);
             } else {

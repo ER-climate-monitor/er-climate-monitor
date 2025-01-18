@@ -1,5 +1,5 @@
-const SENSOR_PORT_HEADER = 'X-Sensor-Port';
-const SENSOR_IP_HEADER = 'X-Sensor-Ip';
-const API_KEY_HEADER = 'X-Api-Key';
+const SENSOR_PORT_FIELD = 'sensorPort';
+const SENSOR_IP_FIELD = 'sensorIp';
+const API_KEY_FIELD = 'apiKey';
 
-export { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER };
+export { SENSOR_PORT_FIELD, SENSOR_IP_FIELD, API_KEY_FIELD };
