@@ -1,7 +1,5 @@
-import { describe } from 'mocha';
 import request from 'supertest';
 import dotenv from 'dotenv';
-import HttpStatus from 'http-status-codes';
 import { Application } from 'express';
 import { SENSOR_IP_HEADER, SENSOR_PORT_HEADER, API_KEY_HEADER } from '../../../../model/v0/headers/sensorHeaders';
 import { SHUT_OFF_ROUTE } from '../../../../routes/v0/paths/sensorPaths';
