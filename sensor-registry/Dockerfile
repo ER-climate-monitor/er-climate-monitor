@@ -29,7 +29,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 RUN npm uninstall tsc && npm install -D typescript
 
 # Expose the port that the application listens on.
-EXPOSE 8888
+EXPOSE 7777
 
 # Run the application.
 CMD npm run build ; npm run start
