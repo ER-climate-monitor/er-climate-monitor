@@ -20,8 +20,8 @@ async function findAllSensors(): Promise<Iterable<ISensor>> {
     });
 }
 
-async function deleteSensor(ip: string, port: number) {
-    const result = await sensorModel.deleteOne({ ip: ip, port: port });
+async function deleteSensor(ip: string, port: number): Promise<boolean> {
+    const result = await sensorModel.deleteOne({ ip: ip, port: port});
     return result.deletedCount === 1;
 }
 
