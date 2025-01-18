@@ -46,13 +46,16 @@ describe('Registering a new Sensor using IPv6', () => {
         const other = createSensor(randomIpv6(), sensorPort);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(other).expect(HttpStatus.CREATED);
+        await shutOffSensor(app, other);
     });
     it('Registering a sensor with different types of IPv6 should be ok.', async () => {
         const ips = Array<string>();
         ips.push(randomIpv6('{token}::1', { padded: true, token: { min: 0, max: 65535 } }));
         ips.push(randomIpv6('{token}:0:0:0:0:1:0:0', { compressed: true, token: { min: 0, max: 65535 } }));
         for (const ip of ips) {
-            await request(app).post(REGISTER_SENSOR_PATH).send(createSensor(ip, sensorPort)).expect(HttpStatus.CREATED);
+            const sensor = createSensor(ip, sensorPort);
+            await request(app).post(REGISTER_SENSOR_PATH).send(sensor).expect(HttpStatus.CREATED);
+            await shutOffSensor(app, sensor);
         }
     });
     it('Registering a sensor with a wrong IPv6 should raise an error.', async () => {
@@ -65,6 +68,14 @@ describe('Registering a new Sensor using IPv6', () => {
             const newIp = ip.join(':');
             sensors.push(createSensor(newIp, sensorPort));
         }
+        for (const sensor of sensors) {
+            await request(app).post(REGISTER_SENSOR_PATH).send(sensor).expect(HttpStatus.NOT_ACCEPTABLE);
+        }
+    });
+    it('Registering a sensor with a wrong PORT value should return an error', async () => {
+        const sensors = [];
+        sensors.push(createSensor(sensorIp, MAX_PORT + 1));
+        sensors.push(createSensor(sensorIp, -1));
         for (const sensor of sensors) {
             await request(app).post(REGISTER_SENSOR_PATH).send(sensor).expect(HttpStatus.NOT_ACCEPTABLE);
         }
@@ -86,4 +97,7 @@ describe('Registering a new Sensor using IPv6', () => {
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CONFLICT);
     });
+    afterEach(async () => {
+        await shutOffSensor(app, sensorInfomration);
+    })
 });

@@ -55,12 +55,12 @@ describe('Registering a new Sensor using IPv4', () => {
     });
     it('Registering a sensor with same IP but different port should be OK', async () => {
         const similarSensor = {
-            [SENSOR_IP_HEADER]: '0.0.0.0',
+            [SENSOR_IP_HEADER]: sensorIp,
             [SENSOR_PORT_HEADER]: 777,
             [API_KEY_HEADER]: SECRET_API_KEY,
         };
+        await shutOffSensor(app, similarSensor);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
-
         await request(app).post(REGISTER_SENSOR_PATH).send(similarSensor).expect(HttpStatus.CREATED);
         await shutOffSensor(app, similarSensor);
     });
