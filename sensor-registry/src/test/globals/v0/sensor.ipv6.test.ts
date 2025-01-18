@@ -15,6 +15,8 @@ dotenv.config();
 const REGISTER_SENSOR_PATH = REGISTER_ROUTE;
 const ALL_SENSORS = ALL_ROUTE;
 
+let createdSensors: Array<unknown> = [];
+
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 const MAX_PORT = 65_535;
 
@@ -30,23 +32,23 @@ const sensorInfomration = {
 const app = createServer();
 
 describe('Registering a new Sensor using IPv6', () => {
-    beforeEach(async () => {
-        await shutOffSensor(app, sensorInfomration);
-    });
     it('Registering a new Sensor using an IPv6 and using a PORT that are not used should be OK', async () => {
+        createdSensors.push(sensorInfomration);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
     });
     it('Registering a sensor with same IPv6 and different port should be ok', async () => {
         const other = createSensor(sensorIp, 1000);
+        createdSensors.push(other);
+        createdSensors.push(sensorInfomration);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(other).expect(HttpStatus.CREATED);
-        await shutOffSensor(app, other);
     });
     it('Registering a sensor with different IPv6 and same port should be ok.', async () => {
         const other = createSensor(randomIpv6(), sensorPort);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(other).expect(HttpStatus.CREATED);
-        await shutOffSensor(app, other);
+        createdSensors.push(other);
+        createdSensors.push(sensorInfomration);
     });
     it('Registering a sensor with different types of IPv6 should be ok.', async () => {
         const ips = Array<string>();
@@ -55,7 +57,7 @@ describe('Registering a new Sensor using IPv6', () => {
         for (const ip of ips) {
             const sensor = createSensor(ip, sensorPort);
             await request(app).post(REGISTER_SENSOR_PATH).send(sensor).expect(HttpStatus.CREATED);
-            await shutOffSensor(app, sensor);
+            createdSensors.push(sensor);
         }
     });
     it('Registering a sensor with a wrong IPv6 should raise an error.', async () => {
@@ -81,6 +83,7 @@ describe('Registering a new Sensor using IPv6', () => {
         }
     });
     it('After registering a new sensor It should be possible to see It saved.', async () => {
+        createdSensors.push(sensorInfomration);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app)
             .get(ALL_SENSORS)
@@ -94,10 +97,15 @@ describe('Registering a new Sensor using IPv6', () => {
             });
     });
     it('Registering a sensor with same Ip and same Port of another sensor should return a conflict', async () => {
+        createdSensors.push(sensorInfomration);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInfomration).expect(HttpStatus.CONFLICT);
     });
     afterEach(async () => {
         await shutOffSensor(app, sensorInfomration);
+        for (const sensor of createdSensors) {
+            await shutOffSensor(app, sensor);
+        }
+        createdSensors = [];
     })
 });
