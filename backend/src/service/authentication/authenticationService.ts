@@ -10,26 +10,28 @@ interface AuthenticationOperations<X> {
     deleteOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
 }
 
-class AuthenticationService<T extends HttpClient<X>, X> extends AbstractService<T, X> implements AuthenticationOperations<X> {
-
+class AuthenticationService<T extends HttpClient<X>, X>
+    extends AbstractService<T, X>
+    implements AuthenticationOperations<X>
+{
     constructor(circuitBreaker: CircuitBreakerClient<T, X>, endpoint: string) {
         super(circuitBreaker, endpoint);
     }
 
     public async registerOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        return this.circuitBreaker.fireRequest(this.authenticationEndpoint, POST, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, POST, endpointPath, headers, body);
     }
 
     public loginOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        return this.circuitBreaker.fireRequest(this.authenticationEndpoint, POST, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, POST, endpointPath, headers, body);
     }
 
     public authenticateTokenOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        return this.circuitBreaker.fireRequest(this.authenticationEndpoint, POST, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, POST, endpointPath, headers, body);
     }
 
     public deleteOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        return this.circuitBreaker.fireRequest(this.authenticationEndpoint, DELETE, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, DELETE, endpointPath, headers, body);
     }
 }
 
