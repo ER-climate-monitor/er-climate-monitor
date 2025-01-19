@@ -19,11 +19,11 @@ class SensorService<T extends HttpClient<X>, X> extends AbstractService<T, X> im
     }
 
     getAllSensorsOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        throw this.circuitBreaker.fireRequest(this.endpoint, GET, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, GET, endpointPath, headers, body);
     }
 
     deleteOperation(endpointPath: string, headers: any, body: any): Promise<X> {
-        throw this.circuitBreaker.fireRequest(this.endpoint, DELETE, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, DELETE, endpointPath, headers, body);
     }
 }
 
