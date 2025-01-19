@@ -1,6 +1,6 @@
 services:
   sensor-registry:
-    image: matteoiorio/sensor-registry:0.0.1
+    image: matteoiorio/sensor-registry:0.0.2
     env_file:
       .env
     ports:
