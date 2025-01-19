@@ -27,7 +27,7 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
         const endpoint = service + path;
         switch (method) {
             case GET: {
-                return this.httpClient.getRequest(endpoint, headers);
+                return this.httpClient.getRequest(endpoint, headers, body);
             }
             case POST: {
                 return this.httpClient.postRequest(endpoint, headers, body);
