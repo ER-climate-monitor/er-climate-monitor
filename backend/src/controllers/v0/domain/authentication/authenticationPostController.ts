@@ -1,6 +1,4 @@
 import { Request, Response } from 'express';
-import { BreakerFactory } from '../../utils/circuitBreaker/circuitRequest';
-import { AUTHENTICATION_ENDPOINT } from '../../../../models/v0/serviceModels';
 import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
 import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
@@ -15,11 +13,9 @@ import {
     USER_JWT_TOKEN_EXPIRATION_BODY,
 } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 import Logger from 'js-logger';
-import { AuthenticationService } from '../../../../service/v0/authentication/authenticationService';
+import { authenticationService } from './authenticationConfig';
 
 Logger.useDefaults();
-const breaker = BreakerFactory.axiosBreakerWithDefaultOptions();
-const authenticationService = new AuthenticationService(breaker, AUTHENTICATION_ENDPOINT);
 
 async function saveToken(response: AxiosResponse) {
     authenticationRedisClient.setToken(
