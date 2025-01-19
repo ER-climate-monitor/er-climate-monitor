@@ -10,6 +10,9 @@
     "format": "prettier --write 'src/**/*.{ts,js}'",
     "prepare": "husky"
   },
+  "lint-staged": {
+      "*.ts": "prettier --write 'src/**/*.{ts,js}'"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm run format"
