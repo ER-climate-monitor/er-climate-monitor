@@ -11,7 +11,7 @@ import { sensorService } from './sensorConfig';
 
 Logger.useDefaults();
 
-const sensorPostHandler = async (request: Request, response: Response, service: AbstractService<any, any>) => {
+const sensorPostHandler = async (request: Request, response: Response) => {
     const endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
     try {
         const axiosResponse = await sensorService.registerOperation(endpointPath, request.headers, request.body);
