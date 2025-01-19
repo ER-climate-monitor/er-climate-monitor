@@ -1,6 +1,7 @@
 import { DELETE, POST } from '../../controllers/v0/utils/api/httpMethods';
 import { CircuitBreakerClient } from '../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { HttpClient } from '../../controllers/v0/utils/circuitBreaker/http/httpClient';
+import { AbstractService } from '../abstractService';
 
 interface AuthenticationOperations<X> {
     registerOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
@@ -9,13 +10,10 @@ interface AuthenticationOperations<X> {
     deleteOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
 }
 
-class AuthenticationService<T extends HttpClient<X>, X> implements AuthenticationOperations<X> {
-    private authenticationEndpoint: string;
-    private circuitBreaker: CircuitBreakerClient<T, X>;
+class AuthenticationService<T extends HttpClient<X>, X> extends AbstractService<T, X> implements AuthenticationOperations<X> {
 
     constructor(circuitBreaker: CircuitBreakerClient<T, X>, endpoint: string) {
-        this.authenticationEndpoint = endpoint;
-        this.circuitBreaker = circuitBreaker;
+        super(circuitBreaker, endpoint);
     }
 
     public async registerOperation(endpointPath: string, headers: any, body: any): Promise<X> {
