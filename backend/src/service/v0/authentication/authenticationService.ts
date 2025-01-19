@@ -1,7 +1,7 @@
-import { DELETE, POST } from '../../controllers/v0/utils/api/httpMethods';
-import { CircuitBreakerClient } from '../../controllers/v0/utils/circuitBreaker/circuitRequest';
-import { HttpClient } from '../../controllers/v0/utils/circuitBreaker/http/httpClient';
+import { DELETE, GET, POST } from '../../../controllers/v0/utils/api/httpMethods';
+import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { AbstractService } from '../abstractService';
+import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
 
 interface AuthenticationOperations<X> {
     registerOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;

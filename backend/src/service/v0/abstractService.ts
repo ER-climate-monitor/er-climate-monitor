@@ -1,5 +1,5 @@
-import { HttpClient } from "../controllers/v0/utils/circuitBreaker/http/httpClient";
-import { CircuitBreakerClient } from "../controllers/v0/utils/circuitBreaker/circuitRequest";
+import { HttpClient } from "../../controllers/v0/utils/circuitBreaker/http/httpClient";
+import { CircuitBreakerClient } from "../../controllers/v0/utils/circuitBreaker/circuitRequest";
 
 abstract class AbstractService<T extends HttpClient<X>, X> {
     protected endpoint: string;

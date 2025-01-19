@@ -1,7 +1,7 @@
 import { AxiosResponse, AxiosError } from 'axios';
 import { Response } from 'express';
 
-function fromAxiosToResponse(axiosResponse: AxiosResponse<any, any>, response: Response): Response {
+function fromAxiosToResponse(axiosResponse: AxiosResponse<unknown, unknown>, response: Response): Response {
     for (const header in axiosResponse.headers) {
         response.setHeader(header, axiosResponse.headers[header]);
     }

@@ -15,7 +15,7 @@ import {
     USER_JWT_TOKEN_EXPIRATION_BODY,
 } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 import Logger from 'js-logger';
-import { AuthenticationService } from '../../../../service/authentication/authenticationService';
+import { AuthenticationService } from '../../../../service/v0/authentication/authenticationService';
 
 Logger.useDefaults();
 const breaker = BreakerFactory.axiosBreakerWithDefaultOptions();
