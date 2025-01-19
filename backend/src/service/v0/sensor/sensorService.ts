@@ -1,7 +1,7 @@
-import { AbstractService } from "../abstractService"
-import { HttpClient } from "../../../controllers/v0/utils/circuitBreaker/http/httpClient"
-import { CircuitBreakerClient } from "../../../controllers/v0/utils/circuitBreaker/circuitRequest";
-import { DELETE, GET, POST } from "../../../controllers/v0/utils/api/httpMethods";
+import { AbstractService } from '../abstractService';
+import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
+import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
+import { DELETE, GET, POST } from '../../../controllers/v0/utils/api/httpMethods';
 
 interface SensorOperations<X> {
     registerOperation(_endpointPath: string, _headers: any, _body: any): Promise<X>;
@@ -27,4 +27,4 @@ class SensorService<T extends HttpClient<X>, X> extends AbstractService<T, X> im
     }
 }
 
-export { SensorService }
+export { SensorService };
