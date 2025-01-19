@@ -15,7 +15,6 @@ export default function createServer(): Application {
     const app: Application = express();
     mongoose.connect(URL, { dbName: 'sensor-database' });
     app.use(express.json());
-    app.use(cors());
     app.use(BASE_SENSOR_PATH_V0, sensorRouter);
     return app;
 }
@@ -23,5 +22,5 @@ export default function createServer(): Application {
 const app = createServer();
 
 app.listen(PORT, () => {
-    console.log('Server is listening...');
+    console.log('Server is listening on port: ' + PORT);
 });
