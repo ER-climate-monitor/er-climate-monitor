@@ -5,6 +5,9 @@ import { deleteSensor, exists, findAllSensors, saveSensor } from './utils/sensor
 import { API_KEY_FIELD, SENSOR_IP_FIELD, SENSOR_PORT_FIELD } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody } from './utils/requestUtils';
+import Logger from "js-logger";
+
+Logger.useDefaults();
 
 dotenv.config();
 
@@ -19,11 +22,13 @@ const registerSensor = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
         const apikey = fromBody(modelData, API_KEY_FIELD, '');
+        Logger.info('Received a request for saving a new sensor');
         if (isAuthorized(apikey)) {
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
             const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
             if (port >= 0 && port <= MAX_PORT && ip != '' && isIpValid(ip)) {
                 if (!(await exists(ip, port))) {
+                    Logger.info('The sensor does not exists, saving it');
                     await saveSensor(ip, port);
                     response.status(HttpStatus.CREATED);
                 } else {
@@ -44,6 +49,7 @@ const registerSensor = async (request: Request, response: Response) => {
 const allSensors = async (request: Request, response: Response) => {
     const modelData = request.body;
     const apikey = fromBody(modelData, API_KEY_FIELD, '');
+    Logger.info('Received a request for returing all the sensors');
     if (isAuthorized(apikey)) {
         response.send({ sensors: await findAllSensors() });
     } else {
@@ -57,6 +63,7 @@ const shutOff = async (request: Request, response: Response) => {
     if (modelData) {
         const apikey = fromBody(modelData, API_KEY_FIELD, '');
         if (isAuthorized(apikey)) {
+            Logger.info('Received a request for shutting of a sensor');
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
             const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
