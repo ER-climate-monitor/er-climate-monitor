@@ -8,7 +8,7 @@ dotenv.config();
 
 interface IAuthenticationClient {
     setToken(token: string, tokenValue: TokenValue): Promise<void>;
-    searchToken(token: string): Promise<string | null>;
+    searchToken(token: string): Promise<TokenValue | null>;
     isExpired(token: string): Promise<boolean>;
     isAdmin(token: string): Promise<boolean>;
 }
@@ -26,8 +26,12 @@ class AuthenticationClient implements IAuthenticationClient {
         }
     }
 
-    public async searchToken(token: string): Promise<string | null> {
-        return this.authenticationRedisClient.get(token);
+    public async searchToken(token: string): Promise<TokenValue | null> {
+        const result = await this.authenticationRedisClient.get(token);
+        if (result === null) {
+            return null
+        }
+        return TokenValue.fromJson(result);
     }
 
     public async isExpired(token: string): Promise<boolean> {
@@ -35,8 +39,7 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return false;
         }
-        const expiration = TokenValue.fromJson(result).expiration;
-        return new Date().getTime() < expiration.getTime();
+        return new Date().getTime() < result.expiration.getTime();
     }
 
     public async isAdmin(token: string) {
@@ -44,8 +47,7 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return false;
         }
-        const role = TokenValue.fromJson(result).role;
-        return role === USER_ADMIN;
+        return result.role.toLowerCase() === USER_ADMIN.toLowerCase();
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
