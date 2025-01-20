@@ -21,6 +21,7 @@ Logger.useDefaults();
 
 async function saveToken(response: AxiosResponse) {
     const tokenValue = new TokenValue(response.data[USER_EMAIL_BODY], response.data[USER_ROLE_BODY], response.data[USER_JWT_TOKEN_EXPIRATION_BODY]);
+    console.log(tokenValue);
     authenticationService.authenticationClient.setToken(
         String(response.data[USER_JWT_TOKEN_BODY]),
         tokenValue
@@ -73,7 +74,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 );
                 response = fromAxiosToResponse(axiosResponse, response);
                 if (response.statusCode === HttpStatusCode.Ok) {
-                    Logger.info('User correctly logged in. Saving the token and Its expiration');
+                    Logger.info('User correctly logged in. Saving the token.');
                     saveToken(axiosResponse);
                 }
                 response.send(axiosResponse.data);
