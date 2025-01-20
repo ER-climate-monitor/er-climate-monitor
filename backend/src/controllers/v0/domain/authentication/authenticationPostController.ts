@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
 import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
-import { authenticationRedisClient } from '../../utils/redis/redisClient';
 import { fromAxiosToResponse, handleAxiosError } from '../../utils/api/responseUtils';
 import {
     AUTHENTICATE_ACTION,
@@ -21,8 +20,8 @@ import { TokenValue } from '../../../../models/v0/tokenModel';
 Logger.useDefaults();
 
 async function saveToken(response: AxiosResponse) {
-    const tokenValue = new TokenValue(response.data[USER_EMAIL_BODY], response.data[USER_ROLE_BODY], response.data[USER_JWT_TOKEN_EXPIRATION_BODY])
-    authenticationRedisClient.setToken(
+    const tokenValue = new TokenValue(response.data[USER_EMAIL_BODY], response.data[USER_ROLE_BODY], response.data[USER_JWT_TOKEN_EXPIRATION_BODY]);
+    authenticationService.authenticationClient.setToken(
         String(response.data[USER_JWT_TOKEN_BODY]),
         tokenValue
     );
@@ -91,7 +90,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         case AUTHENTICATE_ACTION: {
             try {
                 Logger.info('Checking the validation of the input token');
-                const expiration = await authenticationRedisClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
+                const expiration = await authenticationService.authenticationClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
                 if (expiration !== null) {
                     Logger.info('Token found, checking for the expiration');
                     response = isExpired(Number(expiration), response);
