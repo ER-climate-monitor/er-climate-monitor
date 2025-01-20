@@ -18,16 +18,21 @@ function tokenExpiration(token: string): Date {
     return new Date((infos.exp || 0) * 1000);
 }
 
+function getInfosFromToken(token: string): Token {
+    const infos = decodeToken(token);
+    return new Token(token, infos.userEmail, infos.userRole, tokenExpiration(token));
+}
 
-async function createToken(inputEmail: string): Promise<Token> {
+
+async function createToken(inputEmail: string, role: string): Promise<Token> {
     const EXPIRATION = process.env.EXPIRATION || "1h";
     const user = await userModel.findOne({email: inputEmail});
     if (user == null) {
         throw new Error("The input user is not registered.");
     }
-    const data = { userId: user.id};
+    const data = { userId: user.id, userEmail: inputEmail, userRole: role};
     const token = jwt.sign(data, jwtSecretKey, {expiresIn: EXPIRATION});
-    return new Token(token, new Date(tokenExpiration(token)));
+    return new Token(token, inputEmail, role, new Date(tokenExpiration(token)));
 }
 
 async function verifyToken(token: string): Promise<Boolean> {
@@ -45,4 +50,4 @@ async function verifyToken(token: string): Promise<Boolean> {
     }
 };
 
-export { createToken, verifyToken, tokenExpiration }
+export { createToken, verifyToken, tokenExpiration, getInfosFromToken }
