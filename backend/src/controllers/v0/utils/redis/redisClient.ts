@@ -2,6 +2,7 @@ import Redis from 'ioredis';
 
 import dotenv from 'dotenv';
 import { TokenValue } from '../../../../models/v0/tokenModel';
+import { USER_ADMIN } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 
 dotenv.config();
 
@@ -28,6 +29,15 @@ class AuthenticationClient {
         }
         const expiration = TokenValue.fromJson(result).expiration;
         return new Date().getTime() < expiration.getTime();
+    }
+
+    public async isAdmin(token: string) {
+        const result = await this.searchToken(token);
+        if (result === null) {
+            return false;
+        }
+        const role = TokenValue.fromJson(result).role;
+        return role === USER_ADMIN;
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
