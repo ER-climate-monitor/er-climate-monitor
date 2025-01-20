@@ -6,7 +6,15 @@ import { USER_ADMIN } from '../../../../models/v0/authentication/headers/authent
 
 dotenv.config();
 
-class AuthenticationClient {
+interface IAuthenticationClient {
+    setToken(token: string, tokenValue: TokenValue): Promise<void>;
+    searchToken(token: string): Promise<string | null>;
+    isExpired(token: string): Promise<boolean>;
+    isAdmin(token: string): Promise<boolean>;
+}
+
+
+class AuthenticationClient implements IAuthenticationClient {
     private authenticationRedisClient: Redis;
     constructor() {
         this.authenticationRedisClient = new Redis(String(process.env.REDIS_URL));
@@ -51,4 +59,4 @@ class AuthenticationClient {
 
 const authenticationRedisClient = new AuthenticationClient();
 
-export { authenticationRedisClient };
+export { authenticationRedisClient, IAuthenticationClient };
