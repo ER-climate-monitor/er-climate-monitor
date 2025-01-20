@@ -1,15 +1,15 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { jwtDecode } from "jwt-decode";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { jwtDecode } from 'jwt-decode';
 import dotenv from 'dotenv';
-import { Token } from "../../../models/v0/tokenModel";
-import { userModel } from "../../../models/v0/userModel";
-import { checkUserById } from "./userUtils";
+import { Token } from '../../../models/v0/tokenModel';
+import { userModel } from '../../../models/v0/userModel';
+import { checkUserById } from './userUtils';
 
 dotenv.config();
 
-const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || "somesecret"
+const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || 'somesecret';
 
-function decodeToken(token: string): JwtPayload { 
+function decodeToken(token: string): JwtPayload {
     return jwtDecode(token);
 }
 
@@ -23,31 +23,29 @@ function getInfosFromToken(token: string): Token {
     return new Token(token, infos.userEmail, infos.userRole, tokenExpiration(token));
 }
 
-
 async function createToken(inputEmail: string, role: string): Promise<Token> {
-    const EXPIRATION = process.env.EXPIRATION || "1h";
-    const user = await userModel.findOne({email: inputEmail});
+    const EXPIRATION = process.env.EXPIRATION || '1h';
+    const user = await userModel.findOne({ email: inputEmail });
     if (user == null) {
-        throw new Error("The input user is not registered.");
+        throw new Error('The input user is not registered.');
     }
-    const data = { userId: user.id, userEmail: inputEmail, userRole: role};
-    const token = jwt.sign(data, jwtSecretKey, {expiresIn: EXPIRATION});
+    const data = { userId: user.id, userEmail: inputEmail, userRole: role };
+    const token = jwt.sign(data, jwtSecretKey, { expiresIn: EXPIRATION });
     return new Token(token, inputEmail, role, new Date(tokenExpiration(token)));
 }
 
 async function verifyToken(token: string): Promise<Boolean> {
-    try  {
+    try {
         const verified = jwt.verify(token, jwtSecretKey);
         const id = decodeToken(token).userId;
         const exists = await checkUserById(id);
-        return verified && id && exists
-    }
-    catch(error) {
+        return verified && id && exists;
+    } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
             return false;
         }
         throw error;
     }
-};
+}
 
-export { createToken, verifyToken, tokenExpiration, getInfosFromToken }
+export { createToken, verifyToken, tokenExpiration, getInfosFromToken };

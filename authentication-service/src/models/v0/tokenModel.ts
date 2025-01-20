@@ -1,8 +1,8 @@
 interface IToken {
-    token: string,
-    email: string,
-    role: string,
-    expiration: Date
+    token: string;
+    email: string;
+    role: string;
+    expiration: Date;
 }
 
 class Token implements IToken {
@@ -19,4 +19,4 @@ class Token implements IToken {
     }
 }
 
-export { Token }
+export { Token };

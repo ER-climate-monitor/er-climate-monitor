@@ -1,3 +1,3 @@
-const STATUS_PATH = "/status";
+const STATUS_PATH = '/status';
 
-export { STATUS_PATH }
+export { STATUS_PATH };

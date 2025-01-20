@@ -1,49 +1,70 @@
-import { Request, Response } from "express";
-import HttpStatus from "http-status-codes";
+import { Request, Response } from 'express';
+import HttpStatus from 'http-status-codes';
 import dotenv from 'dotenv';
-import jwt from "jsonwebtoken";
-import { login, register, deleteInputUser } from "./utils/auth";
-import { tokenExpiration, verifyToken } from "./utils/jwt";
-import { API_KEY_FIELD, USER_EMAIL_FIELD, USER_PASSWORD_FIELD, USER_JWT_TOKEN_EXPIRATION_FIELD, USER_JWT_TOKEN_FIELD, ADMIN_USER, NORMAL_USER, ERROR_HEADER, USER_ACTION_FIELD } from "../../models/v0/headers/userHeaders";
-import { AUTHENTICATE, DELETE, LOGIN, REGISTER } from "./utils/userActions";
-import Logger from "js-logger";
+import jwt from 'jsonwebtoken';
+import { login, register, deleteInputUser } from './utils/auth';
+import { getInfosFromToken, tokenExpiration, verifyToken } from './utils/jwt';
+import {
+    API_KEY_FIELD,
+    USER_EMAIL_FIELD,
+    USER_PASSWORD_FIELD,
+    USER_JWT_TOKEN_EXPIRATION_FIELD,
+    USER_JWT_TOKEN_FIELD,
+    ADMIN_USER,
+    NORMAL_USER,
+    ERROR_HEADER,
+    USER_ACTION_FIELD,
+    USER_ROLE_FIELD,
+} from '../../models/v0/headers/userHeaders';
+import { AUTHENTICATE, DELETE, LOGIN, REGISTER } from './utils/userActions';
+import Logger from 'js-logger';
 
 Logger.useDefaults();
 
 dotenv.config();
 
-const secretKey = process.env.SECRET_API_KEY || "__"
+const secretKey = process.env.SECRET_API_KEY || '__';
 
 function checkAction(tag: string, body: any, equalTo: string): boolean {
     return body[tag] === equalTo;
 }
 
-function isAdmin(data:any): boolean { 
+function isAdmin(data: any): boolean {
     if (API_KEY_FIELD in data) {
-        const API_KEY: string = data[API_KEY_FIELD]
-        return API_KEY === secretKey
+        const API_KEY: string = data[API_KEY_FIELD];
+        return API_KEY === secretKey;
     }
     return false;
 }
 
 function fromBody<X>(body: any, key: string, defaultValue: X): X {
-    return body && key in body ? body[key]: defaultValue;
+    return body && key in body ? body[key] : defaultValue;
 }
 
 const loginUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
-        response = await login(fromBody<string>(modelData, USER_EMAIL_FIELD, ""), fromBody<string>(modelData, USER_PASSWORD_FIELD, ""), NORMAL_USER, response);
+        response = await login(
+            fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
+            fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
+            NORMAL_USER,
+            response,
+        );
     }
     response.end();
 };
 
 const loginAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
-    if(modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
+    if (modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
         if (isAdmin(modelData)) {
-            response = await login(fromBody<string>(modelData, USER_EMAIL_FIELD, ""), fromBody<string>(modelData, USER_PASSWORD_FIELD, ""), ADMIN_USER, response);
-        }else {
+            response = await login(
+                fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
+                fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
+                ADMIN_USER,
+                response,
+            );
+        } else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -53,9 +74,14 @@ const loginAdmin = async (request: Request, response: Response) => {
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, REGISTER)) {
-        response = await register(fromBody<string>(modelData, USER_EMAIL_FIELD, ""), fromBody<string>(modelData, USER_PASSWORD_FIELD, ""), NORMAL_USER, response);
+        response = await register(
+            fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
+            fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
+            NORMAL_USER,
+            response,
+        );
     }
-    response.end()
+    response.end();
 };
 
 const registerAdmin = async (request: Request, response: Response) => {
@@ -63,19 +89,24 @@ const registerAdmin = async (request: Request, response: Response) => {
 
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, REGISTER)) {
         if (isAdmin(modelData)) {
-            response = await register(fromBody<string>(modelData, USER_EMAIL_FIELD, ""), fromBody<string>(modelData, USER_PASSWORD_FIELD, ""), ADMIN_USER, response);
-        }else {
+            response = await register(
+                fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
+                fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
+                ADMIN_USER,
+                response,
+            );
+        } else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
     }
-    response.end()
+    response.end();
 };
 
 const deleteUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     Logger.info(modelData);
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, DELETE)) {
-        response = await deleteInputUser(fromBody<string>(modelData, USER_EMAIL_FIELD, ""), response);
+        response = await deleteInputUser(fromBody<string>(modelData, USER_EMAIL_FIELD, ''), response);
     }
     response.end();
 };
@@ -84,8 +115,8 @@ const deleteAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
         if (isAdmin(modelData)) {
-            response = await deleteInputUser(fromBody(modelData, USER_EMAIL_FIELD, ""), response);
-        }else {
+            response = await deleteInputUser(fromBody(modelData, USER_EMAIL_FIELD, ''), response);
+        } else {
             response.status(HttpStatus.UNAUTHORIZED);
         }
     }
@@ -96,23 +127,25 @@ const checkToken = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
         if (modelData && checkAction(USER_ACTION_FIELD, modelData, AUTHENTICATE)) {
-            const jwtToken: string = fromBody<string>(modelData, USER_JWT_TOKEN_FIELD, "");
+            const jwtToken: string = fromBody<string>(modelData, USER_JWT_TOKEN_FIELD, '');
             const verified = await verifyToken(jwtToken);
             if (verified) {
-                response.status(HttpStatus.ACCEPTED)
-                    .send({
-                        [USER_JWT_TOKEN_EXPIRATION_FIELD]: tokenExpiration(jwtToken).getTime()
-                    });
-            }else{
+                const tokenInfos = getInfosFromToken(jwtToken);
+                response.status(HttpStatus.ACCEPTED).send({
+                    [USER_JWT_TOKEN_EXPIRATION_FIELD]: tokenExpiration(jwtToken).getTime(),
+                    [USER_EMAIL_FIELD]: tokenInfos.email,
+                    [USER_ROLE_FIELD]: tokenInfos.role,
+                });
+            } else {
                 response.status(HttpStatus.UNAUTHORIZED);
             }
         }
-    }catch(error) {
+    } catch (error) {
         response.status(HttpStatus.BAD_REQUEST);
-        response.setHeader(ERROR_HEADER, "true");
-        response.send({ERROR_TAG: error});
+        response.setHeader(ERROR_HEADER, 'true');
+        response.send({ ERROR_TAG: error });
     }
     response.end();
 };
 
-export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, deleteAdmin, checkToken }
+export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, deleteAdmin, checkToken };
