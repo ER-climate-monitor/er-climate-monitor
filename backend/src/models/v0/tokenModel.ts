@@ -1,15 +1,15 @@
 interface ITokenValue {
     email: string,
     role: string,
-    expiration: Date
+    expiration: number
 }
 
 class TokenValue implements ITokenValue {
     email: string;
     role: string;
-    expiration: Date;
+    expiration: number;
 
-    constructor(email: string, role: string, expiration: Date) {
+    constructor(email: string, role: string, expiration: number) {
         this.email = email;
         this.role = role;
         this.expiration = expiration;
@@ -29,7 +29,7 @@ class TokenValue implements ITokenValue {
         return new TokenValue(
             data.email,
             data.role,
-            new Date(data.expiration) 
+            data.expiration
         );
     }
 }
