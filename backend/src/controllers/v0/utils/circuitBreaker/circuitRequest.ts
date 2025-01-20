@@ -19,24 +19,24 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
         this.httpClient = httpClient;
     }
 
-    async fireRequest(service: string, method: string, path: string, headers: any, body: any): Promise<X> {
-        return this.breaker.fire(service, method, path, headers, body) as X;
+    async fireRequest(service: string, method: string, path: string, headers: any, body: any, params: any = {}, queries: any = {}): Promise<X> {
+        return this.breaker.fire(service, method, path, headers, body, params, queries) as X;
     }
 
-    private async makeRequest(service: string, method: string, path: string, headers: any, body: any): Promise<X> {
+    private async makeRequest(service: string, method: string, path: string, headers: any, body: any, params: any = {}, queries: any = {}): Promise<X> {
         const endpoint = service + path;
         switch (method) {
             case GET: {
-                return this.httpClient.getRequest(endpoint, headers, body);
+                return this.httpClient.getRequest(endpoint, headers, body, params, queries);
             }
             case POST: {
-                return this.httpClient.postRequest(endpoint, headers, body);
+                return this.httpClient.postRequest(endpoint, headers, body, params, queries);
             }
             case PUT: {
-                return this.httpClient.putRequest(endpoint, headers, body);
+                return this.httpClient.putRequest(endpoint, headers, body, params, queries);
             }
             case DELETE: {
-                return this.httpClient.deleteRequest(endpoint, headers, body);
+                return this.httpClient.deleteRequest(endpoint, headers, body, params, queries);
             }
             default: {
                 throw new Error('Http method not supported: ' + method);
