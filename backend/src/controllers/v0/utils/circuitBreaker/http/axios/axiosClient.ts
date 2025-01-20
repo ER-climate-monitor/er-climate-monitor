@@ -8,20 +8,20 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
 class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     constructor() {}
 
-    public httpGet(endpoint: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
-        return axios.get(endpoint, { headers: headers, data: body });
+    public httpGet(endpoint: string, headers: any, data: any): Promise<AxiosResponse<any, any>> {
+        return axios.get(endpoint, {data});
     }
 
     public httpPost(endpoint: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
-        return axios.post(endpoint, body, { headers: headers });
+        return axios.post(endpoint, body, headers);
     }
 
     public httpPut(endpoint: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
-        return axios.put(endpoint, body, { headers: headers });
+        return axios.put(endpoint, body, headers);
     }
 
-    public httpDelete(endpoint: string, headers: any, body: any): Promise<AxiosResponse<any, any>> {
-        throw axios.delete(endpoint, { headers: headers, data: body });
+    public httpDelete(endpoint: string, headers: {[key: string]: string}, data: {[key: string]: string | {}}): Promise<AxiosResponse<any, any>> {
+        return axios.delete(endpoint, {data});
     }
 }
 
