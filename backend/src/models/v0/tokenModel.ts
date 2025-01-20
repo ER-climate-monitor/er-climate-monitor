@@ -23,6 +23,15 @@ class TokenValue implements ITokenValue {
         }
         return JSON.stringify(body);
     }
+
+    static fromJson(jsonString: string): TokenValue {
+        const data = JSON.parse(jsonString);
+        return new TokenValue(
+            data.email,
+            data.role,
+            new Date(data.expiration) 
+        );
+    }
 }
 
 export { TokenValue }
