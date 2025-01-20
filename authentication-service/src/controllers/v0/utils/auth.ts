@@ -7,7 +7,7 @@ import { USER_EMAIL_FIELD, USER_JWT_TOKEN_EXPIRATION_FIELD, USER_JWT_TOKEN_FIELD
 import { checkEmail, checkUser, createUser, deleteOneUser} from "./userUtils";
 import { Token } from "../../../models/v0/tokenModel";
 
-async function login(email: string, password: string, response :Response): Promise<Response> {
+async function login(email: string, password: string, role: string, response :Response): Promise<Response> {
     try{
         if (checkEmail(email)) {
             const userExist = await checkUser(email);
@@ -16,7 +16,7 @@ async function login(email: string, password: string, response :Response): Promi
                 if (user) {
                     const samePsw = await bcrypt.compare(password, user.password);
                     if (samePsw) {
-                        const jwtToken: Token = await createToken(email);
+                        const jwtToken: Token = await createToken(email, role);
                         response.status(HttpStatus.OK)
                             .send({
                                 [USER_EMAIL_FIELD]: email,
@@ -53,7 +53,7 @@ async function register(email: string, password: string, role: string, response:
             const userExist = await checkUser(email);
             if (!userExist) {
                 const user = await createUser(email, password, role);
-                const jwtToken: Token = await createToken(email);
+                const jwtToken: Token = await createToken(email, role);
                 response.status(HttpStatus.CREATED)
                     .send({
                         [USER_EMAIL_FIELD]: email,
