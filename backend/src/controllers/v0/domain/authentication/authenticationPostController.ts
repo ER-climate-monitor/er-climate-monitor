@@ -9,20 +9,24 @@ import {
     LOGIN_ACTION,
     REGISTER_ACTION,
     USER_ACTION_BODY,
+    USER_EMAIL_BODY,
     USER_JWT_TOKEN_BODY,
     USER_JWT_TOKEN_EXPIRATION_BODY,
+    USER_ROLE_BODY,
 } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 import Logger from 'js-logger';
 import { authenticationService } from './authenticationConfig';
+import { TokenValue } from '../../../../models/v0/tokenModel';
 
 Logger.useDefaults();
 
 async function saveToken(response: AxiosResponse) {
+    const tokenValue = new TokenValue(response.data[USER_EMAIL_BODY], response.data[USER_ROLE_BODY], response.data[USER_JWT_TOKEN_EXPIRATION_BODY])
     authenticationRedisClient.setToken(
         String(response.data[USER_JWT_TOKEN_BODY]),
-        String(response.data[USER_JWT_TOKEN_EXPIRATION_BODY]),
+        tokenValue
     );
-}
+} 
 
 function isExpired(expiration: number, response: Response) {
     const now = new Date().getTime();
