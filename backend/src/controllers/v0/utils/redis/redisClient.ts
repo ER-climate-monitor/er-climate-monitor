@@ -22,6 +22,7 @@ class AuthenticationClient implements IAuthenticationClient {
 
     public async setToken(token: string, tokenValue: TokenValue): Promise<void> {
         if (this.checkInput(token) && this.checkTokenValue(tokenValue)) {
+            console.log(tokenValue.toJson());
             this.authenticationRedisClient.set(token, tokenValue.toJson());
         }
     }
@@ -39,7 +40,7 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return false;
         }
-        return new Date().getTime() < result.expiration.getTime();
+        return new Date().getTime() < result.expiration;
     }
 
     public async isAdmin(token: string) {
@@ -51,7 +52,7 @@ class AuthenticationClient implements IAuthenticationClient {
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
-        return this.checkInput(tokenValue.email) && this.checkInput(tokenValue.expiration.getTime().toString()) && this.checkInput(tokenValue.role);
+        return this.checkInput(tokenValue.email) && this.checkInput(tokenValue.expiration.toString()) && this.checkInput(tokenValue.role);
     }
 
     private checkInput(input: string): boolean {
