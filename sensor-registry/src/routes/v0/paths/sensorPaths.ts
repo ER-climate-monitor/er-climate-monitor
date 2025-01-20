@@ -10,6 +10,7 @@ const SHUT_OFF_PATH = '/shutoff';
 const SHUT_OFF_ROUTE = BASE_SENSOR_PATH_V0 + SHUT_OFF_PATH;
 
 const QUERIES_PATH = '/queries';
+const TYPE_PATH = '/type';
 
 export {
     BASE_SENSOR_PATH_V0,
@@ -20,4 +21,5 @@ export {
     ALL_ROUTE,
     SHUT_OFF_ROUTE,
     QUERIES_PATH,
+    TYPE_PATH,
 };

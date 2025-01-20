@@ -11,8 +11,15 @@ import {
     API_KEY_FIELD,
     SENSOR_NAME,
     SENSOR_QUERIES,
+    SENSOR_TYPE,
 } from '../../../model/v0/headers/sensorHeaders';
-import { ALL_ROUTE, BASE_SENSOR_PATH_V0, QUERIES_PATH, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
+import {
+    ALL_ROUTE,
+    BASE_SENSOR_PATH_V0,
+    QUERIES_PATH,
+    REGISTER_ROUTE,
+    TYPE_PATH,
+} from '../../../routes/v0/paths/sensorPaths';
 import { beforeEach, it, describe } from 'mocha';
 
 dotenv.config();
@@ -27,12 +34,14 @@ const MAX_PORT = 65_535;
 const sensorIp = '0.0.0.0';
 const sensorPort = 1926;
 const sensorName = 'napoli-sensor';
+const sensorType = 'rain';
 const sensorQueries = ['25%-threshold', '50%-threshold', '75%-threshold', '100%-threshold'];
 
 const sensorInformation = {
     [SENSOR_IP_FIELD]: sensorIp,
     [SENSOR_PORT_FIELD]: sensorPort,
     [SENSOR_NAME]: sensorName,
+    [SENSOR_TYPE]: sensorType,
     [SENSOR_QUERIES]: sensorQueries,
     [API_KEY_FIELD]: SECRET_API_KEY,
 };
@@ -128,7 +137,7 @@ describe('Registering a new Sensor using IPv4', () => {
         }
     });
 
-    it('It should be possibile to retrieve all queries by sensor name for an existing sensor.', async () => {
+    it('Should be possibile to retrieve all queries by sensor name for an existing sensor.', async () => {
         await request(app).post(REGISTER_SENSOR_PATH).send(sensorInformation).expect(HttpStatus.CREATED);
         await request(app)
             .get(BASE_SENSOR_PATH_V0 + QUERIES_PATH + `?${SENSOR_NAME}=${sensorName}`)
@@ -139,6 +148,29 @@ describe('Registering a new Sensor using IPv4', () => {
                 const queries: string[] = res.body;
                 if (!(queries.length === sensorQueries.length)) {
                     fail(`Expected exactly ${sensorQueries.length} queries but got: ${queries.length}`);
+                }
+            });
+    });
+
+    it('Getting an existing sensor from its type', async () => {
+        await request(app).post(REGISTER_SENSOR_PATH).send(sensorInformation).expect(HttpStatus.CREATED);
+        await request(app)
+            .get(BASE_SENSOR_PATH_V0 + TYPE_PATH + `?${SENSOR_TYPE}=${sensorType}`)
+            .expect(HttpStatus.OK)
+            .expect((res) => {
+                const sensors: ISensor[] = res.body;
+                if (sensors.length !== 1) {
+                    fail(`Expected to receive exactly one sensor, got instead ${sensors.length} sensors!`);
+                }
+                const sensor = sensors[0];
+                if (
+                    !(sensor.ip === sensorInformation[SENSOR_IP_FIELD]) ||
+                    !(sensor.port === sensorInformation[SENSOR_PORT_FIELD]) ||
+                    !(sensor.name === sensorInformation[SENSOR_NAME]) ||
+                    !(sensor.type === sensorInformation[SENSOR_TYPE]) ||
+                    !(sensor.queries.length === sensorInformation[SENSOR_QUERIES].length)
+                ) {
+                    fail();
                 }
             });
     });

@@ -1,13 +1,21 @@
 import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 import { isIpValid } from './utils/ipUtils';
-import { deleteSensor, exists, findAllSensors, getSensorFromName, saveSensor } from './utils/sensorUtils';
+import {
+    deleteSensor,
+    exists,
+    findAllSensors,
+    getSensorFromName,
+    getSensorOfType,
+    saveSensor,
+} from './utils/sensorUtils';
 import {
     API_KEY_FIELD,
     SENSOR_IP_FIELD,
     SENSOR_NAME,
     SENSOR_PORT_FIELD,
     SENSOR_QUERIES,
+    SENSOR_TYPE,
 } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody } from './utils/requestUtils';
@@ -34,11 +42,12 @@ const registerSensor = async (request: Request, response: Response) => {
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
             const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
             const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
+            const type = fromBody(modelData, SENSOR_TYPE, 'unkown');
             const queries = fromBody(modelData, SENSOR_QUERIES, []);
             if (port >= 0 && port <= MAX_PORT && ip != '' && isIpValid(ip)) {
                 if (!(await exists(ip, port))) {
                     Logger.info('The sensor does not exists, saving it');
-                    await saveSensor(ip, port, name, queries);
+                    await saveSensor(ip, port, name, type, queries);
                     response.status(HttpStatus.CREATED);
                 } else {
                     response.status(HttpStatus.CONFLICT);
@@ -91,25 +100,34 @@ const shutOff = async (request: Request, response: Response) => {
 };
 
 const allQueriesForSensor = async (request: Request, response: Response) => {
-    const sensorName = request.query[SENSOR_NAME];
-    if (!sensorName) {
-        response.status(HttpStatus.BAD_REQUEST).json({ error: "You must provide a 'sensorName' in the request body" });
-        return;
-    }
-
-    getSensorFromName(sensorName as string)
-        .then((res) => {
-            if (!res) {
-                response
-                    .status(HttpStatus.NOT_FOUND)
-                    .json({ error: `Sensor with name '${sensorName}' has not been found!` });
-            } else {
-                response.status(HttpStatus.OK).json(res.queries);
-            }
-        })
-        .catch((err: Error) =>
-            response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: `Something went wrong: ${err.message}` }),
-        );
+    serveSimpleGet(request, response, SENSOR_NAME, getSensorFromName, (s) => s?.queries);
 };
 
-export { registerSensor, allSensors, shutOff, allQueriesForSensor };
+const allSensorsOfType = async (request: Request, response: Response) => {
+    serveSimpleGet(request, response, SENSOR_TYPE, getSensorOfType, (s) => s);
+};
+
+async function serveSimpleGet<T, K>(
+    request: Request,
+    response: Response,
+    paramKey: string,
+    func: (_: string) => Promise<T>,
+    transFunc: (_: T) => K,
+) {
+    const keyVal = request.query[paramKey];
+    if (!paramKey) {
+        response
+            .status(HttpStatus.BAD_REQUEST)
+            .json({ error: `You must provide a '${paramKey}' in request parameters` });
+    }
+
+    func(keyVal as string).then((res) => {
+        if (!res) {
+            response.status(HttpStatus.NOT_FOUND).json({ error: `Cannot find an object with: ${paramKey}: ${keyVal}` });
+        } else {
+            response.status(HttpStatus.OK).json(transFunc(res));
+        }
+    });
+}
+
+export { registerSensor, allSensors, shutOff, allQueriesForSensor, allSensorsOfType };

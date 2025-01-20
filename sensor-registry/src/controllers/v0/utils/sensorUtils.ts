@@ -4,8 +4,8 @@ async function exists(ip: string, port: number): Promise<boolean> {
     return (await sensorModel.exists({ ip: ip, port: port })) !== null;
 }
 
-async function saveSensor(ip: string, port: number, name: string, queries: string[]) {
-    const newSensor = new sensorModel({ ip, port, name, queries });
+async function saveSensor(ip: string, port: number, name: string, type: string, queries: string[]) {
+    const newSensor = new sensorModel({ ip, port, name, type, queries });
     newSensor.save();
     return newSensor;
 }
@@ -16,6 +16,7 @@ async function findAllSensors(): Promise<Iterable<ISensor>> {
             ip: result.ip,
             port: result.port,
             name: result.name,
+            type: result.type,
             queries: result.queries,
         };
         return sensor;
@@ -31,4 +32,8 @@ async function getSensorFromName(name: string): Promise<ISensor | null> {
     return sensorModel.findOne({ name });
 }
 
-export { saveSensor, exists, findAllSensors, deleteSensor, getSensorFromName };
+async function getSensorOfType(type: string): Promise<ISensor[]> {
+    return sensorModel.find({ type });
+}
+
+export { saveSensor, exists, findAllSensors, deleteSensor, getSensorFromName, getSensorOfType };
