@@ -2,10 +2,11 @@ import { GET, POST } from '../../../controllers/v0/utils/api/httpMethods';
 import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
 import { AbstractService } from '../abstractService';
+import { IAuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
 
 export class NotificationService<T extends HttpClient<X>, X> extends AbstractService<T, X> {
-    constructor(cb: CircuitBreakerClient<T, X>, endpoint: string) {
-        super(cb, endpoint);
+    constructor(cb: CircuitBreakerClient<T, X>, endpoint: string, authenticationClient: IAuthenticationClient) {
+        super(cb, endpoint, authenticationClient);
     }
 
     async getTopics(endpointPath: string): Promise<X> {
