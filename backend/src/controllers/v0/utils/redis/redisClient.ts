@@ -21,6 +21,15 @@ class AuthenticationClient {
         return this.authenticationRedisClient.get(token);
     }
 
+    public async isExpired(token: string): Promise<boolean> {
+        const result = await this.searchToken(token);
+        if (result === null) {
+            return false;
+        }
+        const expiration = TokenValue.fromJson(result).expiration;
+        return new Date().getTime() < expiration.getTime();
+    }
+
     private checkTokenValue(tokenValue: TokenValue) {
         return this.checkInput(tokenValue.email) && this.checkInput(tokenValue.expiration.getTime().toString()) && this.checkInput(tokenValue.role);
     }
