@@ -27,4 +27,8 @@ async function deleteSensor(ip: string, port: number): Promise<boolean> {
     return result.deletedCount === 1;
 }
 
-export { saveSensor, exists, findAllSensors, deleteSensor };
+async function getSensorFromName(name: string): Promise<ISensor | null> {
+    return sensorModel.findOne({ name });
+}
+
+export { saveSensor, exists, findAllSensors, deleteSensor, getSensorFromName };

@@ -12,7 +12,7 @@ import {
     SENSOR_NAME,
     SENSOR_QUERIES,
 } from '../../../model/v0/headers/sensorHeaders';
-import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
+import { ALL_ROUTE, BASE_SENSOR_PATH_V0, QUERIES_PATH, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
 import { beforeEach, it, describe } from 'mocha';
 
 dotenv.config();
@@ -126,5 +126,20 @@ describe('Registering a new Sensor using IPv4', () => {
         for (const sensor of wrongSensors) {
             await request(app).post(REGISTER_SENSOR_PATH).send(sensor).expect(HttpStatus.NOT_ACCEPTABLE);
         }
+    });
+
+    it('It should be possibile to retrieve all queries by sensor name for an existing sensor.', async () => {
+        await request(app).post(REGISTER_SENSOR_PATH).send(sensorInformation).expect(HttpStatus.CREATED);
+        await request(app)
+            .get(BASE_SENSOR_PATH_V0 + QUERIES_PATH + `?${SENSOR_NAME}=${sensorName}`)
+            .expect((res) => {
+                if (res.status !== HttpStatus.OK) {
+                    fail(`Something went wrong (HTTP 1.1: ${res.status}): ${JSON.stringify(res)}`);
+                }
+                const queries: string[] = res.body;
+                if (!(queries.length === sensorQueries.length)) {
+                    fail(`Expected exactly ${sensorQueries.length} queries but got: ${queries.length}`);
+                }
+            });
     });
 });
