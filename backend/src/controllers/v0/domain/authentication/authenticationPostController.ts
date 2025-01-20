@@ -21,7 +21,6 @@ Logger.useDefaults();
 
 async function saveToken(response: AxiosResponse) {
     const tokenValue = new TokenValue(response.data[USER_EMAIL_BODY], response.data[USER_ROLE_BODY], response.data[USER_JWT_TOKEN_EXPIRATION_BODY]);
-    console.log(tokenValue);
     authenticationService.authenticationClient.setToken(
         String(response.data[USER_JWT_TOKEN_BODY]),
         tokenValue
@@ -30,7 +29,7 @@ async function saveToken(response: AxiosResponse) {
 
 function isExpired(expiration: number, response: Response) {
     const now = new Date().getTime();
-    if (now >= Number(expiration)) {
+    if (now >= expiration) {
         response.status(HttpStatusCode.Unauthorized);
     } else {
         response.status(HttpStatusCode.Accepted);
@@ -91,10 +90,10 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         case AUTHENTICATE_ACTION: {
             try {
                 Logger.info('Checking the validation of the input token');
-                const expiration = await authenticationService.authenticationClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
-                if (expiration !== null) {
+                const token = await authenticationService.authenticationClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
+                if (token !== null) {
                     Logger.info('Token found, checking for the expiration');
-                    response = isExpired(Number(expiration), response);
+                    response = isExpired(token.expiration, response);
                 } else {
                     Logger.info('Token not found, checking using the authentication service.');
                     const axiosResponse = await authenticationService.authenticateTokenOperation(
