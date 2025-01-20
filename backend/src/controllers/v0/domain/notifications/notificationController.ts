@@ -1,17 +1,18 @@
 import { Request, Response } from 'express';
 import axios, { HttpStatusCode } from 'axios';
-import {
-    NOTIFICATION_SUBSCRIPTION_PATH,
-    NOTIFICATION_TOPIC_QUERIES_PATH,
-    NOTIFICATION_TOPICS_PATH,
-    NOTIFICATION_SERVICE_ENDPOINT,
-} from '../../routes/v0/paths/gatewayPaths';
-import { Topic, TopicQuery } from '../../models/v0/notificationModels';
+import { Topic, TopicQuery } from '../../../../models/v0/notificationModels';
 import Logger from 'js-logger';
+import {
+    NOTIFICATION_SERVICE_ENDPOINT,
+    NOTIFICATION_TOPICS_PATH,
+    NOTIFICATION_TOPIC_QUERIES_PATH,
+    NOTIFICATION_SUBSCRIPTION_PATH,
+} from '../../../../routes/v0/paths/gatewayPaths';
+import { notificationService } from './notificationConfig';
 
 const getTopics = async (_: Request, res: Response) => {
-    axios
-        .get(NOTIFICATION_SERVICE_ENDPOINT + NOTIFICATION_TOPICS_PATH)
+    notificationService
+        .getTopics(NOTIFICATION_TOPICS_PATH)
         .then((response) => response.data)
         .then((topics: Topic[]) => res.status(HttpStatusCode.Ok).json(topics))
         .catch((err: Error) => {
@@ -20,14 +21,16 @@ const getTopics = async (_: Request, res: Response) => {
         });
 };
 
+// TODO: see if it's better to make implement this function to the specific service itself.
 const getTopicQueries = async (req: Request, res: Response) => {
     const topicId = req.params['topic'];
     if (!topicId) {
         res.status(HttpStatusCode.BadRequest).json({ error: 'You must include in your request a topic id!' });
         return;
     }
-    axios
-        .get(NOTIFICATION_SERVICE_ENDPOINT + NOTIFICATION_TOPIC_QUERIES_PATH, { params: { topic: topicId } })
+
+    notificationService
+        .getTopicQueries(NOTIFICATION_TOPIC_QUERIES_PATH, topicId)
         .then((r) => r.data)
         .then((data: TopicQuery[]) => res.status(HttpStatusCode.Ok).json(data))
         .catch((err: Error) => {
@@ -50,8 +53,8 @@ const subcribeUser = async (req: Request, res: Response) => {
         });
     }
 
-    axios
-        .post(NOTIFICATION_SERVICE_ENDPOINT + NOTIFICATION_SUBSCRIPTION_PATH, {
+    notificationService
+        .suscribeUser(NOTIFICATION_SUBSCRIPTION_PATH, {
             userId: userId,
             topic: topicId,
             query: queryId,
@@ -70,4 +73,4 @@ const subcribeUser = async (req: Request, res: Response) => {
         });
 };
 
-export { getTopics, getTopicQueries };
+export { getTopics, getTopicQueries, subcribeUser };
