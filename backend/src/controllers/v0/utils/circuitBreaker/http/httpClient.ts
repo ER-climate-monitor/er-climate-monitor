@@ -1,8 +1,8 @@
 interface HttpClient<X> {
-    httpGet(_endpoint: string, _headers: Record<string, string>, _data: any, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
-    httpPost(_endpoint: string, _headers: Record<string, string>, _data: any, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
-    httpPut(_endpoint: string, _headers: Record<string, string>, _data: any, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
-    httpDelete(_endpoint: string, _headers: Record<string, string>, _data: any, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
+    httpGet(_endpoint: string, _headers: Record<string, string>, _data: object, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
+    httpPost(_endpoint: string, _headers: Record<string, string>, _data: object, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
+    httpPut(_endpoint: string, _headers: Record<string, string>, _data: object, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
+    httpDelete(_endpoint: string, _headers: Record<string, string>, _data: object, _params: Record<string, string>, _queries: Record<string, string>): Promise<X>;
 }
 
 abstract class AbstractHttpClient<T extends HttpClient<X>, X> {

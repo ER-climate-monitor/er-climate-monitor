@@ -7,18 +7,18 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
 
 class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     constructor() {}
-    httpGet(endpoint: string, headers: Record<string, string>, data: any, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+    httpGet(endpoint: string, headers: Record<string, string>, data: object, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
         return axios.get(endpoint, {data});
     }
-    httpPost(endpoint: string, headers: Record<string, string>, data: any, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+    httpPost(endpoint: string, headers: Record<string, string>, data: object, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
         return axios.post(endpoint, data, headers);
     }
 
-    httpPut(endpoint: string, headers: Record<string, string>, data: any, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+    httpPut(endpoint: string, headers: Record<string, string>, data: object, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
         return axios.put(endpoint, data, headers);
     }
 
-    httpDelete(endpoint: string, headers: Record<string, string>, data: any, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+    httpDelete(endpoint: string, headers: Record<string, string>, data: object, _params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
         return axios.delete(endpoint, {data});
     }
 }
