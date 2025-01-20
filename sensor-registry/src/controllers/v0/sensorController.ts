@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 import { isIpValid } from './utils/ipUtils';
 import { deleteSensor, exists, findAllSensors, saveSensor } from './utils/sensorUtils';
-import { API_KEY_FIELD, SENSOR_IP_FIELD, SENSOR_PORT_FIELD } from '../../model/v0/headers/sensorHeaders';
+import { API_KEY_FIELD, SENSOR_IP_FIELD, SENSOR_NAME, SENSOR_PORT_FIELD, SENSOR_QUERIES } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody } from './utils/requestUtils';
 import Logger from "js-logger";
@@ -26,10 +26,12 @@ const registerSensor = async (request: Request, response: Response) => {
         if (isAuthorized(apikey)) {
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
             const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
+            const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
+            const queries = fromBody(modelData, SENSOR_QUERIES, []);
             if (port >= 0 && port <= MAX_PORT && ip != '' && isIpValid(ip)) {
                 if (!(await exists(ip, port))) {
                     Logger.info('The sensor does not exists, saving it');
-                    await saveSensor(ip, port);
+                    await saveSensor(ip, port, name, queries);
                     response.status(HttpStatus.CREATED);
                 } else {
                     response.status(HttpStatus.CONFLICT);
