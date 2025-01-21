@@ -17,11 +17,15 @@ class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
         });
         return axiosHeaders
     }
-    httpGet(endpoint: string, headers: Record<string, string>, data: object, params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+
+    private setSecret(headers: Record<string, string>) { 
         const axiosHeaders = this.makeAxiosHeaders(headers);
         if (axiosHeaders.has(API_KEY_HEADER.toLowerCase())) {
             axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = axiosHeaders[API_KEY_HEADER.toLowerCase()]
         }
+    }
+    httpGet(endpoint: string, headers: Record<string, string>, data: object, params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+        this.setSecret(headers);
         return axios.get(endpoint)
     }
     httpPost(endpoint: string, headers: Record<string, string>, data: object, params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
@@ -33,6 +37,7 @@ class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
     }
 
     httpDelete(endpoint: string, headers: Record<string, string>, data: object, params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
+        this.setSecret(headers);
         return axios.delete(endpoint, {data});
     }
 }
