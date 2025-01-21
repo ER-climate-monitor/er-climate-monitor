@@ -20,12 +20,13 @@ import { TokenValue } from '../../../../models/v0/tokenModel';
 Logger.useDefaults();
 
 async function saveToken(response: AxiosResponse) {
-    const tokenValue = new TokenValue(response.data[USER_EMAIL_BODY], response.data[USER_ROLE_BODY], response.data[USER_JWT_TOKEN_EXPIRATION_BODY]);
-    authenticationService.authenticationClient.setToken(
-        String(response.data[USER_JWT_TOKEN_BODY]),
-        tokenValue
+    const tokenValue = new TokenValue(
+        response.data[USER_EMAIL_BODY],
+        response.data[USER_ROLE_BODY],
+        response.data[USER_JWT_TOKEN_EXPIRATION_BODY],
     );
-} 
+    authenticationService.authenticationClient.setToken(String(response.data[USER_JWT_TOKEN_BODY]), tokenValue);
+}
 
 function isExpired(expiration: number, response: Response) {
     const now = new Date().getTime();
@@ -90,7 +91,9 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         case AUTHENTICATE_ACTION: {
             try {
                 Logger.info('Checking the validation of the input token');
-                const token = await authenticationService.authenticationClient.searchToken(request.body[USER_JWT_TOKEN_BODY]);
+                const token = await authenticationService.authenticationClient.searchToken(
+                    request.body[USER_JWT_TOKEN_BODY],
+                );
                 if (token !== null) {
                     Logger.info('Token found, checking for the expiration');
                     response = isExpired(token.expiration, response);
@@ -110,7 +113,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 Logger.error('Error during Token validation');
                 if (error instanceof AxiosError) {
                     response = handleAxiosError(error, response);
-                }else if (error instanceof Error) { 
+                } else if (error instanceof Error) {
                     response.status(HttpStatusCode.BadRequest).send(error.message);
                 }
             } finally {
