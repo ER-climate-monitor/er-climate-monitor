@@ -4,7 +4,7 @@ import cors from 'cors';
 import { router, setMessageBroker, setSocketManger } from './routes/notificationRoutes';
 import Logger from 'js-logger';
 import path from 'path';
-import { MessageBroker } from './messageBroker';
+import { DetectionBroker, DetectionEvent } from './DetectionBroker';
 import { SocketManager, createSocketNotificationCallback } from './socketManager';
 
 Logger.useDefaults();
@@ -13,11 +13,11 @@ const app = express();
 const server = createServer(app);
 const port = 4444;
 
-const messageBroker = new MessageBroker<string>();
+const messageBroker = new DetectionBroker<DetectionEvent>();
 const socketManager = new SocketManager(server);
 messageBroker.connect();
 
-messageBroker.setNotificationCallback(createSocketNotificationCallback(socketManager));
+messageBroker.notificationCallback = createSocketNotificationCallback(socketManager);
 
 app.use(cors());
 app.use(express.json());

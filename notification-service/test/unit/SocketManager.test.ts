@@ -5,7 +5,7 @@ import { io as ClientIO } from 'socket.io-client';
 import { SocketManager } from '../../src/socketManager';
 import { AddressInfo } from 'net';
 import Logger from 'js-logger';
-import { SubscriptionTopic } from '../../src/messageBroker';
+import { SubscriptionTopic } from '../../src/DetectionBroker';
 
 Logger.useDefaults();
 
@@ -14,8 +14,15 @@ describe('SocketManager - Unit tests', () => {
     let socketManager: SocketManager;
     let clientSocket: any;
     let port: number;
+
     const testTopic = 'test-topic';
     const testQuery = 'test-query';
+
+    const testSub: SubscriptionTopic = {
+        topic: testTopic,
+        query: testQuery,
+    };
+
     const notificationPrefix = 'notification';
 
     beforeEach((done) => {
@@ -51,8 +58,8 @@ describe('SocketManager - Unit tests', () => {
         });
 
         test('should successfully let a user to be registered', (done) => {
-            const userId = 1;
-            const subInfo = socketManager.registerUser(userId, testTopic, testQuery);
+            const userId = 'user-123';
+            const subInfo = socketManager.registerUser(userId, testSub);
             clientSocket.connect();
 
             clientSocket.on('connect', () => {
@@ -68,8 +75,8 @@ describe('SocketManager - Unit tests', () => {
 
     describe('topic subscription messages', () => {
         test('should send messages to user subscribed to topic', (done) => {
-            const userId = 1;
-            const subInfo = socketManager.registerUser(userId, testTopic, testQuery);
+            const userId = 'user-123';
+            const subInfo = socketManager.registerUser(userId, testSub);
             clientSocket.connect();
 
             clientSocket.on('connect', () => {
@@ -83,8 +90,8 @@ describe('SocketManager - Unit tests', () => {
                     done();
                 });
                 const sub: SubscriptionTopic = {
-                    topicName: testTopic,
-                    queryName: testQuery,
+                    topic: testTopic,
+                    query: testQuery,
                 };
                 socketManager.sendToTopicSubscribers(sub, msg, notificationPrefix);
             });

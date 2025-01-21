@@ -1,7 +1,7 @@
 import Logger from 'js-logger';
 import { Socket, Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import { NotificationCallback, SubscriptionTopic } from './messageBroker';
+import { NotificationCallback, SubscriptionTopic, parseSubscription, stringifySubscription } from './DetectionBroker';
 
 Logger.useDefaults();
 
@@ -16,7 +16,7 @@ interface NotificationConnection {
 
 class SocketManager {
     private io: Server;
-    usersUIDs: Map<number, string>;
+    usersUIDs: Map<string, string>;
     subscriptionsToUID: Map<string, Set<string>>;
     usersConnections: Map<string, NotificationConnection>;
 
@@ -38,15 +38,7 @@ class SocketManager {
             Logger.info(`New client connection ${socket.id}`);
             socket.on('register', async (uid: string, topicAddr: string) => {
                 try {
-                    const topicRegex = /^notification\.([A-Za-z0-9-]+)\.([A-Za-z0-9-]+)$/;
-                    const match = topicAddr.match(topicRegex);
-                    if (!match) {
-                        throw new Error(`Unrecognized topic name: ${topicAddr}`);
-                    }
-                    const sub: SubscriptionTopic = {
-                        topicName: match[1],
-                        queryName: match[2],
-                    };
+                    const sub = parseSubscription(topicAddr, 'notification');
                     if (!this.subscriptionsToUID.get(JSON.stringify(sub))?.has(uid)) {
                         throw new Error(`User ${uid} is not subscribed for topic: ${JSON.stringify(sub)}`);
                     }
@@ -103,12 +95,12 @@ class SocketManager {
         try {
             if (prefix) prefix = prefix + '.';
             else prefix = '';
-
-            this.io.emit(`${prefix}${topic.topicName}.${topic.queryName}`, data);
-            Logger.info(`Sent ${JSON.stringify(data)} to subscribers of topic ${topic}`);
+            const sub = stringifySubscription(topic);
+            this.io.emit(`${prefix}${sub}`, data);
+            Logger.info(`Sent ${JSON.stringify(data)} to subscribers of topic ${sub}`);
             return true;
         } catch (error) {
-            Logger.error(`Failed to send message to topic ${topic} subscribers:  ${error}`);
+            Logger.error(`Failed to send message to topic ${stringifySubscription(topic)} subscribers:  ${error}`);
             return false;
         }
     }
@@ -119,16 +111,15 @@ class SocketManager {
      * of topic names is always the MessageBroker, and thus the only source
      * of truth of topic names.
      */
-    registerUser(userId: number, topic: string, query: string) {
+    registerUser(userId: string, sub: SubscriptionTopic) {
         let uid = this.usersUIDs.get(userId);
-        if (uid) return { uid: uid, topicAddr: `notification.${topic}.${query}` };
+        if (uid) return { uid: uid, topicAddr: `notification.${stringifySubscription(sub)}` };
         uid = generateUID();
         this.usersUIDs.set(userId, uid);
-        const sub: SubscriptionTopic = { topicName: topic, queryName: query };
         const topicSubs = this.subscriptionsToUID.get(JSON.stringify(sub)) ?? new Set();
         topicSubs.add(uid);
         this.subscriptionsToUID.set(JSON.stringify(sub), topicSubs);
-        return { uid: uid, topicAddr: `notification.${topic}.${query}` };
+        return { uid: uid, topicAddr: `notification.${stringifySubscription(sub)}` };
     }
 
     close() {
