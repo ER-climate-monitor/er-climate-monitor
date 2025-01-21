@@ -41,12 +41,12 @@ const getTopicQueries = async (req: Request, res: Response) => {
 };
 
 const subcribeUser = async (req: Request, res: Response) => {
-    const jwtToken = req.headers[USER_JWT_TOKEN_BODY.toLowerCase()];
-    if (!jwtToken && jwtToken?.length != 1) {
+    const jwtToken = req.headers[USER_JWT_TOKEN_BODY.toLowerCase()] as string | undefined;
+    if (!jwtToken) {
         res.status(HttpStatusCode.Unauthorized);
         return;
     }
-    const userId = await notificationService.authenticationClient.searchToken(jwtToken[0]).then((res) => res?.email);
+    const userId = await notificationService.authenticationClient.searchToken(jwtToken).then((res) => res?.email);
     const topicId = req.params['topic'];
     const queryId = req.params['query'];
 
