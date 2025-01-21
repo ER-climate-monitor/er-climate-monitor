@@ -22,7 +22,6 @@ class AuthenticationClient implements IAuthenticationClient {
 
     public async setToken(token: string, tokenValue: TokenValue): Promise<void> {
         if (this.checkInput(token) && this.checkTokenValue(tokenValue)) {
-            console.log(tokenValue.toJson());
             this.authenticationRedisClient.set(token, tokenValue.toJson());
         }
     }
