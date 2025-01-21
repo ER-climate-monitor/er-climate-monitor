@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 import createServer from '../../../detection-service/src/server'
 import HttpStatus from 'http-status-codes';
 import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/globals';
-import { generateMultipleMockDetection, connectToDatabase, closeDatabaseConnection, generateMockDetection } from './utils/mockData';
-import { getModelForSensorType } from '../../src/models/v0/detectionModel';
+import { connectToDatabase, closeDatabaseConnection, generateMockDetection } from './utils/mockData';
 import http from 'http';
 
 
