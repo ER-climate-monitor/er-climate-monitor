@@ -16,11 +16,6 @@ logs/
 *.pid
 *.pid.lock
 
-# Environment variables
-.env
-.env.local
-.env.*.local
-
 # TypeScript
 *.tsbuildinfo
 
