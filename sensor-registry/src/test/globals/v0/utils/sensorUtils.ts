@@ -11,14 +11,13 @@ const DELETE_SENSOR_PATH = SHUT_OFF_ROUTE;
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 
 async function shutOffSensor(app: Application, data: any) {
-    await request(app).delete(DELETE_SENSOR_PATH).send(data);
+    await request(app).delete(DELETE_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(data);
 }
 
 function createSensor(ip: string, port: number) {
     return {
         [SENSOR_IP_FIELD]: ip,
         [SENSOR_PORT_FIELD]: port,
-        [API_KEY_FIELD]: SECRET_API_KEY,
     };
 }
 
