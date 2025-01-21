@@ -1,14 +1,28 @@
 import axios, { AxiosError, AxiosHeaders, AxiosResponse } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
+import { API_KEY_HEADER } from '../../../../../../models/v0/sensor/headers/sensorHeaders';
 
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
 }
 
 class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
-    constructor() {}
+    constructor() {
+        axios.defaults.headers.common[API_KEY_HEADER.toLowerCase()] = '';
+    }
+    private makeAxiosHeaders(headers: Record<string, string>): AxiosHeaders {
+        const axiosHeaders = new AxiosHeaders();
+        Object.keys(headers).forEach(key => {
+            axiosHeaders[String(key)] = headers[key];
+        });
+        return axiosHeaders
+    }
     httpGet(endpoint: string, headers: Record<string, string>, data: object, params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
-        return axios.get(endpoint, {params, data});
+        const axiosHeaders = this.makeAxiosHeaders(headers);
+        if (axiosHeaders.has(API_KEY_HEADER.toLowerCase())) {
+            axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = axiosHeaders[API_KEY_HEADER.toLowerCase()]
+        }
+        return axios.get(endpoint)
     }
     httpPost(endpoint: string, headers: Record<string, string>, data: object, params: Record<string, string>, queries: Record<string, string>): Promise<AxiosResponse<any, any>> {
         return axios.post(endpoint, data, headers);
