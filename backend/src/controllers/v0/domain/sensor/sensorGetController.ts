@@ -14,8 +14,10 @@ const sensorGetHandler = async (request: Request, response: Response) => {
     try {
         Logger.info('Requested to get all the sensors');
         const jwtToken = request.headers[USER_JWT_TOKEN_BODY.toLowerCase()];
-        // TODO: check if the user is admin
-        request.body[USER_JWT_TOKEN_BODY] = jwtToken;
+        if (jwtToken === null) {
+            response.send(HttpStatusCode.Unauthorized);
+            return;
+        }
         const axiosResponse = await sensorService.getAllSensorsOperation(endpointPath, request.headers, request.body);
         response = fromAxiosToResponse(axiosResponse, response);
         response.send(axiosResponse.data);
