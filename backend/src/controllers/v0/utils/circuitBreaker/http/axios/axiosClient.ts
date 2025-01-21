@@ -41,6 +41,7 @@ class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
         params: Record<string, string>,
         queries: Record<string, string>,
     ): Promise<AxiosResponse<any, any>> {
+        this.setSecret(headers);
         return axios.post(endpoint, data, headers);
     }
 
@@ -51,6 +52,7 @@ class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
         params: Record<string, string>,
         queries: Record<string, string>,
     ): Promise<AxiosResponse<any, any>> {
+        this.setSecret(headers);
         return axios.put(endpoint, data, headers);
     }
 
