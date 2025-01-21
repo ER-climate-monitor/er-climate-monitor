@@ -6,7 +6,16 @@ import {
     FROM_TIMESTAMP_QUERY_VALUE, 
     TO_TIMESTAMP_QUERY_VALUE 
 } from "../../../routes/v0/paths/detection.paths";
-import { query, Request } from "express";
+import {
+    SENSOR_ID_HEADER,
+    SENSOR_NAME_HEADER,
+    SENSOR_DETECTION_VALUE_HEADER,
+    SENSOR_DETECTION_LATITUDE_HEADER,
+    SENSOR_DETECTION_LONGITUDE_HEADER,
+    SENSOR_DETECTION_TIMESTAMP_HEADER,
+    SENSOR_DETECTION_UNIT_HEADER
+} from '../../../config/Costants'
+import { Request } from "express";
 
 function fromBody<X>(body: any, key: string, defaultValue: X) {
     return body && key in body ? body[key] : defaultValue;
@@ -14,13 +23,13 @@ function fromBody<X>(body: any, key: string, defaultValue: X) {
 
 async function handleSaveDetection(model: Model<DetectionDocument>, data: any) {
     const newDetection = await saveDetectionModel(model,
-        fromBody(data, String(process.env.SENSOR_ID_HEADER), ""),
-        fromBody(data, String(process.env.SENSOR_NAME_HEADER), ""),
-        fromBody(data, String(process.env.SENSOR_DETECTION_UNIT_HEADER), ""),
-        fromBody(data, String(process.env.SENSOR_DETECTION_TIMESTAMP_HEADER), 0),
-        fromBody(data, String(process.env.SENSOR_DETECTION_LONGITUDE_HEADER), 0),
-        fromBody(data, String(process.env.SENSOR_DETECTION_LATITUDE_HEADER), 0),
-        fromBody(data, String(process.env.SENSOR_DETECTION_VALUE_HEADER), 0));
+        fromBody(data, SENSOR_ID_HEADER, ""),
+        fromBody(data, SENSOR_NAME_HEADER, ""),
+        fromBody(data, SENSOR_DETECTION_UNIT_HEADER, ""),
+        fromBody(data, SENSOR_DETECTION_TIMESTAMP_HEADER, 0),
+        fromBody(data, SENSOR_DETECTION_LONGITUDE_HEADER, 0),
+        fromBody(data, SENSOR_DETECTION_LATITUDE_HEADER, 0),
+        fromBody(data, SENSOR_DETECTION_VALUE_HEADER, 0));
     return newDetection;
 }
 

@@ -5,6 +5,7 @@ import HttpStatus from 'http-status-codes';
 import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/globals';
 import { connectToDatabase, closeDatabaseConnection, generateMockDetection } from './utils/mockData';
 import http from 'http';
+import { ERROR_TAG, SUCCESS_TAG } from '../../src/config/Costants';
 
 
 describe('Save Detection Endpoint', () => {
@@ -39,7 +40,7 @@ describe('Save Detection Endpoint', () => {
             .send(); // no data in the request body
 
         expect(res.status).toBe(HttpStatus.BAD_REQUEST);
-        expect(res.body[process.env.ERROR_TAG || 'error']).toContain('Missing detection data in the request body');
+        expect(res.body[ERROR_TAG]).toContain('Missing detection data in the request body');
     });
 
     test('should return 201 if detection is successfully saved', async () => {
@@ -52,7 +53,7 @@ describe('Save Detection Endpoint', () => {
             .send(modelData);
 
             expect(res.status).toBe(HttpStatus.CREATED);
-            expect(res.body[process.env.SUCCESS_TAG || 'success']).toBe('Detection saved successfully.');
+            expect(res.body[SUCCESS_TAG]).toBe('Detection saved successfully.');
     });
 
     test('should return 400 if saving detection fails', async () => {
@@ -65,6 +66,6 @@ describe('Save Detection Endpoint', () => {
             .send(modelData);
 
         expect(res.status).toBe(HttpStatus.BAD_REQUEST);
-        expect(res.body[process.env.ERROR_TAG || 'error']).toBe('Missing required field: value');
+        expect(res.body[ERROR_TAG]).toBe('Missing required field: value');
     });
 });

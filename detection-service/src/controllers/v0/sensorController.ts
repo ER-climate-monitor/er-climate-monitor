@@ -5,6 +5,7 @@ import { handleGetDetectionsFromSensor, handleSaveDetection, handleGetSensorLoca
 import { sensorIdParameter } from '../../routes/v0/paths/detection.paths';
 import { checkSensorID } from './utils/detectionUtils';
 import validateDetectionData from './utils/validation';
+import { ERROR_TAG, SUCCESS_TAG, SENSOR_ID_HEADER } from '../../config/Costants';
 
 async function saveDetection(req: Request, res: Response) {
     const modelData = req.body;
@@ -12,27 +13,27 @@ async function saveDetection(req: Request, res: Response) {
     
     if (!Object.keys(modelData).length) {
         res.status(HttpStatus.BAD_REQUEST).send({
-            [String(process.env.ERROR_TAG)]: 'Missing detection data in the request body.',
+            [ERROR_TAG]: 'Missing detection data in the request body.',
         });
         return;
     }
 
-    modelData[String(process.env.SENSOR_ID_HEADER)] = sensorId;
+    modelData[SENSOR_ID_HEADER] = sensorId;
 
     const validationError = validateDetectionData(modelData);
     if (validationError) {
         res.status(HttpStatus.BAD_REQUEST).send({
-            [String(process.env.ERROR_TAG)]: validationError,
+            [ERROR_TAG]: validationError,
         });
         return;
     }
     
     handleSaveDetection(getModelForSensorType(sensorType), modelData)
         .then(() => res.status(HttpStatus.CREATED).send({
-            [String(process.env.SUCCESS_TAG)]: 'Detection saved successfully.',
+            [SUCCESS_TAG]: 'Detection saved successfully.',
         }))
         .catch((e) => res.status(HttpStatus.BAD_REQUEST).send({
-            [String(process.env.ERROR_TAG)]: e.message || 'Failed to save detection.',
+            [ERROR_TAG]: e.message || 'Failed to save detection.',
         }))
         .finally(() => res.end());
 }
@@ -42,14 +43,14 @@ async function getDetectionsFromSensor(req: Request, res: Response) {
 
     if (!sensorType) {
         res.status(HttpStatus.NOT_ACCEPTABLE).send({
-            [String(process.env.ERROR_TAG)]: `Missing "sensorType" parameter from the input request.`,
+            [ERROR_TAG]: `Missing "sensorType" parameter from the input request.`,
         });
         return;
     }
 
     if (!sensorId) {
         res.status(HttpStatus.NOT_ACCEPTABLE).send({
-            [String(process.env.ERROR_TAG)]: `Missing "sensorId" parameter from the input request.`,
+            [ERROR_TAG]: `Missing "sensorId" parameter from the input request.`,
         });
         return;
     }
@@ -57,18 +58,18 @@ async function getDetectionsFromSensor(req: Request, res: Response) {
     try {
         if (!(await checkSensorID(getModelForSensorType(sensorType), sensorId))) {
             res.status(HttpStatus.NOT_FOUND).send({
-                [String(process.env.ERROR_TAG)]: 'The input sensor ID does not exist.',
+                [ERROR_TAG]: 'The input sensor ID does not exist.',
             });
             return;
         }
 
         const result = await handleGetDetectionsFromSensor(sensorType, sensorId, req);
         res.status(HttpStatus.OK).send({
-            [String(process.env.SENSOR_DETECTIONS_HEADER)]: result,
+            [SENSOR_DETECTIONS_HEADER]: result,
         });
     } catch (error) {
         res.status(HttpStatus.BAD_REQUEST).send({
-            [String(process.env.ERROR_TAG)]: error instanceof Error ? error.message : 'An error occurred.',
+            [ERROR_TAG]: error instanceof Error ? error.message : 'An error occurred.',
         });
     } finally {
         res.end();
@@ -80,7 +81,7 @@ async function getSensorLocationsByType(req: Request, res: Response) {
 
     if (!sensorType) {
         res.status(HttpStatus.BAD_REQUEST).send({
-            [String(process.env.ERROR_TAG)]: 'Missing "sensorType" parameter from the input request.',
+            [ERROR_TAG]: 'Missing "sensorType" parameter from the input request.',
         });
         return;
     }
@@ -89,17 +90,17 @@ async function getSensorLocationsByType(req: Request, res: Response) {
         const result = await handleGetSensorLocationsByType(getModelForSensorType(sensorType));
         if (!result || result.length === 0) {
             res.status(HttpStatus.NOT_FOUND).send({
-                [String(process.env.ERROR_TAG)]: `No locations found for sensor type "${sensorType}".`,
+                [ERROR_TAG]: `No locations found for sensor type "${sensorType}".`,
             });
             return;
         }
 
         res.status(HttpStatus.OK).send({
-            [String(process.env.SENSOR_LOCATIONS_HEADER)]: result,
+            [SENSOR_LOCATIONS_HEADER]: result,
         });
     } catch (error) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-            [String(process.env.ERROR_TAG)]: error instanceof Error ? error.message : 'An error occurred.',
+            [ERROR_TAG]: error instanceof Error ? error.message : 'An error occurred.',
         });
     } finally {
         res.end();
