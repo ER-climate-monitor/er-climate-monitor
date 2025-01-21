@@ -11,13 +11,12 @@ import { API_KEY_HEADER } from '../../../../models/v0/sensor/headers/sensorHeade
 Logger.useDefaults();
 const SECRET = String(process.env.SECRET_API_KEY);
 
-
 const sensorGetHandler = async (request: Request, response: Response) => {
     const endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
     try {
         Logger.info('Requested to get all the sensors');
         const jwtToken = String(request.headers[USER_JWT_TOKEN_BODY.toLowerCase()]);
-        if (jwtToken === null || !await sensorService.authenticationClient.isAdmin(jwtToken)) {
+        if (jwtToken === null || !(await sensorService.authenticationClient.isAdmin(jwtToken))) {
             response.status(HttpStatusCode.Unauthorized);
             return;
         }

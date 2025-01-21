@@ -15,7 +15,11 @@ class AuthenticationService<T extends HttpClient<X>, X>
     extends AbstractService<T, X>
     implements AuthenticationOperations<X>
 {
-    constructor(circuitBreaker: CircuitBreakerClient<T, X>, endpoint: string, authenticationClient: IAuthenticationClient) {
+    constructor(
+        circuitBreaker: CircuitBreakerClient<T, X>,
+        endpoint: string,
+        authenticationClient: IAuthenticationClient,
+    ) {
         super(circuitBreaker, endpoint, authenticationClient);
     }
 

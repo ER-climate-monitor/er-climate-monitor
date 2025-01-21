@@ -8,8 +8,8 @@ const USER_ACTION_BODY = 'action';
 const REGISTER_ACTION = 'register';
 const LOGIN_ACTION = 'login';
 const AUTHENTICATE_ACTION = 'authenticate';
-const USER_ADMIN = "admin";
-const USER_NORMA = "normal";
+const USER_ADMIN = 'admin';
+const USER_NORMA = 'normal';
 
 export {
     USER_EMAIL_BODY,

@@ -19,11 +19,27 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
         this.httpClient = httpClient;
     }
 
-    async fireRequest(service: string, method: string, path: string, headers: any, body: any, params: any = {}, queries: any = {}): Promise<X> {
+    async fireRequest(
+        service: string,
+        method: string,
+        path: string,
+        headers: any,
+        body: any,
+        params: any = {},
+        queries: any = {},
+    ): Promise<X> {
         return this.breaker.fire(service, method, path, headers, body, params, queries) as X;
     }
 
-    private async makeRequest(service: string, method: string, path: string, headers: any, body: any, params: any = {}, queries: any = {}): Promise<X> {
+    private async makeRequest(
+        service: string,
+        method: string,
+        path: string,
+        headers: any,
+        body: any,
+        params: any = {},
+        queries: any = {},
+    ): Promise<X> {
         const endpoint = service + path;
         switch (method) {
             case GET: {

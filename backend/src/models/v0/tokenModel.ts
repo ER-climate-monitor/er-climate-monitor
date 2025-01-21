@@ -1,7 +1,7 @@
 interface ITokenValue {
-    email: string,
-    role: string,
-    expiration: number
+    email: string;
+    role: string;
+    expiration: number;
 }
 
 class TokenValue implements ITokenValue {
@@ -15,23 +15,19 @@ class TokenValue implements ITokenValue {
         this.expiration = expiration;
     }
 
-    toJson(): string { 
+    toJson(): string {
         const body = {
             email: this.email,
             role: this.role,
-            expiration: this.expiration
-        }
+            expiration: this.expiration,
+        };
         return JSON.stringify(body);
     }
 
     static fromJson(jsonString: string): TokenValue {
         const data = JSON.parse(jsonString);
-        return new TokenValue(
-            data.email,
-            data.role,
-            data.expiration
-        );
+        return new TokenValue(data.email, data.role, data.expiration);
     }
 }
 
-export { TokenValue }
+export { TokenValue };

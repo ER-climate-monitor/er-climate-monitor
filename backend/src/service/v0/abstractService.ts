@@ -7,7 +7,11 @@ abstract class AbstractService<T extends HttpClient<X>, X> {
     protected circuitBreaker: CircuitBreakerClient<T, X>;
     authenticationClient: IAuthenticationClient;
 
-    constructor(circuitBreaker: CircuitBreakerClient<T, X>, endpoint: string, authenticationClient: IAuthenticationClient) {
+    constructor(
+        circuitBreaker: CircuitBreakerClient<T, X>,
+        endpoint: string,
+        authenticationClient: IAuthenticationClient,
+    ) {
         this.endpoint = endpoint;
         this.circuitBreaker = circuitBreaker;
         this.authenticationClient = authenticationClient;

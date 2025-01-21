@@ -13,7 +13,6 @@ interface IAuthenticationClient {
     isAdmin(token: string): Promise<boolean>;
 }
 
-
 class AuthenticationClient implements IAuthenticationClient {
     private authenticationRedisClient: Redis;
     constructor() {
@@ -29,7 +28,7 @@ class AuthenticationClient implements IAuthenticationClient {
     public async searchToken(token: string): Promise<TokenValue | null> {
         const result = await this.authenticationRedisClient.get(token);
         if (result === null) {
-            return null
+            return null;
         }
         return TokenValue.fromJson(result);
     }
@@ -51,7 +50,11 @@ class AuthenticationClient implements IAuthenticationClient {
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
-        return this.checkInput(tokenValue.email) && this.checkInput(tokenValue.expiration.toString()) && this.checkInput(tokenValue.role);
+        return (
+            this.checkInput(tokenValue.email) &&
+            this.checkInput(tokenValue.expiration.toString()) &&
+            this.checkInput(tokenValue.role)
+        );
     }
 
     private checkInput(input: string): boolean {
