@@ -4,18 +4,29 @@ import { getModelForSensorType } from '../../models/v0/detectionModel';
 import { handleGetDetectionsFromSensor, handleSaveDetection, handleGetSensorLocationsByType } from './utils/handlers';
 import { sensorIdParameter } from '../../routes/v0/paths/detection.paths';
 import { checkSensorID } from './utils/detectionUtils';
+import validateDetectionData from './utils/validation';
 
 async function saveDetection(req: Request, res: Response) {
     const modelData = req.body;
     const { sensorType, [sensorIdParameter]: sensorId } = req.params;
-
-    if (!modelData) {
+    
+    if (!Object.keys(modelData).length) {
         res.status(HttpStatus.BAD_REQUEST).send({
             [String(process.env.ERROR_TAG)]: 'Missing detection data in the request body.',
         });
         return;
     }
 
+    modelData[String(process.env.SENSOR_ID_HEADER)] = sensorId;
+
+    const validationError = validateDetectionData(modelData);
+    if (validationError) {
+        res.status(HttpStatus.BAD_REQUEST).send({
+            [String(process.env.ERROR_TAG)]: validationError,
+        });
+        return;
+    }
+    
     handleSaveDetection(getModelForSensorType(sensorType), modelData)
         .then(() => res.status(HttpStatus.CREATED).send({
             [String(process.env.SUCCESS_TAG)]: 'Detection saved successfully.',
