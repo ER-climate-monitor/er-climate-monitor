@@ -110,6 +110,8 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 Logger.error('Error during Token validation');
                 if (error instanceof AxiosError) {
                     response = handleAxiosError(error, response);
+                }else if (error instanceof Error) { 
+                    response.status(HttpStatusCode.BadRequest).send(error.message);
                 }
             } finally {
                 response.end();
