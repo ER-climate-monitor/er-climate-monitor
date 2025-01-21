@@ -9,6 +9,7 @@ import {
     NOTIFICATION_SUBSCRIPTION_PATH,
 } from '../../../../routes/v0/paths/gatewayPaths';
 import { notificationService } from './notificationConfig';
+import { USER_JWT_TOKEN_BODY } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 
 const getTopics = async (_: Request, res: Response) => {
     notificationService
@@ -40,7 +41,12 @@ const getTopicQueries = async (req: Request, res: Response) => {
 };
 
 const subcribeUser = async (req: Request, res: Response) => {
-    const userId = '1'; // TODO: retrieve userId (or email) here in gateway
+    const jwtToken = req.headers[USER_JWT_TOKEN_BODY.toLowerCase()];
+    if (!jwtToken && jwtToken?.length != 1) {
+        res.status(HttpStatusCode.Unauthorized);
+        return;
+    }
+    const userId = await notificationService.authenticationClient.searchToken(jwtToken[0]).then((res) => res?.email);
     const topicId = req.params['topic'];
     const queryId = req.params['query'];
 
