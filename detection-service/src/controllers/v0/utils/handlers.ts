@@ -37,9 +37,9 @@ async function handleGetDetectionsFromSensor(sensorType: string, sensorId: strin
         const detections = await model
             .find({
                 sensorId: sensorId,
-                timeStamp: { $gte: fromTimestamp, $lte: toTimestamp },
+                timestamp: { $gte: fromTimestamp, $lte: toTimestamp },
             })
-            .sort({ timeStamp: -1 });
+            .sort({ timestamp: -1 });
         return detections.map((detection) => new Detection(
             detection.sensorId,
             detection.sensorName,

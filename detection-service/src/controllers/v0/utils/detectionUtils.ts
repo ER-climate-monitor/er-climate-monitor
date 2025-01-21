@@ -23,7 +23,7 @@ async function saveDetection(model: Model<DetectionDocument>, detection: Detecti
         sensorId: detection.sensorId,
         sensorName: detection.sensorName,
         unit: detection.unit,
-        timeStamp: detection.timestamp,
+        timestamp: detection.timestamp,
         longitude: detection.longitude,
         latitude: detection.latitude,
         value: detection.value,
@@ -72,4 +72,4 @@ async function getLastXDetections(
     });
 }
 
-export { saveDetectionModel, checkSensorID, getLastXDetections };
+export { saveDetectionModel, checkSensorID, getLastXDetections, createDetection };
