@@ -4,7 +4,7 @@ import { isIpValid } from './utils/ipUtils';
 import { deleteSensor, exists, findAllSensors, saveSensor } from './utils/sensorUtils';
 import { API_KEY_FIELD, SENSOR_IP_FIELD, SENSOR_PORT_FIELD } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
-import { fromBody } from './utils/requestUtils';
+import { fromBody, fromHeaders } from './utils/requestUtils';
 import Logger from "js-logger";
 
 Logger.useDefaults();
@@ -21,7 +21,7 @@ function isAuthorized(key: string): boolean {
 const registerSensor = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromBody(modelData, API_KEY_FIELD, '');
+        const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
         Logger.info('Received a request for saving a new sensor');
         if (isAuthorized(apikey)) {
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
@@ -47,10 +47,9 @@ const registerSensor = async (request: Request, response: Response) => {
 };
 
 const allSensors = async (request: Request, response: Response) => {
-    const modelData = request.body;
-    const apikey = fromBody(modelData, API_KEY_FIELD, '');
+    const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
     Logger.info('Received a request for returing all the sensors');
-    if (isAuthorized(apikey)) {
+    if (apikey !== '' && isAuthorized(apikey)) {
         response.send({ sensors: await findAllSensors() });
     } else {
         response.status(HttpStatus.UNAUTHORIZED);
@@ -61,8 +60,8 @@ const allSensors = async (request: Request, response: Response) => {
 const shutOff = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromBody(modelData, API_KEY_FIELD, '');
-        if (isAuthorized(apikey)) {
+        const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
+        if (apikey !== '' && isAuthorized(apikey)) {
             Logger.info('Received a request for shutting of a sensor');
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
             const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
