@@ -1,6 +1,6 @@
 services:
   sensor-registry:
-    image: matteoiorio/sensor-registry:0.0.2
+    image: matteoiorio/sensor-registry:0.0.3
     ports:
       - target: 7777
         published: 7777
