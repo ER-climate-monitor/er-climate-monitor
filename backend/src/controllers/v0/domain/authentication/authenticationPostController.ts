@@ -32,7 +32,7 @@ async function saveToken(response: HttpResponse) {
 
 function isExpired(expiration: number, response: Response) {
     const now = new Date().getTime();
-    if (now >= expiration) {
+    if (now >= expiration && expiration !== null) {
         response.status(HttpStatus.UNAUTHORIZED);
     } else {
         response.status(HttpStatus.ACCEPTED);
@@ -96,7 +96,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 const token = await authenticationService.authenticationClient.searchToken(
                     request.body[USER_JWT_TOKEN_BODY],
                 );
-                if (token !== null) {
+                if (token !== null && token.expiration !== null) {
                     Logger.info('Token found, checking for the expiration');
                     response = isExpired(token.expiration, response);
                 } else {
@@ -106,6 +106,11 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                         request.headers,
                         request.body,
                     );
+                    if (httpResponse.statusCode !== HttpStatus.ACCEPTED) {
+                        response.status(HttpStatus.UNAUTHORIZED);
+                        return;
+                    }
+
                     const expiration = httpResponse.data[USER_JWT_TOKEN_EXPIRATION_BODY];
                     Logger.info('Caching the Token');
                     saveToken(httpResponse);
