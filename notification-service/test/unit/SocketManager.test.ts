@@ -31,7 +31,7 @@ describe('SocketManager - Unit tests', () => {
         const address = httpServer.address() as AddressInfo;
         port = address.port;
 
-        socketManager = new SocketManager(httpServer);
+        socketManager = new SocketManager(httpServer, notificationPrefix);
         clientSocket = ClientIO(`http://localhost:${port}`, {
             transports: ['websocket'],
             autoConnect: false,
@@ -94,7 +94,7 @@ describe('SocketManager - Unit tests', () => {
                     topic: testTopic,
                     query: testQuery,
                 };
-                socketManager.sendToTopicSubscribers(sub, msg, notificationPrefix);
+                socketManager.sendToTopicSubscribers(sub, msg);
             });
         }, 2000);
 

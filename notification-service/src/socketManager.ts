@@ -19,8 +19,10 @@ class SocketManager {
     usersUIDs: Map<string, string>;
     subscriptionsToUID: Map<string, Set<string>>;
     usersConnections: Map<string, NotificationConnection>;
+    topicPrefix: string;
 
-    constructor(httpServer: HttpServer) {
+    constructor(httpServer: HttpServer, topicPrefix: string = 'notification') {
+        this.topicPrefix = topicPrefix;
         this.usersUIDs = new Map();
         this.usersConnections = new Map();
         this.subscriptionsToUID = new Map();
@@ -38,7 +40,7 @@ class SocketManager {
             Logger.info(`New client connection ${socket.id}`);
             socket.on('register', async (uid: string, topicAddr: string) => {
                 try {
-                    const sub = parseSubscription(topicAddr, 'notification');
+                    const sub = parseSubscription(topicAddr, this.topicPrefix);
                     if (!this.subscriptionsToUID.get(JSON.stringify(sub))?.has(uid)) {
                         throw new Error(`User ${uid} is not subscribed for topic: ${JSON.stringify(sub)}`);
                     }
@@ -91,8 +93,9 @@ class SocketManager {
         }
     }
 
-    sendToTopicSubscribers<T>(topic: SubscriptionTopic, data: T, prefix: string | null = null): boolean {
+    sendToTopicSubscribers<T>(topic: SubscriptionTopic, data: T): boolean {
         try {
+            let prefix = this.topicPrefix;
             if (prefix) prefix = prefix + '.';
             else prefix = '';
             const sub = stringifySubscription(topic);
@@ -113,13 +116,13 @@ class SocketManager {
      */
     registerUser(userId: string, sub: SubscriptionTopic) {
         let uid = this.usersUIDs.get(userId);
-        if (uid) return { uid: uid, topicAddr: `notification.${stringifySubscription(sub)}` };
+        if (uid) return { uid: uid, topicAddr: `${this.topicPrefix}.${stringifySubscription(sub)}` };
         uid = generateUID();
         this.usersUIDs.set(userId, uid);
         const topicSubs = this.subscriptionsToUID.get(JSON.stringify(sub)) ?? new Set();
         topicSubs.add(uid);
         this.subscriptionsToUID.set(JSON.stringify(sub), topicSubs);
-        return { uid: uid, topicAddr: `notification.${stringifySubscription(sub)}` };
+        return { uid: uid, topicAddr: `${this.topicPrefix}.${stringifySubscription(sub)}` };
     }
 
     close() {
@@ -129,18 +132,8 @@ class SocketManager {
 }
 
 function createSocketNotificationCallback<T>(socketManager: SocketManager): NotificationCallback<T> {
-    return async (userIds, topic, notification) => {
-        const usersToCheck = socketManager.subscriptionsToUID.get(JSON.stringify(topic))!;
-        // The following check is not really necessary and can be removed, but
-        // it provides a way to show to engineers if this compoenent and
-        // `MessageBroker` are not properly synced in which are the subscribers.
-        Array.from(userIds).forEach((user) => {
-            const uid = socketManager.usersUIDs.get(user)!;
-            if (!usersToCheck.has(uid)) {
-                Logger.warn(`Sending data to user ${uid} which does not appear to be subscribed to ${topic}`);
-            }
-        });
-        socketManager.sendToTopicSubscribers(topic, notification, 'notification');
+    return async (_userIds, topic, notification) => {
+        socketManager.sendToTopicSubscribers(topic, notification);
     };
 }
 export { createSocketNotificationCallback, SocketManager };
