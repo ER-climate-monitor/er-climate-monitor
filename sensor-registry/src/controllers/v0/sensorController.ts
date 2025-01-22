@@ -17,6 +17,7 @@ import {
     SENSOR_PORT_FIELD,
     SENSOR_QUERIES,
     SENSOR_TYPE,
+    UPDATE_NAME_ACTION,
 } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody, fromHeaders } from './utils/requestUtils';
@@ -108,6 +109,11 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
             return;
         }
         const action = request.body[ACTION];
+        switch (action) {
+            case (UPDATE_NAME_ACTION): {
+                return;
+            }
+        }
 
     } finally {
         respone.end();
