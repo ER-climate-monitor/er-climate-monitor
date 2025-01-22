@@ -8,6 +8,7 @@ import {
     getSensorFromName,
     getSensorOfType,
     saveSensor,
+    updateSensorName,
 } from './utils/sensorUtils';
 import {
     ACTION,
@@ -109,8 +110,11 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
             return;
         }
         const action = request.body[ACTION];
+        const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
+        const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
         switch (action) {
             case (UPDATE_NAME_ACTION): {
+                updateSensorName()
                 return;
             }
         }
