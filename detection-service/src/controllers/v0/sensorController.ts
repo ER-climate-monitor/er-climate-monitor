@@ -41,20 +41,6 @@ async function saveDetection(req: Request, res: Response) {
 async function getDetectionsFromSensor(req: Request, res: Response) {
     const { sensorType, [sensorIdParameter]: sensorId } = req.params;
 
-    if (!sensorType) {
-        res.status(HttpStatus.NOT_ACCEPTABLE).send({
-            [ERROR_TAG]: `Missing "sensorType" parameter from the input request.`,
-        });
-        return;
-    }
-
-    if (!sensorId) {
-        res.status(HttpStatus.NOT_ACCEPTABLE).send({
-            [ERROR_TAG]: `Missing "sensorId" parameter from the input request.`,
-        });
-        return;
-    }
-
     try {
         if (!(await checkSensorID(getModelForSensorType(sensorType), sensorId))) {
             res.status(HttpStatus.NOT_FOUND).send({
@@ -64,9 +50,7 @@ async function getDetectionsFromSensor(req: Request, res: Response) {
         }
 
         const result = await handleGetDetectionsFromSensor(sensorType, sensorId, req);
-        res.status(HttpStatus.OK).send({
-            [SENSOR_DETECTIONS_HEADER]: result,
-        });
+        res.status(HttpStatus.OK).send(result);
     } catch (error) {
         res.status(HttpStatus.BAD_REQUEST).send({
             [ERROR_TAG]: error instanceof Error ? error.message : 'An error occurred.',
@@ -95,9 +79,7 @@ async function getSensorLocationsByType(req: Request, res: Response) {
             return;
         }
 
-        res.status(HttpStatus.OK).send({
-            [SENSOR_LOCATIONS_HEADER]: result,
-        });
+        res.status(HttpStatus.OK).send(result);
     } catch (error) {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
             [ERROR_TAG]: error instanceof Error ? error.message : 'An error occurred.',
