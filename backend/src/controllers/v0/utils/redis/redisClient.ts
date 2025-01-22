@@ -72,7 +72,7 @@ class AuthenticationClient implements IAuthenticationClient {
     }
 
     private checkExpirationDate(expiration: number) {
-        return new Date().getTime() >= expiration;
+        return new Date().getTime() < expiration;
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
