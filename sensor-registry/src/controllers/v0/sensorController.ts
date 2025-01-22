@@ -100,35 +100,31 @@ const shutDown = async (request: Request, response: Response) => {
     response.end();
 };
 
-const allQueriesForSensor = async (request: Request, response: Response) => {
-    serveSimpleGet(request, response, SENSOR_NAME, getSensorFromName, (s) => s?.queries);
+const allSensorsInfo = async (_: Request, response: Response) => {
+    findAllSensors()
+        .then((sensors) => {
+            const infos = Array.from(sensors).map((s) => {
+                return { name: s.name, type: s.type, queries: s.queries };
+            });
+            response.status(HttpStatus.OK).json(infos);
+        })
+        .catch((err) => response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: (err as Error).message }));
 };
 
 const allSensorsOfType = async (request: Request, response: Response) => {
-    serveSimpleGet(request, response, SENSOR_TYPE, getSensorOfType, (s) => s);
-};
-
-async function serveSimpleGet<T, K>(
-    request: Request,
-    response: Response,
-    paramKey: string,
-    func: (_: string) => Promise<T>,
-    transFunc: (_: T) => K,
-) {
-    const keyVal = request.query[paramKey];
-    if (!paramKey) {
+    const type = request.query[SENSOR_TYPE];
+    if (!type) {
         response
             .status(HttpStatus.BAD_REQUEST)
-            .json({ error: `You must provide a '${paramKey}' in request parameters` });
+            .json({ error: 'You must provide a valid sensorType in request query params!' });
     }
-
-    func(keyVal as string).then((res) => {
+    getSensorOfType(type as string).then((res) => {
         if (!res) {
-            response.status(HttpStatus.NOT_FOUND).json({ error: `Cannot find an object with: ${paramKey}: ${keyVal}` });
+            response.status(HttpStatus.NOT_FOUND).json({ error: `Cannot find a sensor with type ${type}` });
         } else {
-            response.status(HttpStatus.OK).json(transFunc(res));
+            response.status(HttpStatus.OK).json(res);
         }
     });
-}
+};
 
-export { registerSensor, allSensors, shutDown, allQueriesForSensor, allSensorsOfType };
+export { registerSensor, allSensors, shutDown, allSensorsInfo, allSensorsOfType };
