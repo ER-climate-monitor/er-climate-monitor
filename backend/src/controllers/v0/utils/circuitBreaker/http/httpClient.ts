@@ -1,4 +1,4 @@
-import { HttpResponse } from "./httpResponse";
+import { HttpResponse } from './httpResponse';
 
 interface HttpClient {
     httpGet(

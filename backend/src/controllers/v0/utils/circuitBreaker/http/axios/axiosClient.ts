@@ -1,6 +1,8 @@
-import axios, { AxiosError, AxiosHeaders, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 import { API_KEY_HEADER } from '../../../../../../models/v0/sensor/headers/sensorHeaders';
+import { BasicHttpResponse, HttpResponse } from '../httpResponse';
+import { response } from 'express';
 
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
@@ -24,15 +26,50 @@ class AxiosHttpClient implements HttpClient {
             axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = axiosHeaders[API_KEY_HEADER.toLowerCase()];
         }
     }
+
+    private removeSecret() {
+        axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = '';
+    }
+
+    private fromAxiosHeadersToRecord(axiosHeaders: any): Record<string, string> {
+        const headers: Record<string, string> = {};
+        Object.keys(axiosHeaders).forEach((key) => (headers[key] = axiosHeaders[key]));
+        return headers;
+    }
+
+    private async sendRequest(request: () => Promise<AxiosResponse>): Promise<HttpResponse> {
+        try {
+            const response = await request();
+            return new BasicHttpResponse(
+                response.status,
+                this.fromAxiosHeadersToRecord(response.headers),
+                response.data,
+            );
+        } catch (error) {
+            if (error instanceof AxiosError && error.response !== undefined) {
+                return new BasicHttpResponse(
+                    error.response.status,
+                    this.fromAxiosHeadersToRecord(error.response.headers),
+                    error.response.data,
+                );
+            } else if (error instanceof Error) {
+                return new BasicHttpResponse(HttpStatusCode.BadRequest, {}, Object(error.message));
+            }
+            return new BasicHttpResponse(HttpStatusCode.BadRequest);
+        } finally {
+            this.removeSecret();
+        }
+    }
+
     httpGet(
         endpoint: string,
         headers: Record<string, string>,
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<AxiosResponse<any, any>> {
+    ): Promise<HttpResponse> {
         this.setSecret(headers);
-        return axios.get(endpoint);
+        return this.sendRequest(() => axios.get(endpoint));
     }
     httpPost(
         endpoint: string,
@@ -40,9 +77,9 @@ class AxiosHttpClient implements HttpClient {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<AxiosResponse<any, any>> {
+    ): Promise<HttpResponse> {
         this.setSecret(headers);
-        return axios.post(endpoint, data, headers);
+        return this.sendRequest(() => axios.post(endpoint, data, headers));
     }
 
     httpPut(
@@ -51,9 +88,9 @@ class AxiosHttpClient implements HttpClient {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<AxiosResponse<any, any>> {
+    ): Promise<HttpResponse> {
         this.setSecret(headers);
-        return axios.put(endpoint, data, headers);
+        return this.sendRequest(() => axios.put(endpoint, data, headers));
     }
 
     httpDelete(
@@ -62,13 +99,13 @@ class AxiosHttpClient implements HttpClient {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<AxiosResponse<any, any>> {
+    ): Promise<HttpResponse> {
         this.setSecret(headers);
         return axios.delete(endpoint, { data });
     }
 }
 
-class AxiosService extends AbstractHttpClient<AxiosHttpClient, AxiosResponse> {
+class AxiosService extends AbstractHttpClient<AxiosHttpClient> {
     private axiosClient: AxiosHttpClient = new AxiosHttpClient();
 
     constructor() {

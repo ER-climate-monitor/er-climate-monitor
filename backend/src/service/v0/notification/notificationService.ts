@@ -3,17 +3,18 @@ import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreak
 import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
 import { AbstractService } from '../abstractService';
 import { IAuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
+import { HttpResponse } from '../../../controllers/v0/utils/circuitBreaker/http/httpResponse';
 
-export class NotificationService<T extends HttpClient<X>, X> extends AbstractService<T, X> {
-    constructor(cb: CircuitBreakerClient<T, X>, endpoint: string, authenticationClient: IAuthenticationClient) {
+export class NotificationService<T extends HttpClient> extends AbstractService<T> {
+    constructor(cb: CircuitBreakerClient<T>, endpoint: string, authenticationClient: IAuthenticationClient) {
         super(cb, endpoint, authenticationClient);
     }
 
-    async getTopics(endpointPath: string): Promise<X> {
+    async getTopics(endpointPath: string): Promise<HttpResponse> {
         return this.circuitBreaker.fireRequest(this.endpoint, GET, endpointPath, null, null);
     }
 
-    async getTopicQueries(endpointPath: string, topicId: string): Promise<X> {
+    async getTopicQueries(endpointPath: string, topicId: string): Promise<HttpResponse> {
         endpointPath = this.buildendpointWithParams(endpointPath, { topic: topicId });
         return this.circuitBreaker.fireRequest(this.endpoint, GET, endpointPath, null, null);
     }
