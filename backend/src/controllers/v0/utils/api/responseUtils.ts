@@ -1,4 +1,4 @@
-\import { Response } from 'express';
+import { Response } from 'express';
 import { HttpResponse } from '../circuitBreaker/http/httpResponse';
 
 function fromHttpResponseToExpressResponse(httpResponse: HttpResponse, response: Response): Response {
