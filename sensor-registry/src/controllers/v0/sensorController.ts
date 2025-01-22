@@ -19,14 +19,16 @@ import {
 } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody, fromHeaders } from './utils/requestUtils';
+import { BasicHttpClient } from './utils/http/httpClient';
 import Logger from "js-logger";
+import { SHUT_DOWN_PATH } from '../../routes/v0/paths/sensorPaths';
 
 Logger.useDefaults();
 
 dotenv.config();
 
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
-console.log(SECRET_API_KEY);
+const basicHttpClient = new BasicHttpClient();
 const MAX_PORT = 65_535;
 
 function isAuthorized(key: string): boolean {
@@ -83,6 +85,7 @@ const shutDown = async (request: Request, response: Response) => {
             Logger.info('Received a request for shutting of a sensor');
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
             const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
+            basicHttpClient.deleteSensor(SHUT_DOWN_PATH, ip, port);
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
                 response.status(HttpStatus.OK);
             } else {

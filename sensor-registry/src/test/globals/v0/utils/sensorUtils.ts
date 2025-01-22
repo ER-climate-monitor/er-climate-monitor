@@ -8,11 +8,11 @@ import {
     SENSOR_NAME,
     SENSOR_QUERIES,
 } from '../../../../model/v0/headers/sensorHeaders';
-import { SHUT_OFF_ROUTE } from '../../../../routes/v0/paths/sensorPaths';
+import { SHUT_DOWN_PATH } from '../../../../routes/v0/paths/sensorPaths';
 
 dotenv.config();
 
-const DELETE_SENSOR_PATH = SHUT_OFF_ROUTE;
+const DELETE_SENSOR_PATH = SHUT_DOWN_PATH;
 
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 
