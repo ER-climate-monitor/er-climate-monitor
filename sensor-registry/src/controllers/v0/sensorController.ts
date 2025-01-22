@@ -10,6 +10,7 @@ import {
     saveSensor,
 } from './utils/sensorUtils';
 import {
+    ACTION,
     API_KEY_FIELD,
     SENSOR_IP_FIELD,
     SENSOR_NAME,
@@ -100,6 +101,19 @@ const shutDown = async (request: Request, response: Response) => {
     response.end();
 };
 
+const updateSensorInfo= async (request: Request, respone: Response) => {
+    const modelData = request.body;
+    try {
+        if (!modelData) {
+            return;
+        }
+        const action = request.body[ACTION];
+
+    } finally {
+        respone.end();
+    }
+}
+
 const allSensorsInfo = async (_: Request, response: Response) => {
     findAllSensors()
         .then((sensors) => {
@@ -127,4 +141,4 @@ const allSensorsOfType = async (request: Request, response: Response) => {
     });
 };
 
-export { registerSensor, allSensors, shutDown, allSensorsInfo, allSensorsOfType };
+export { registerSensor, allSensors, shutDown, allSensorsInfo, allSensorsOfType, updateSensorInfo };
