@@ -67,13 +67,6 @@ async function getDetectionsFromSensor(req: Request, res: Response) {
 async function getSensorLocationsByType(req: Request, res: Response) {
     const { sensorType } = req.params;
 
-    if (!sensorType) {
-        res.status(HttpStatus.BAD_REQUEST).send({
-            [ERROR_TAG]: 'Missing "sensorType" parameter from the input request.',
-        });
-        return;
-    }
-
     try {
         const result = await handleGetSensorLocationsByType(getModelForSensorType(sensorType));
         if (!result || result.length === 0) {
