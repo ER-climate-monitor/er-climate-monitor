@@ -1,19 +1,13 @@
 import { Request, Response } from 'express';
-import { Topic, TopicQuery } from '../../../../models/v0/notificationModels';
 import Logger from 'js-logger';
-import {
-    NOTIFICATION_SERVICE_ENDPOINT,
-    NOTIFICATION_TOPICS_PATH,
-    NOTIFICATION_TOPIC_QUERIES_PATH,
-    NOTIFICATION_SUBSCRIPTION_PATH,
-} from '../../../../routes/v0/paths/gatewayPaths';
+import { NOTIFICATIONS_API } from '../../../../routes/v0/paths/gatewayPaths';
 import HttpStatus from 'http-status-codes';
 import { notificationService } from './notificationConfig';
 import { USER_JWT_TOKEN_BODY } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 
 const getTopics = async (_: Request, res: Response) => {
     notificationService
-        .getTopics(NOTIFICATION_TOPICS_PATH)
+        .getTopics(NOTIFICATIONS_API.PATHS.TOPICS)
         .then((response) => response.data)
         .then((topics) => res.status(HttpStatus.OK).json(topics))
         .catch((err: Error) => {
@@ -31,7 +25,7 @@ const getTopicQueries = async (req: Request, res: Response) => {
     }
 
     notificationService
-        .getTopicQueries(NOTIFICATION_TOPIC_QUERIES_PATH, topicId)
+        .getTopicQueries(NOTIFICATIONS_API.PATHS.TOPIC_QUERIES, topicId)
         .then((r) => r.data)
         .then((data) => res.status(HttpStatus.OK).json(data))
         .catch((err: Error) => {
@@ -60,7 +54,7 @@ const subcribeUser = async (req: Request, res: Response) => {
     }
 
     notificationService
-        .suscribeUser(NOTIFICATION_SUBSCRIPTION_PATH, {
+        .suscribeUser(NOTIFICATIONS_API.PATHS.SUBSCRIPTION, {
             userId: userId,
             topic: topicId,
             query: queryId,
