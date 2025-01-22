@@ -2,6 +2,7 @@ import CircuitBreaker from 'opossum';
 import { DELETE, GET, POST, PUT } from '../api/httpMethods';
 import { AbstractHttpClient, HttpClient } from './http/httpClient';
 import { AxiosService, axiosCheckServerError } from './http/axios/axiosClient';
+import { HttpResponse } from './http/httpResponse';
 
 const defaultOptions = {
     timeout: 6000, // If our function takes longer than 3 seconds, trigger a failure
@@ -11,10 +12,10 @@ const defaultOptions = {
 
 const ERROR_FILTER = 'errorFilter';
 
-class CircuitBreakerClient<T extends HttpClient<X>, X> {
+class CircuitBreakerClient<T extends HttpClient> {
     private breaker: CircuitBreaker;
-    private httpClient: AbstractHttpClient<T, X>;
-    constructor(options: { [key: string]: any }, httpClient: AbstractHttpClient<T, X>) {
+    private httpClient: AbstractHttpClient<T>;
+    constructor(options: { [key: string]: any }, httpClient: AbstractHttpClient<T>) {
         this.breaker = new CircuitBreaker(this.makeRequest.bind(this), options);
         this.httpClient = httpClient;
     }
@@ -27,8 +28,8 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
         body: any,
         params: any = {},
         queries: any = {},
-    ): Promise<X> {
-        return this.breaker.fire(service, method, path, headers, body, params, queries) as X;
+    ): Promise<HttpResponse> {
+        return this.breaker.fire(service, method, path, headers, body, params, queries) as Promise<HttpResponse>;
     }
 
     private async makeRequest(
@@ -39,7 +40,7 @@ class CircuitBreakerClient<T extends HttpClient<X>, X> {
         body: any,
         params: any = {},
         queries: any = {},
-    ): Promise<X> {
+    ): Promise<HttpResponse> {
         const endpoint = service + path;
         switch (method) {
             case GET: {
