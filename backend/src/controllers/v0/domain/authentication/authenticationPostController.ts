@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
-import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
-import { fromAxiosToResponse, handleAxiosError } from '../../utils/api/responseUtils';
+import HttpStatus from 'http-status-codes';
 import {
     AUTHENTICATE_ACTION,
     LOGIN_ACTION,
@@ -16,14 +15,17 @@ import {
 import Logger from 'js-logger';
 import { authenticationService } from './authenticationConfig';
 import { TokenValue } from '../../../../models/v0/tokenModel';
+import { HttpResponse } from '../../utils/circuitBreaker/http/httpResponse';
+import { fromHttpResponseToExpressResponse, handleError } from '../../utils/api/responseUtils';
 
 Logger.useDefaults();
 
-async function saveToken(response: AxiosResponse) {
+async function saveToken(response: HttpResponse) {
+    response.data;
     const tokenValue = new TokenValue(
-        response.data[USER_EMAIL_BODY],
-        response.data[USER_ROLE_BODY],
-        response.data[USER_JWT_TOKEN_EXPIRATION_BODY],
+        String(response.data[USER_EMAIL_BODY]),
+        String(response.data[USER_ROLE_BODY]),
+        Number(response.data[USER_JWT_TOKEN_EXPIRATION_BODY]),
     );
     authenticationService.authenticationClient.setToken(String(response.data[USER_JWT_TOKEN_BODY]), tokenValue);
 }
@@ -31,9 +33,9 @@ async function saveToken(response: AxiosResponse) {
 function isExpired(expiration: number, response: Response) {
     const now = new Date().getTime();
     if (now >= expiration) {
-        response.status(HttpStatusCode.Unauthorized);
+        response.status(HttpStatus.UNAUTHORIZED);
     } else {
-        response.status(HttpStatusCode.Accepted);
+        response.status(HttpStatus.ACCEPTED);
     }
     return response;
 }
@@ -49,16 +51,16 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                     request.headers,
                     request.body,
                 );
-                response = fromAxiosToResponse(axiosResponse, response);
-                if (response.statusCode === HttpStatusCode.Created) {
+                response = fromHttpResponseToExpressResponse(axiosResponse, response);
+                if (response.statusCode === HttpStatus.CREATED) {
                     Logger.info('User registered correctly, saving the token and Its expiration.');
                     saveToken(axiosResponse);
                 }
                 response.send(axiosResponse.data);
             } catch (error) {
                 Logger.error("Error during user's registration " + error);
-                if (error instanceof AxiosError) {
-                    response = handleAxiosError(error, response);
+                if (error instanceof Error) {
+                    response.status(HttpStatus.BAD_REQUEST).send(error.message);
                 }
             } finally {
                 response.end();
@@ -72,16 +74,16 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                     request.headers,
                     request.body,
                 );
-                response = fromAxiosToResponse(axiosResponse, response);
-                if (response.statusCode === HttpStatusCode.Ok) {
+                response = fromHttpResponseToExpressResponse(axiosResponse, response);
+                if (response.statusCode === HttpStatus.OK) {
                     Logger.info('User correctly logged in. Saving the token.');
                     saveToken(axiosResponse);
                 }
                 response.send(axiosResponse.data);
             } catch (error) {
                 Logger.error("Error during user's login " + error);
-                if (error instanceof AxiosError) {
-                    response = handleAxiosError(error, response);
+                if (error instanceof Error) {
+                    response.status(HttpStatus.BAD_REQUEST).send(error.message);
                 }
             } finally {
                 response.end();
@@ -111,10 +113,8 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 }
             } catch (error) {
                 Logger.error('Error during Token validation');
-                if (error instanceof AxiosError) {
-                    response = handleAxiosError(error, response);
-                } else if (error instanceof Error) {
-                    response.status(HttpStatusCode.BadRequest).send(error.message);
+                if (error instanceof Error) {
+                    response.status(HttpStatus.BAD_REQUEST).send(error.message);
                 }
             } finally {
                 response.end();
@@ -123,7 +123,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         }
         default: {
             Logger.error("Error, the request's actions has not been found");
-            response.status(HttpStatusCode.BadRequest).end();
+            response.status(HttpStatus.BAD_REQUEST).end();
         }
     }
 };

@@ -37,4 +37,4 @@ const sensorDeleteHandler = async (request: Request, response: Response) => {
     }
 };
 
-export { sensorDeleteHandler }
+export { sensorDeleteHandler };
