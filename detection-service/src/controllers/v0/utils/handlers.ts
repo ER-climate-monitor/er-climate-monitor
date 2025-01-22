@@ -37,8 +37,8 @@ async function handleGetDetectionsFromSensor(sensorType: string, sensorId: strin
     const model = getModelForSensorType(sensorType);
 
     if (LAST_DETECTION_QUERY_VARIABLE in request.query) {
-        const days = Number(request.query[LAST_DETECTION_QUERY_VARIABLE]);
-        return await getLastXDetections(model, sensorId, days);
+        const last = Number(request.query[LAST_DETECTION_QUERY_VARIABLE]);
+        return await getLastXDetections(model, sensorId, last);
     } else if (FROM_TIMESTAMP_QUERY_VALUE in request.query && TO_TIMESTAMP_QUERY_VALUE in request.query) {
         const fromTimestamp = Number(request.query[FROM_TIMESTAMP_QUERY_VALUE]);
         const toTimestamp = Number(request.query[TO_TIMESTAMP_QUERY_VALUE]);
@@ -49,6 +49,18 @@ async function handleGetDetectionsFromSensor(sensorType: string, sensorId: strin
                 timestamp: { $gte: fromTimestamp, $lte: toTimestamp },
             })
             .sort({ timestamp: -1 });
+        return detections.map((detection) => new Detection(
+            detection.sensorId,
+            detection.sensorName,
+            detection.unit,
+            detection.timestamp,
+            detection.longitude,
+            detection.latitude,
+            detection.value
+        ));
+    } else if (Object.keys(request.query).length === 0) {
+        const detections = await model.find({ sensorId }).sort({ timestamp: -1 });
+
         return detections.map((detection) => new Detection(
             detection.sensorId,
             detection.sensorName,

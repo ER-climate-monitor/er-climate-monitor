@@ -59,7 +59,7 @@ async function getLastXDetections(
     if (last <= LOWER_BOUND || last > UPPER_BOUND) {
         throw new Error(`The query prameter last, must be in the interval: [${LOWER_BOUND}, ${UPPER_BOUND}]`);
     }
-    return (await model.find({ sensorId: sensorId }).sort({ _id: -1 }).limit(last)).map((detection) => {
+    return (await model.find({ sensorId: sensorId }).sort({ timestamp: -1 }).limit(last)).map((detection) => {
         return new Detection(
             detection.sensorId,
             detection.sensorName,
