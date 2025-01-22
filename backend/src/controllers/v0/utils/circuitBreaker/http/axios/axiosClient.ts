@@ -2,7 +2,6 @@ import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode } from '
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 import { API_KEY_HEADER } from '../../../../../../models/v0/sensor/headers/sensorHeaders';
 import { BasicHttpResponse, HttpResponse } from '../httpResponse';
-import { response } from 'express';
 
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
@@ -101,7 +100,7 @@ class AxiosHttpClient implements HttpClient {
         queries: Record<string, string>,
     ): Promise<HttpResponse> {
         this.setSecret(headers);
-        return axios.delete(endpoint, { data });
+        return this.sendRequest(() => axios.delete(endpoint, { data }));
     }
 }
 
