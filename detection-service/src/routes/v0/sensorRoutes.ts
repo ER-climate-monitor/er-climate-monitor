@@ -17,6 +17,6 @@ router.use(
 );
 
 router.route(API_ROUTES.SENSOR.DETECTIONS).post(saveDetection).get(getDetectionsFromSensor);
-router.route(API_ROUTES.SENSOR.POSITIONS).get(getSensorLocationsByType);
+router.route(API_ROUTES.SENSOR.LOCATIONS).get(getSensorLocationsByType);
 
 export default router;

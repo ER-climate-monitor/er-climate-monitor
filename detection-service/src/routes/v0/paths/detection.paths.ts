@@ -6,7 +6,7 @@ const API_ROUTES = {
     SENSOR: {
         ROOT: '/v0/sensor',
         DETECTIONS: `/:sensorType/:${sensorIdParameter}/detections`,
-        POSITIONS: '/:sensorType/positions',
+        LOCATIONS: '/:sensorType/locations',
     },
     SERVICE: {
         ALERTS: '/v0/service/alerts',
