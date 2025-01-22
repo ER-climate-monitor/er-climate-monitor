@@ -2,7 +2,7 @@ import express from 'express';
 import {
     allSensors,
     registerSensor,
-    shutOff,
+    shutDown,
     allQueriesForSensor,
     allSensorsOfType,
 } from '../../controllers/v0/sensorController';
@@ -13,7 +13,7 @@ sensorRouter.route(REGISTER_PATH).post(registerSensor);
 
 sensorRouter.route(ALL_PATH).get(allSensors);
 
-sensorRouter.route(SHUT_OFF_PATH).delete(shutOff);
+sensorRouter.route(SHUT_OFF_PATH).delete(shutDown);
 
 sensorRouter.route(QUERIES_PATH).get(allQueriesForSensor);
 

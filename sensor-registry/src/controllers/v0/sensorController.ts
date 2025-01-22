@@ -75,7 +75,7 @@ const allSensors = async (request: Request, response: Response) => {
     response.end();
 };
 
-const shutOff = async (request: Request, response: Response) => {
+const shutDown = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
         const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
@@ -128,4 +128,4 @@ async function serveSimpleGet<T, K>(
     });
 }
 
-export { registerSensor, allSensors, shutOff, allQueriesForSensor, allSensorsOfType };
+export { registerSensor, allSensors, shutDown, allQueriesForSensor, allSensorsOfType };

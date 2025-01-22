@@ -6,7 +6,7 @@ const REGISTER_ROUTE = BASE_SENSOR_PATH_V0 + REGISTER_PATH;
 const ALL_PATH = '/all';
 const ALL_ROUTE = BASE_SENSOR_PATH_V0 + ALL_PATH;
 
-const SHUT_OFF_PATH = '/shutoff';
+const SHUT_OFF_PATH = '/shutdown';
 const SHUT_OFF_ROUTE = BASE_SENSOR_PATH_V0 + SHUT_OFF_PATH;
 
 const QUERIES_PATH = '/queries';
