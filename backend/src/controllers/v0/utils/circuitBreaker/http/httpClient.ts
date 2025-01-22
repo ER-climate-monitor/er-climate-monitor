@@ -1,41 +1,43 @@
-interface HttpClient<X> {
+import { HttpResponse } from "./httpResponse";
+
+interface HttpClient {
     httpGet(
         _endpoint: string,
         _headers: Record<string, string>,
         _data: object,
         _params: Record<string, string>,
         _queries: Record<string, string>,
-    ): Promise<X>;
+    ): Promise<HttpResponse>;
     httpPost(
         _endpoint: string,
         _headers: Record<string, string>,
         _data: object,
         _params: Record<string, string>,
         _queries: Record<string, string>,
-    ): Promise<X>;
+    ): Promise<HttpResponse>;
     httpPut(
         _endpoint: string,
         _headers: Record<string, string>,
         _data: object,
         _params: Record<string, string>,
         _queries: Record<string, string>,
-    ): Promise<X>;
+    ): Promise<HttpResponse>;
     httpDelete(
         _endpoint: string,
         _headers: Record<string, string>,
         _data: object,
         _params: Record<string, string>,
         _queries: Record<string, string>,
-    ): Promise<X>;
+    ): Promise<HttpResponse>;
 }
 
-abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
+abstract class AbstractHttpClient<T extends HttpClient> {
     clientTechnology: T;
     protected constructor(clientTechnology: T) {
         this.clientTechnology = clientTechnology;
     }
 
-    private makeRequest(request: () => Promise<X>): Promise<X> {
+    private makeRequest(request: () => Promise<HttpResponse>): Promise<HttpResponse> {
         return request();
     }
 
@@ -45,7 +47,7 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<X> {
+    ): Promise<HttpResponse> {
         return this.makeRequest(() => this.clientTechnology.httpGet(endpoint, headers, data, params, queries));
     }
     async postRequest(
@@ -54,7 +56,7 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<X> {
+    ): Promise<HttpResponse> {
         return this.makeRequest(() => this.clientTechnology.httpPost(endpoint, headers, data, params, queries));
     }
     async putRequest(
@@ -63,7 +65,7 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<X> {
+    ): Promise<HttpResponse> {
         return this.makeRequest(() => this.clientTechnology.httpPut(endpoint, headers, data, params, queries));
     }
     async deleteRequest(
@@ -72,7 +74,7 @@ abstract class AbstractHttpClient<T extends HttpClient<X>, X> {
         data: object,
         params: Record<string, string>,
         queries: Record<string, string>,
-    ): Promise<X> {
+    ): Promise<HttpResponse> {
         return this.makeRequest(() => this.clientTechnology.httpDelete(endpoint, headers, data, params, queries));
     }
 }
