@@ -63,9 +63,6 @@ class AxiosHttpClient implements HttpClient {
     httpGet(
         endpoint: string,
         headers: Record<string, string>,
-        data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
     ): Promise<HttpResponse> {
         this.setSecret(headers);
         return this.sendRequest(() => axios.get(endpoint));
@@ -74,8 +71,6 @@ class AxiosHttpClient implements HttpClient {
         endpoint: string,
         headers: Record<string, string>,
         data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
     ): Promise<HttpResponse> {
         this.setSecret(headers);
         return this.sendRequest(() => axios.post(endpoint, data, headers));
@@ -85,8 +80,6 @@ class AxiosHttpClient implements HttpClient {
         endpoint: string,
         headers: Record<string, string>,
         data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
     ): Promise<HttpResponse> {
         this.setSecret(headers);
         return this.sendRequest(() => axios.put(endpoint, data, headers));
@@ -96,8 +89,6 @@ class AxiosHttpClient implements HttpClient {
         endpoint: string,
         headers: Record<string, string>,
         data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
     ): Promise<HttpResponse> {
         this.setSecret(headers);
         return this.sendRequest(() => axios.delete(endpoint, { data }));
