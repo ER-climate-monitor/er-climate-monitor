@@ -1,18 +1,23 @@
 interface HttpResponse {
-    headers: Record<string, string>,
-    data: object,
-    params: Record<string, string>
+    statusCode: number;
+    headers: Record<string, string> | undefined;
+    data: Record<string, string | object>;
 }
 
 class BasicHttpResponse implements HttpResponse {
-    headers: Record<string, string>;
-    data: object;
-    params: Record<string, string>;
-    constructor(headers: Record<string, string>, data: object, params: Record<string, string>) {
+    statusCode: number;
+    headers: Record<string, string> | undefined;
+    data: Record<string, string | object>;
+    params: Record<string, string> | undefined;
+    constructor(
+        statusCode: number,
+        headers: Record<string, string> | undefined = {},
+        data: Record<string, string | object> = {},
+    ) {
+        this.statusCode = statusCode;
         this.headers = headers;
         this.data = data;
-        this.params = params;
     }
 }
 
-export { BasicHttpResponse, HttpResponse }
+export { BasicHttpResponse, HttpResponse };
