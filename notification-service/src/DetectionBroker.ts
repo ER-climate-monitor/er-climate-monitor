@@ -230,10 +230,7 @@ function parseSubscription(sub: string, prefix: string | null = null): Subscript
     } else if (parts.length === 3) {
         subscription.sensorName = parts[1];
         subscription.query = parts[2];
-    } else {
-        throw new Error(`Cannot parse ${sub}`);
     }
-
     return subscription;
 }
 
