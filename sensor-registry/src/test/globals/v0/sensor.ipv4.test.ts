@@ -15,8 +15,8 @@ import {
 } from '../../../model/v0/headers/sensorHeaders';
 import {
     ALL_ROUTE,
+    ALL_INFO_ROUTE,
     BASE_SENSOR_PATH_V0,
-    QUERIES_PATH,
     REGISTER_ROUTE,
     TYPE_PATH,
 } from '../../../routes/v0/paths/sensorPaths';
@@ -52,7 +52,11 @@ describe('Registering a new Sensor using IPv4', () => {
         await shutOffSensor(app, sensorInformation);
     });
     it('Registering a new Sensor that does not exists inside the database should be OK', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
     });
     it('Registering a new Sensor without specifying an API KEY or by using a wrong API Key should return an error', async () => {
         const noAPI = {
@@ -64,11 +68,23 @@ describe('Registering a new Sensor using IPv4', () => {
             [SENSOR_PORT_FIELD]: sensorPort,
         };
         await request(app).post(REGISTER_SENSOR_PATH).send(noAPI).expect(HttpStatus.UNAUTHORIZED);
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, 'anotherKey').send(wrongAPI).expect(HttpStatus.UNAUTHORIZED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, 'anotherKey')
+            .send(wrongAPI)
+            .expect(HttpStatus.UNAUTHORIZED);
     });
     it('Registering a sensor with a duplicate pair IP-Port should return an error', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CONFLICT);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CONFLICT);
     });
     it('Registering a sensor with same IP but different port should be OK', async () => {
         const similarSensor = {
@@ -76,8 +92,16 @@ describe('Registering a new Sensor using IPv4', () => {
             [SENSOR_PORT_FIELD]: 777,
         };
         await shutOffSensor(app, similarSensor);
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(similarSensor).expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(similarSensor)
+            .expect(HttpStatus.CREATED);
         await shutOffSensor(app, similarSensor);
     });
     it('Registering a sensor with same Port but differnt IP should be OK', async () => {
@@ -85,19 +109,35 @@ describe('Registering a new Sensor using IPv4', () => {
             [SENSOR_IP_FIELD]: '1.0.0.0',
             [SENSOR_PORT_FIELD]: sensorPort,
         };
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(similarSensor).expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(similarSensor)
+            .expect(HttpStatus.CREATED);
         await shutOffSensor(app, similarSensor);
     });
     it('Delete an existing sensor should be OK', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
         await shutOffSensor(app, sensorInformation);
     });
     it('Get all the sensors without using the Secret Key should return an error.', async () => {
         await request(app).get(ALL_SENSORS).expect(HttpStatus.UNAUTHORIZED);
     });
     it('Register a sensor and query for all the sensors should be able to find the registered sensor', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
         await request(app)
             .get(ALL_SENSORS)
             .set(API_KEY_FIELD, SECRET_API_KEY)
@@ -115,9 +155,17 @@ describe('Registering a new Sensor using IPv4', () => {
             [SENSOR_IP_FIELD]: sensorIp,
             [SENSOR_PORT_FIELD]: -1,
         };
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(wrongSensor).expect(HttpStatus.NOT_ACCEPTABLE);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(wrongSensor)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
         wrongSensor[SENSOR_PORT_FIELD] = MAX_PORT + 1;
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(wrongSensor).expect(HttpStatus.NOT_ACCEPTABLE);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(wrongSensor)
+            .expect(HttpStatus.NOT_ACCEPTABLE);
     });
     it('Registering a Sensor with a wrong IP should return an error.', async () => {
         const ip: string = '0.0.0.0';
@@ -128,68 +176,47 @@ describe('Registering a new Sensor using IPv4', () => {
             wrongSensors.push(createSensor(wrongIp.join('.'), 10, 'wrong-sensor-2', []));
         }
         for (const sensor of wrongSensors) {
-            await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensor).expect(HttpStatus.NOT_ACCEPTABLE);
+            await request(app)
+                .post(REGISTER_SENSOR_PATH)
+                .set(API_KEY_FIELD, SECRET_API_KEY)
+                .send(sensor)
+                .expect(HttpStatus.NOT_ACCEPTABLE);
         }
     });
 
-    it('Should be possibile to retrieve all queries by sensor name for an existing sensor.', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
+    it('Should be possibile to retrieve all sensors basic infos', async () => {
         await request(app)
-            .get(BASE_SENSOR_PATH_V0 + QUERIES_PATH + `?${SENSOR_NAME}=${sensorName}`)
+            .post(REGISTER_SENSOR_PATH)
             .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
+        await request(app)
+            .get(BASE_SENSOR_PATH_V0 + ALL_INFO_ROUTE)
             .expect((res) => {
                 if (res.status !== HttpStatus.OK) {
                     fail(`Something went wrong (HTTP 1.1: ${res.status}): ${JSON.stringify(res)}`);
                 }
-                const queries: string[] = res.body;
-                if (!(queries.length === sensorQueries.length)) {
-                    fail(`Expected exactly ${sensorQueries.length} queries but got: ${queries.length}`);
+                const info: { name: string; type: string; queries: string[] }[] = res.body;
+                if (info.length !== 1) {
+                    fail(`Expected exactly 1 sensorInfo, but got: ${info.length}`);
                 }
-            });
-    });
-
-    it('Getting an existing sensor from its type', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
-        await request(app)
-            .get(BASE_SENSOR_PATH_V0 + TYPE_PATH + `?${SENSOR_TYPE}=${sensorType}`)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
-            .expect(HttpStatus.OK)
-            .expect((res) => {
-                const sensors: ISensor[] = res.body;
-                if (sensors.length !== 1) {
-                    fail(`Expected to receive exactly one sensor, got instead ${sensors.length} sensors!`);
-                }
-                const sensor = sensors[0];
+                const sensorInfo = info[0];
                 if (
-                    !(sensor.ip === sensorInformation[SENSOR_IP_FIELD]) ||
-                    !(sensor.port === sensorInformation[SENSOR_PORT_FIELD]) ||
-                    !(sensor.name === sensorInformation[SENSOR_NAME]) ||
-                    !(sensor.type === sensorInformation[SENSOR_TYPE]) ||
-                    !(sensor.queries.length === sensorInformation[SENSOR_QUERIES].length)
+                    !(sensorInfo.name === sensorInformation[SENSOR_NAME]) ||
+                    !(sensorInfo.type === sensorInformation[SENSOR_TYPE]) ||
+                    !(sensorInfo.queries.length === sensorInformation[SENSOR_QUERIES].length)
                 ) {
                     fail();
                 }
             });
     });
 
-    it('Should be possibile to retrieve all queries by sensor name for an existing sensor.', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
-        await request(app)
-            .get(BASE_SENSOR_PATH_V0 + QUERIES_PATH + `?${SENSOR_NAME}=${sensorName}`)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
-            .expect((res) => {
-                if (res.status !== HttpStatus.OK) {
-                    fail(`Something went wrong (HTTP 1.1: ${res.status}): ${JSON.stringify(res)}`);
-                }
-                const queries: string[] = res.body;
-                if (!(queries.length === sensorQueries.length)) {
-                    fail(`Expected exactly ${sensorQueries.length} queries but got: ${queries.length}`);
-                }
-            });
-    });
-
     it('Getting an existing sensor from its type', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation).expect(HttpStatus.CREATED);
+        await request(app)
+            .post(REGISTER_SENSOR_PATH)
+            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .send(sensorInformation)
+            .expect(HttpStatus.CREATED);
         await request(app)
             .get(BASE_SENSOR_PATH_V0 + TYPE_PATH + `?${SENSOR_TYPE}=${sensorType}`)
             .set(API_KEY_FIELD, SECRET_API_KEY)
