@@ -16,6 +16,8 @@ import {
     SENSOR_DETECTION_UNIT_HEADER,
 } from '../../../config/Costants';
 import { Request } from 'express';
+import { Alert, buildEvent } from 'src/models/v0/alertModel';
+import { detectionPublisher } from './brokerClient';
 
 function fromBody<X>(body: any, key: string, defaultValue: X) {
     return body && key in body ? body[key] : defaultValue;
@@ -103,4 +105,8 @@ async function handleGetSensorLocationsByType(model: Model<DetectionDocument>) {
     }
 }
 
-export { handleSaveDetection, handleGetDetectionsFromSensor, handleGetSensorLocationsByType };
+async function handleAlertPropagation(alert: Alert): Promise<boolean> {
+    return detectionPublisher.publishEvent(buildEvent(alert));
+}
+
+export { handleSaveDetection, handleGetDetectionsFromSensor, handleGetSensorLocationsByType, handleAlertPropagation };

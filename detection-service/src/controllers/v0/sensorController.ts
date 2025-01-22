@@ -1,11 +1,18 @@
 import { Request, Response } from 'express';
-import HttpStatus from 'http-status-codes';
+import HttpStatus, { BAD_REQUEST } from 'http-status-codes';
 import { getModelForSensorType } from '../../models/v0/detectionModel';
-import { handleGetDetectionsFromSensor, handleSaveDetection, handleGetSensorLocationsByType } from './utils/handlers';
+import {
+    handleGetDetectionsFromSensor,
+    handleSaveDetection,
+    handleGetSensorLocationsByType,
+    handleAlertPropagation,
+} from './utils/handlers';
 import { sensorIdParameter } from '../../routes/v0/paths/detection.paths';
 import { checkSensorID } from './utils/detectionUtils';
 import validateDetectionData from './utils/validation';
 import { ERROR_TAG, SUCCESS_TAG, SENSOR_ID_HEADER } from '../../config/Costants';
+import { Alert } from 'src/models/v0/alertModel';
+import Logger from 'js-logger';
 
 async function saveDetection(req: Request, res: Response) {
     const modelData = req.body;
@@ -86,4 +93,15 @@ async function getSensorLocationsByType(req: Request, res: Response) {
     }
 }
 
-export { saveDetection, getDetectionsFromSensor, getSensorLocationsByType };
+async function forwardAlert(req: Request, res: Response) {
+    try {
+        const alert: Alert = req.body;
+        if (await handleAlertPropagation(alert)) res.status(HttpStatus.OK);
+        else res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (error) {
+        Logger.error('An error occurred', error);
+        res.status(HttpStatus.BAD_REQUEST).json({ error: (error as Error).message });
+    }
+}
+
+export { saveDetection, getDetectionsFromSensor, getSensorLocationsByType, forwardAlert };
