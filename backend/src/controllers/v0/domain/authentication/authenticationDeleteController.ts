@@ -1,6 +1,6 @@
 import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { AUTHENTICATION_SERVICE } from '../../../../routes/v0/paths/gatewayPaths';
-import { fromHttpResponseToExpressResponse, handleError } from '../../utils/api/responseUtils';
+import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils';
 import { Request, Response } from 'express';
 import Logger from 'js-logger';
 import HttpStatus from 'http-status-codes';
