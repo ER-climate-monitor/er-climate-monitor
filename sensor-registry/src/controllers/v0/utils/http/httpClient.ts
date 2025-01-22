@@ -1,5 +1,6 @@
 import axios, { HttpStatusCode } from 'axios';
 import { SHUT_DOWN_PATH } from "../../../../routes/v0/paths/sensorPaths";
+import { SENSOR_NAME } from '../../../../model/v0/headers/sensorHeaders';
 
 interface HttpClient {
     deleteSensor(endpoint: string, ip: string, port: number): Promise<boolean>;
@@ -19,7 +20,8 @@ class BasicHttpClient implements HttpClient{
     }
 
     async updateSensorName(endpoint: string, ip: string, port: number, newName: string): Promise<boolean> {
-        throw new Error('TODO');
+        const url = this.makeURL(ip, port, endpoint);
+        return axios.put(url, {[SENSOR_NAME]: newName});
     }
 }
 
