@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 import { DetectionDocument, getModelForSensorType } from '../../../src/models/v0/detectionModel';
 
-function generateMockDetection(sensorType: string): Partial<DetectionDocument> {
-    const timestamp = Date.now();
+function generateMockDetection(sensorType: string, timestamp = Date.now()): Partial<DetectionDocument> {
     return {
         sensorName: `${sensorType}-Sensor`,
         unit: sensorType === 'temperature' ? 'C' : sensorType === 'hydro' ? 'm' : '',
@@ -16,9 +15,9 @@ function generateMockDetection(sensorType: string): Partial<DetectionDocument> {
 function generateMultipleMockDetection(sensorType: string, count: number, sensorId: string): Partial<DetectionDocument>[] {
     return Array.from({ length: count }).map((_, index) => generateMockDetection(sensorType));
 }
-async function createDetection(sensorType: string, sensorId: string): Promise<DetectionDocument> {
+async function createDetection(sensorType: string, sensorId: string, timestamp = Date.now()): Promise<DetectionDocument> {
     const model = getModelForSensorType(sensorType);
-    const mockData = generateMockDetection(sensorType);
+    const mockData = generateMockDetection(sensorType, timestamp);
 
     mockData.sensorId = sensorId;
 
@@ -27,7 +26,7 @@ async function createDetection(sensorType: string, sensorId: string): Promise<De
 }
 
 
-async function createMultipleDetections(sensorType: string, count: number, sensorId: string): Promise<DetectionDocument[]> {
+async function createMultipleDetections(sensorType: string, sensorId: string, count: number): Promise<DetectionDocument[]> {
     const model = getModelForSensorType(sensorType);
 
     const detections = Array.from({ length: count }).map((_, index) => {
