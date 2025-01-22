@@ -30,10 +30,11 @@ async function saveToken(response: HttpResponse) {
     authenticationService.authenticationClient.setToken(String(response.data[USER_JWT_TOKEN_BODY]), tokenValue);
 }
 
-function isExpired(expiration: number, response: Response) {
+function isExpired(expiration: number, token: string, response: Response) {
     const now = new Date().getTime();
     if (now >= expiration && expiration !== null) {
         response.status(HttpStatus.UNAUTHORIZED);
+        authenticationService.authenticationClient.deleteToken(token);
     } else {
         response.status(HttpStatus.ACCEPTED);
     }
@@ -98,7 +99,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                 );
                 if (token !== null && token.expiration !== null) {
                     Logger.info('Token found, checking for the expiration');
-                    response = isExpired(token.expiration, response);
+                    response = isExpired(token.expiration, request.body[USER_JWT_TOKEN_BODY], response);
                 } else {
                     Logger.info('Token not found, checking using the authentication service.');
                     const httpResponse = await authenticationService.authenticateTokenOperation(
@@ -111,10 +112,10 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                         return;
                     }
 
-                    const expiration = httpResponse.data[USER_JWT_TOKEN_EXPIRATION_BODY];
+                    const expiration = Number(httpResponse.data[USER_JWT_TOKEN_EXPIRATION_BODY]);
                     Logger.info('Caching the Token');
                     saveToken(httpResponse);
-                    response = isExpired(Number(expiration), response);
+                    response = isExpired(expiration, request.body[USER_JWT_TOKEN_BODY], response);
                 }
             } catch (error) {
                 Logger.error('Error during Token validation');
