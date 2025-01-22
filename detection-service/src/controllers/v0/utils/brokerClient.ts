@@ -41,7 +41,7 @@ class DetectionPublisher {
         }
     }
 
-    async publishEvent(event: AlertEvent): Promise<boolean> {
+    publishEvent(event: AlertEvent): boolean {
         if (!this.ensureConnection()) return false;
 
         try {

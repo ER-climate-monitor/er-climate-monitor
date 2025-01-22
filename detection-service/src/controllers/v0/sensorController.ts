@@ -93,11 +93,12 @@ async function getSensorLocationsByType(req: Request, res: Response) {
     }
 }
 
-async function forwardAlert(req: Request, res: Response) {
+function forwardAlert(req: Request, res: Response) {
     try {
         const alert: Alert = req.body;
-        if (await handleAlertPropagation(alert)) res.status(HttpStatus.OK);
-        else res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        Logger.info('Alert arrived: ', JSON.stringify(alert));
+        if (handleAlertPropagation(alert)) res.status(HttpStatus.OK).send();
+        else res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
     } catch (error) {
         Logger.error('An error occurred', error);
         res.status(HttpStatus.BAD_REQUEST).json({ error: (error as Error).message });

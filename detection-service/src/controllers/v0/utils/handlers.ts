@@ -16,7 +16,7 @@ import {
     SENSOR_DETECTION_UNIT_HEADER,
 } from '../../../config/Costants';
 import { Request } from 'express';
-import { Alert, buildEvent } from 'src/models/v0/alertModel';
+import { Alert, buildEvent } from '../../../models/v0/alertModel';
 import { detectionPublisher } from './brokerClient';
 
 function fromBody<X>(body: any, key: string, defaultValue: X) {
@@ -105,7 +105,7 @@ async function handleGetSensorLocationsByType(model: Model<DetectionDocument>) {
     }
 }
 
-async function handleAlertPropagation(alert: Alert): Promise<boolean> {
+function handleAlertPropagation(alert: Alert): boolean {
     return detectionPublisher.publishEvent(buildEvent(alert));
 }
 
