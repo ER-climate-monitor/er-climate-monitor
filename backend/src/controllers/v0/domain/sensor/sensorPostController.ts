@@ -3,7 +3,7 @@ import Logger from 'js-logger';
 import { SENSOR_REGISTRY_ENDPOINT } from '../../../../models/v0/serviceModels';
 import { removeServiceFromUrl } from '../../utils/api/urlUtils';
 import { sensorService } from './sensorConfig';
-import HttpStatus from 'http-status-codes'
+import HttpStatus from 'http-status-codes';
 import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils';
 
 Logger.useDefaults();

@@ -4,7 +4,7 @@ import { SENSOR_REGISTRY_ENDPOINT } from '../../../../models/v0/serviceModels';
 import { sensorService } from './sensorConfig';
 import Logger from 'js-logger';
 import { USER_JWT_TOKEN_BODY } from '../../../../models/v0/authentication/headers/authenticationHeaders';
-import HttpStatus from 'http-status-codes'
+import HttpStatus from 'http-status-codes';
 import { API_KEY_HEADER } from '../../../../models/v0/sensor/headers/sensorHeaders';
 import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils';
 
