@@ -5,8 +5,8 @@ import {
     SENSOR_DETECTION_LATITUDE_HEADER,
     SENSOR_DETECTION_LONGITUDE_HEADER,
     SENSOR_DETECTION_TIMESTAMP_HEADER,
-    SENSOR_DETECTION_UNIT_HEADER
-} from '../../../config/Costants'
+    SENSOR_DETECTION_UNIT_HEADER,
+} from '../../../config/Costants';
 
 export default function validateDetectionData(data: Record<string, unknown>): string | null {
     const requiredFields = [
@@ -16,7 +16,7 @@ export default function validateDetectionData(data: Record<string, unknown>): st
         SENSOR_DETECTION_TIMESTAMP_HEADER,
         SENSOR_DETECTION_VALUE_HEADER,
         SENSOR_DETECTION_LONGITUDE_HEADER,
-        SENSOR_DETECTION_LATITUDE_HEADER
+        SENSOR_DETECTION_LATITUDE_HEADER,
     ];
 
     for (const field of requiredFields) {

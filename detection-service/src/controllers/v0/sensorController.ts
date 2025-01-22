@@ -10,7 +10,7 @@ import { ERROR_TAG, SUCCESS_TAG, SENSOR_ID_HEADER } from '../../config/Costants'
 async function saveDetection(req: Request, res: Response) {
     const modelData = req.body;
     const { sensorType, [sensorIdParameter]: sensorId } = req.params;
-    
+
     if (!Object.keys(modelData).length) {
         res.status(HttpStatus.BAD_REQUEST).send({
             [ERROR_TAG]: 'Missing detection data in the request body.',
@@ -27,14 +27,18 @@ async function saveDetection(req: Request, res: Response) {
         });
         return;
     }
-    
+
     handleSaveDetection(getModelForSensorType(sensorType), modelData)
-        .then(() => res.status(HttpStatus.CREATED).send({
-            [SUCCESS_TAG]: 'Detection saved successfully.',
-        }))
-        .catch((e) => res.status(HttpStatus.BAD_REQUEST).send({
-            [ERROR_TAG]: e.message || 'Failed to save detection.',
-        }))
+        .then(() =>
+            res.status(HttpStatus.CREATED).send({
+                [SUCCESS_TAG]: 'Detection saved successfully.',
+            }),
+        )
+        .catch((e) =>
+            res.status(HttpStatus.BAD_REQUEST).send({
+                [ERROR_TAG]: e.message || 'Failed to save detection.',
+            }),
+        )
         .finally(() => res.end());
 }
 

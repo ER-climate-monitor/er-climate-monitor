@@ -1,11 +1,11 @@
-import { getLastXDetections, saveDetectionModel } from "./detectionUtils";
-import { Detection, DetectionDocument, getModelForSensorType } from "../../../models/v0/detectionModel";
-import { Model } from "mongoose";
-import { 
-    LAST_DETECTION_QUERY_VARIABLE, 
-    FROM_TIMESTAMP_QUERY_VALUE, 
-    TO_TIMESTAMP_QUERY_VALUE 
-} from "../../../routes/v0/paths/detection.paths";
+import { getLastXDetections, saveDetectionModel } from './detectionUtils';
+import { Detection, DetectionDocument, getModelForSensorType } from '../../../models/v0/detectionModel';
+import { Model } from 'mongoose';
+import {
+    LAST_DETECTION_QUERY_VARIABLE,
+    FROM_TIMESTAMP_QUERY_VALUE,
+    TO_TIMESTAMP_QUERY_VALUE,
+} from '../../../routes/v0/paths/detection.paths';
 import {
     SENSOR_ID_HEADER,
     SENSOR_NAME_HEADER,
@@ -13,27 +13,33 @@ import {
     SENSOR_DETECTION_LATITUDE_HEADER,
     SENSOR_DETECTION_LONGITUDE_HEADER,
     SENSOR_DETECTION_TIMESTAMP_HEADER,
-    SENSOR_DETECTION_UNIT_HEADER
-} from '../../../config/Costants'
-import { Request } from "express";
+    SENSOR_DETECTION_UNIT_HEADER,
+} from '../../../config/Costants';
+import { Request } from 'express';
 
 function fromBody<X>(body: any, key: string, defaultValue: X) {
     return body && key in body ? body[key] : defaultValue;
 }
 
 async function handleSaveDetection(model: Model<DetectionDocument>, data: any) {
-    const newDetection = await saveDetectionModel(model,
-        fromBody(data, SENSOR_ID_HEADER, ""),
-        fromBody(data, SENSOR_NAME_HEADER, ""),
-        fromBody(data, SENSOR_DETECTION_UNIT_HEADER, ""),
+    const newDetection = await saveDetectionModel(
+        model,
+        fromBody(data, SENSOR_ID_HEADER, ''),
+        fromBody(data, SENSOR_NAME_HEADER, ''),
+        fromBody(data, SENSOR_DETECTION_UNIT_HEADER, ''),
         fromBody(data, SENSOR_DETECTION_TIMESTAMP_HEADER, 0),
         fromBody(data, SENSOR_DETECTION_LONGITUDE_HEADER, 0),
         fromBody(data, SENSOR_DETECTION_LATITUDE_HEADER, 0),
-        fromBody(data, SENSOR_DETECTION_VALUE_HEADER, 0));
+        fromBody(data, SENSOR_DETECTION_VALUE_HEADER, 0),
+    );
     return newDetection;
 }
 
-async function handleGetDetectionsFromSensor(sensorType: string, sensorId: string, request: Request): Promise<Array<Detection>> {
+async function handleGetDetectionsFromSensor(
+    sensorType: string,
+    sensorId: string,
+    request: Request,
+): Promise<Array<Detection>> {
     const model = getModelForSensorType(sensorType);
 
     if (LAST_DETECTION_QUERY_VARIABLE in request.query) {
@@ -49,29 +55,35 @@ async function handleGetDetectionsFromSensor(sensorType: string, sensorId: strin
                 timestamp: { $gte: fromTimestamp, $lte: toTimestamp },
             })
             .sort({ timestamp: -1 });
-        return detections.map((detection) => new Detection(
-            detection.sensorId,
-            detection.sensorName,
-            detection.unit,
-            detection.timestamp,
-            detection.longitude,
-            detection.latitude,
-            detection.value
-        ));
+        return detections.map(
+            (detection) =>
+                new Detection(
+                    detection.sensorId,
+                    detection.sensorName,
+                    detection.unit,
+                    detection.timestamp,
+                    detection.longitude,
+                    detection.latitude,
+                    detection.value,
+                ),
+        );
     } else if (Object.keys(request.query).length === 0) {
         const detections = await model.find({ sensorId }).sort({ timestamp: -1 });
 
-        return detections.map((detection) => new Detection(
-            detection.sensorId,
-            detection.sensorName,
-            detection.unit,
-            detection.timestamp,
-            detection.longitude,
-            detection.latitude,
-            detection.value
-        ));
+        return detections.map(
+            (detection) =>
+                new Detection(
+                    detection.sensorId,
+                    detection.sensorName,
+                    detection.unit,
+                    detection.timestamp,
+                    detection.longitude,
+                    detection.latitude,
+                    detection.value,
+                ),
+        );
     }
-    throw new Error("Invalid query parameters.");
+    throw new Error('Invalid query parameters.');
 }
 
 async function handleGetSensorLocationsByType(model: Model<DetectionDocument>) {

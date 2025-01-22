@@ -9,16 +9,14 @@ const API_ROUTES = {
         POSITIONS: '/:sensorType/positions',
     },
     SERVICE: {
-      ALERTS: '/v0/service/alerts',
+        ALERTS: '/v0/service/alerts',
     },
-  };
-  
-  export  {
+};
+
+export {
     API_ROUTES,
     FROM_TIMESTAMP_QUERY_VALUE,
     TO_TIMESTAMP_QUERY_VALUE,
     LAST_DETECTION_QUERY_VARIABLE,
     sensorIdParameter,
-  };
-  
-
+};
