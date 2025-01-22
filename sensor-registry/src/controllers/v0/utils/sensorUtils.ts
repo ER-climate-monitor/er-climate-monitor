@@ -10,6 +10,10 @@ async function saveSensor(ip: string, port: number, name: string, type: string, 
     return newSensor;
 }
 
+async function updateSensorName(ip: string, port: number, newName: string) {
+    await sensorModel.updateOne({ip: ip, port: port}, {$set: {name: newName}});
+}
+
 async function findAllSensors(): Promise<Iterable<ISensor>> {
     return (await sensorModel.find({})).map((result) => {
         const sensor: ISensor = {
@@ -36,4 +40,4 @@ async function getSensorOfType(type: string): Promise<ISensor[]> {
     return sensorModel.find({ type });
 }
 
-export { saveSensor, exists, findAllSensors, deleteSensor, getSensorFromName, getSensorOfType };
+export { saveSensor, exists, findAllSensors, deleteSensor, getSensorFromName, getSensorOfType, updateSensorName };
