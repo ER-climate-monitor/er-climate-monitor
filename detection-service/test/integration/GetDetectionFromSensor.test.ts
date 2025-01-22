@@ -151,7 +151,6 @@ describe('Get Detections From Sensor Endpoint', () => {
         const res = await request(server)
             .get(`/v0/sensor/${sensorType}/${sensorId}/detections?invalidParam=true`);
 
-            console.log(res.body);
         expect(res.status).toBe(HttpStatus.BAD_REQUEST);
         expect(res.body[ERROR_TAG]).toContain('Invalid query parameters.');
     });
