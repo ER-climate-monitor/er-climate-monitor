@@ -9,7 +9,7 @@ const API_ROUTES = {
         LOCATIONS: '/:sensorType/locations',
     },
     SERVICE: {
-        ALERTS: '/v0/service/alerts',
+        ALERTS: '/alerts',
     },
 };
 
