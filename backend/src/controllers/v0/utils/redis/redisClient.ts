@@ -36,9 +36,9 @@ class AuthenticationClient implements IAuthenticationClient {
     public async isExpired(token: string): Promise<boolean> {
         const result = await this.searchToken(token);
         if (result === null) {
-            return false;
+            return true;
         }
-        return new Date().getTime() < result.expiration;
+        return new Date().getTime() >= result.expiration;
     }
 
     public async isAdmin(token: string) {
