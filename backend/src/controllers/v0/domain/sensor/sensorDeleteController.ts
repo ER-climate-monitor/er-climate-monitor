@@ -16,7 +16,7 @@ const sensorDeleteHandler = async (request: Request, response: Response) => {
         Logger.info('Received a request for deleting a sensor');
         const endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
         const jwtToken = String(request.headers[USER_JWT_TOKEN_BODY.toLowerCase()]);
-        if (jwtToken === null ||!(await sensorService.authenticationClient.isAdmin(jwtToken)) || (await sensorService.authenticationClient.isExpired(jwtToken))) {
+        if (jwtToken === null ||!(sensorService.authenticationClient.isAdminAndNotExpired(jwtToken))) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
