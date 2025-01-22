@@ -16,7 +16,8 @@ const sensorGetHandler = async (request: Request, response: Response) => {
     try {
         Logger.info('Requested to get all the sensors');
         const jwtToken = String(request.headers[USER_JWT_TOKEN_BODY.toLowerCase()]);
-        if (jwtToken === null || !(await sensorService.authenticationClient.isAdminAndNotExpired(jwtToken))) {
+        const authorized = (await sensorService.authenticationClient.isAdminAndNotExpired(jwtToken));
+        if (jwtToken === null || !authorized) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
