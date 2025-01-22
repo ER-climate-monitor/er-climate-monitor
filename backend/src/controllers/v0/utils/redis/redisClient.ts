@@ -11,6 +11,8 @@ interface IAuthenticationClient {
     searchToken(token: string): Promise<TokenValue | null>;
     isExpired(token: string): Promise<boolean>;
     isAdmin(token: string): Promise<boolean>;
+    isAdminAndNotExpired(token: string): Promise<boolean>;
+    deleteToken(token: string): void;
 }
 
 class AuthenticationClient implements IAuthenticationClient {
@@ -38,7 +40,15 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return true;
         }
-        return new Date().getTime() >= result.expiration;
+        const expired = this.checkExpirationDate(result.expiration);
+        if (expired) {
+            this.deleteToken(token);
+        }
+        return expired;
+    }
+
+    public async deleteToken(token: string) {
+        this.authenticationRedisClient.unlink(token); 
     }
 
     public async isAdmin(token: string) {
@@ -46,7 +56,23 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return false;
         }
-        return result.role.toLowerCase() === USER_ADMIN.toLowerCase();
+        return this.checkTokenRole(result.role, USER_ADMIN.toLowerCase());
+    }
+
+    public async isAdminAndNotExpired(token: string): Promise<boolean> {
+        const result = await this.searchToken(token);
+        if (result === null) {
+            return false;
+        }
+        return this.checkTokenRole(result.role, USER_ADMIN.toLowerCase()) && this.checkExpirationDate(result.expiration);
+    }
+
+    public checkTokenRole(tokenRole: string, role: string) {
+        return tokenRole.toLowerCase() === role.toLowerCase();
+    }
+
+    private checkExpirationDate(expiration: number) {
+        return new Date().getTime() >= expiration;
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
