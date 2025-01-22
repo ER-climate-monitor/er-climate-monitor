@@ -12,19 +12,36 @@ Logger.useDefaults();
 const SECRET = String(process.env.SECRET_API_KEY);
 
 const sensorGetHandler = async (request: Request, response: Response) => {
-    const endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
+    let endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
     try {
         Logger.info('Requested to get all the sensors');
         const jwtToken = String(request.headers[USER_JWT_TOKEN_BODY.toLowerCase()]);
-        const authorized = (await sensorService.authenticationClient.isAdminAndNotExpired(jwtToken));
-        if (jwtToken === null || !authorized) {
+
+        const isExpired = await sensorService.authenticationClient.isExpired(jwtToken);
+
+        if (isExpired) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
-        request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
-        const httpResponse = await sensorService.getAllSensorsOperation(endpointPath, request.headers, request.body);
-        response = fromHttpResponseToExpressResponse(httpResponse, response);
-        response.send(httpResponse.data);
+        if (await sensorService.authenticationClient.isAdmin(jwtToken)) {
+            request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
+            const httpResponse = await sensorService.getAllSensorsOperation(
+                endpointPath,
+                request.headers,
+                request.body,
+            );
+            response = fromHttpResponseToExpressResponse(httpResponse, response);
+            response.send(httpResponse.data);
+        } else {
+            endpointPath = endpointPath + '/infos';
+            const httpResponse = await sensorService.getAllSensorsOperation(
+                endpointPath,
+                request.headers,
+                request.body,
+            );
+            response = fromHttpResponseToExpressResponse(httpResponse, response);
+            response.send(httpResponse.data);
+        }
     } catch (error) {
         Logger.info('Error while trying to return all the different sensors');
         if (error instanceof Error) {
