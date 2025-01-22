@@ -1,20 +1,18 @@
-import { AxiosResponse, AxiosError } from 'axios';
-import { Response } from 'express';
+\import { Response } from 'express';
+import { HttpResponse } from '../circuitBreaker/http/httpResponse';
 
-function fromAxiosToResponse(axiosResponse: AxiosResponse<unknown, unknown>, response: Response): Response {
-    for (const header in axiosResponse.headers) {
-        response.setHeader(header, axiosResponse.headers[header]);
+function fromHttpResponseToExpressResponse(httpResponse: HttpResponse, response: Response): Response {
+    for (const header in httpResponse.headers) {
+        response.setHeader(header, httpResponse.headers[header]);
     }
-    response.status(axiosResponse.status);
+    response.status(httpResponse.statusCode);
     return response;
 }
 
-function handleAxiosError(error: AxiosError<unknown, unknown>, response: Response) {
-    if (error.response !== undefined) {
-        response = fromAxiosToResponse(error.response, response);
-        response.send(error.response.data);
-    }
+function handleError(error: HttpResponse, response: Response) {
+    response = fromHttpResponseToExpressResponse(error, response);
+    response.send(error.data);
     return response;
 }
 
-export { fromAxiosToResponse, handleAxiosError };
+export { fromHttpResponseToExpressResponse, handleError };
