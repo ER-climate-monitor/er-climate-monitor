@@ -12,9 +12,9 @@ const authenticationDeleteHandler = async (request: Request, response: Response)
     const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
     try {
         Logger.info('Requested to delete a user');
-        const axiosResponse = await authenticationService.deleteOperation(endpointPath, request.headers, request.body);
-        response = fromHttpResponseToExpressResponse(axiosResponse, response);
-        response.send(axiosResponse.data);
+        const httpResponse = await authenticationService.deleteOperation(endpointPath, request.headers, request.body);
+        response = fromHttpResponseToExpressResponse(httpResponse, response);
+        response.send(httpResponse.data);
     } catch (error) {
         Logger.error('Error during delete operation.');
         if (error instanceof Error) {

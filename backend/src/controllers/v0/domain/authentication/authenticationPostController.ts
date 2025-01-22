@@ -46,17 +46,17 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
     switch (action) {
         case REGISTER_ACTION: {
             try {
-                const axiosResponse = await authenticationService.registerOperation(
+                const httpResponse = await authenticationService.registerOperation(
                     endpointPath,
                     request.headers,
                     request.body,
                 );
-                response = fromHttpResponseToExpressResponse(axiosResponse, response);
+                response = fromHttpResponseToExpressResponse(httpResponse, response);
                 if (response.statusCode === HttpStatus.CREATED) {
                     Logger.info('User registered correctly, saving the token and Its expiration.');
-                    saveToken(axiosResponse);
+                    saveToken(httpResponse);
                 }
-                response.send(axiosResponse.data);
+                response.send(httpResponse.data);
             } catch (error) {
                 Logger.error("Error during user's registration " + error);
                 if (error instanceof Error) {
@@ -69,17 +69,17 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         }
         case LOGIN_ACTION: {
             try {
-                const axiosResponse = await authenticationService.loginOperation(
+                const httpResponse = await authenticationService.loginOperation(
                     endpointPath,
                     request.headers,
                     request.body,
                 );
-                response = fromHttpResponseToExpressResponse(axiosResponse, response);
+                response = fromHttpResponseToExpressResponse(httpResponse, response);
                 if (response.statusCode === HttpStatus.OK) {
                     Logger.info('User correctly logged in. Saving the token.');
-                    saveToken(axiosResponse);
+                    saveToken(httpResponse);
                 }
-                response.send(axiosResponse.data);
+                response.send(httpResponse.data);
             } catch (error) {
                 Logger.error("Error during user's login " + error);
                 if (error instanceof Error) {
@@ -101,14 +101,14 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
                     response = isExpired(token.expiration, response);
                 } else {
                     Logger.info('Token not found, checking using the authentication service.');
-                    const axiosResponse = await authenticationService.authenticateTokenOperation(
+                    const httpResponse = await authenticationService.authenticateTokenOperation(
                         endpointPath,
                         request.headers,
                         request.body,
                     );
-                    const expiration = axiosResponse.data[USER_JWT_TOKEN_EXPIRATION_BODY];
+                    const expiration = httpResponse.data[USER_JWT_TOKEN_EXPIRATION_BODY];
                     Logger.info('Caching the Token');
-                    saveToken(axiosResponse);
+                    saveToken(httpResponse);
                     response = isExpired(Number(expiration), response);
                 }
             } catch (error) {
