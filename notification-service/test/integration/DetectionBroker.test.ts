@@ -95,7 +95,6 @@ describe('DetectionBroker - Integration Tests', () => {
     const containerPort = 5672;
 
     const instanceId = 'test-instance';
-    const queueName = `notifications.${instanceId}`;
     const exchangeName = 'sensor.notifications';
 
     const testSub: SubscriptionTopic = {
@@ -127,7 +126,7 @@ describe('DetectionBroker - Integration Tests', () => {
         await container.stop();
     });
 
-    test('shouldd handle subscriptions for users with different topic specs', async () => {
+    test('should handle subscriptions for users with different topic specs', async () => {
         let receivedMessages: { detection: DetectionEvent; userIds: string[]; topic: SubscriptionTopic }[] = [];
         const mockCallback: NotificationCallback<DetectionEvent> = async (userIds, topic, detection) => {
             receivedMessages.push({ detection, userIds: Array.from(userIds), topic });
@@ -140,9 +139,20 @@ describe('DetectionBroker - Integration Tests', () => {
             topic: testSub.topic,
         });
 
+        await broker.subscribeUser('user-abc', {
+            topic: testSub.topic,
+            query: testSub.query,
+        });
+
+        await broker.subscribeUser('user-bca', {
+            topic: testSub.topic,
+            sensorName: testSub.sensorName,
+        });
+
         client.publishTestEvent();
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        expect(receivedMessages).toHaveLength(2);
+        expect(receivedMessages).toHaveLength(4);
+        expect(receivedMessages.flatMap((d) => d.userIds)).toEqual([testUserId, 'user-321', 'user-abc', 'user-bca']);
 
         const firstMessage = receivedMessages.filter((m) => m.userIds[0] == testUserId)[0];
 

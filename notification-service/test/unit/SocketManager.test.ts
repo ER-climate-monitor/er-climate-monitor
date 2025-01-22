@@ -5,7 +5,8 @@ import { io as ClientIO } from 'socket.io-client';
 import { SocketManager } from '../../src/socketManager';
 import { AddressInfo } from 'net';
 import Logger from 'js-logger';
-import { SubscriptionTopic } from '../../src/DetectionBroker';
+import { parseSubscription, stringifySubscription, SubscriptionTopic } from '../../src/DetectionBroker';
+import exp from 'constants';
 
 Logger.useDefaults();
 
@@ -96,5 +97,24 @@ describe('SocketManager - Unit tests', () => {
                 socketManager.sendToTopicSubscribers(sub, msg, notificationPrefix);
             });
         }, 2000);
+
+        test('should support wildcard subscriptions', () => {
+            const userId = 'user-123';
+            const sensorName = 'eeeee';
+            const topicOnlySub: SubscriptionTopic = { topic: testTopic };
+            const topicQuerySub: SubscriptionTopic = { topic: testTopic, query: testQuery };
+            const topicSensorSub: SubscriptionTopic = { topic: testTopic, sensorName: sensorName };
+            const fullTopicSub: SubscriptionTopic = { topic: testTopic, query: testQuery, sensorName: sensorName };
+
+            const subInfo1 = socketManager.registerUser(userId, topicOnlySub);
+            const subInfo2 = socketManager.registerUser(userId, topicQuerySub);
+            const subInfo3 = socketManager.registerUser(userId, topicSensorSub);
+            const subInfo4 = socketManager.registerUser(userId, fullTopicSub);
+
+            expect(subInfo1.topicAddr).toEqual(`notification.${testTopic}.#`);
+            expect(subInfo2.topicAddr).toEqual(`notification.${testTopic}.*.${testQuery}`);
+            expect(subInfo3.topicAddr).toEqual(`notification.${testTopic}.${sensorName}.#`);
+            expect(subInfo4.topicAddr).toEqual(`notification.${testTopic}.${sensorName}.${testQuery}`);
+        });
     });
 });
