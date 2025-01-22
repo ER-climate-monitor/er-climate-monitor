@@ -6,7 +6,7 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
 }
 
-class AxiosHttpClient implements HttpClient<AxiosResponse<any, any>> {
+class AxiosHttpClient implements HttpClient {
     constructor() {
         axios.defaults.headers.common[API_KEY_HEADER.toLowerCase()] = '';
     }
