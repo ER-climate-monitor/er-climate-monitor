@@ -27,7 +27,7 @@ const sensorGetHandler = async (request: Request, response: Response) => {
     } catch (error) {
         Logger.info('Error while trying to return all the different sensors');
         if (error instanceof Error) {
-            response.status(HttpStatus.BAD_REQUEST).send(error.message);
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error.message);
         }
     } finally {
         response.end();

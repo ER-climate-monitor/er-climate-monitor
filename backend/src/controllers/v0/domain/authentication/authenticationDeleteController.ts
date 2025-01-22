@@ -18,7 +18,7 @@ const authenticationDeleteHandler = async (request: Request, response: Response)
     } catch (error) {
         Logger.error('Error during delete operation.');
         if (error instanceof Error) {
-            response.status(HttpStatus.BAD_REQUEST).send(error.message);
+            response.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error.message);
         }
     } finally {
         response.end();
