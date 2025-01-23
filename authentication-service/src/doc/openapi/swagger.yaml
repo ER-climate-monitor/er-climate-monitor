@@ -205,7 +205,7 @@ paths:
     delete:
       summary: Delete a user
       parameters:
-        - in: path
+        - in: query
           name: userEmail
           required: true
           schema:
@@ -230,7 +230,7 @@ paths:
     delete:
       summary: Delete an admin
       parameters:
-        - in: path
+        - in: query
           name: userEmail
           required: true
           schema:
