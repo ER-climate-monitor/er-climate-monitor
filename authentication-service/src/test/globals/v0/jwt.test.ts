@@ -1,5 +1,5 @@
 import request from 'supertest';
-import createServer from '../../..';
+import { createTestServer, dropTestDatabase } from '../../../appUtils';
 import { describe, it } from 'mocha';
 import HttpStatus from 'http-status-codes';
 import {
@@ -33,7 +33,7 @@ const adminInformation = {
     [API_KEY_FIELD]: api_key,
 };
 
-const app: Application = createServer();
+const app: Application = createTestServer();
 
 describe('JWT token for registered users', () => {
     beforeEach(async () => {
@@ -112,4 +112,8 @@ describe('JWT token for registered users', () => {
             .send(createBodyUser(AUTHENTICATE, { [USER_JWT_TOKEN_FIELD]: jwtToken }))
             .expect(HttpStatus.UNAUTHORIZED);
     });
+
+    after(async () => {
+        await dropTestDatabase();
+    })
 });

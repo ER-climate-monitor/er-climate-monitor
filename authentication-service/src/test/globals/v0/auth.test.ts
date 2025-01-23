@@ -1,5 +1,5 @@
 import request from 'supertest';
-import createServer from '../../..';
+import { createTestServer, dropTestDatabase } from '../../../appUtils';
 import { describe, it, afterEach } from 'mocha';
 import { fail, ok } from 'node:assert';
 import HttpStatus from 'http-status-codes';
@@ -41,7 +41,7 @@ const maliciousEmails: Array<String> = [
     '{"$regex": ".*", "$options": "i"}',
 ];
 
-const app: Application = createServer();
+const app: Application = createTestServer();
 
 describe('User Authentication', () => {
     beforeEach(async () => {
@@ -164,4 +164,7 @@ describe('User Authentication', () => {
             });
         await request(app).post(LOGIN_ADMIN_ROUTE).send(createBodyUser(LOGIN, adminInformation)).expect(HttpStatus.OK);
     });
+    after(async () => {
+        await dropTestDatabase();
+    })
 });
