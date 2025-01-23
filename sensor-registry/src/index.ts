@@ -11,16 +11,27 @@ const PORT = process.env.PORT || 3000;
 
 const URL: string = process.env.DB_URL || 'mongodb://localhost:27017/';
 
-export default function createServer(): Application {
+function createServer(url: string): Application {
     const app: Application = express();
-    mongoose.connect(URL, { dbName: 'sensor-database' });
+    mongoose.connect(url, { dbName: 'sensor-database' });
     app.use(express.json());
     app.use(BASE_SENSOR_PATH_V0, sensorRouter);
     return app;
 }
 
-const app = createServer();
+async function dropTestDatabase() {
+    const url: string =  String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
+    mongoose.connect(url, { dbName: 'sensor-database' })
+        .then((mongodb) => {
+            mongodb.connection.dropDatabase();
+        });
+}
 
-app.listen(PORT, () => {
-    console.log('Server is listening on port: ' + PORT);
-});
+
+// const app = createServer(URL);
+
+// app.listen(PORT, () => {
+//     console.log('Server is listening on port: ' + PORT);
+// });
+
+export { createServer, dropTestDatabase }
