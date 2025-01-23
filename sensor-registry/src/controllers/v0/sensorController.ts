@@ -24,7 +24,7 @@ import dotenv from 'dotenv';
 import { fromBody, fromHeaders } from './utils/requestUtils';
 import { BasicHttpClient } from './utils/http/httpClient';
 import Logger from "js-logger";
-import { SHUT_DOWN_PATH } from '../../routes/v0/paths/sensorPaths';
+import { SHUT_DOWN_PATH, UPDATE_SENSOR_NAME_PATH } from '../../routes/v0/paths/sensorPaths';
 
 Logger.useDefaults();
 
@@ -81,24 +81,26 @@ const allSensors = async (request: Request, response: Response) => {
 };
 
 const shutDown = async (request: Request, response: Response) => {
-    const modelData = request.body;
-    if (modelData) {
-        const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
-        if (apikey !== '' && isAuthorized(apikey)) {
-            Logger.info('Received a request for shutting of a sensor');
-            const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
-            const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
-            basicHttpClient.deleteSensor(SHUT_DOWN_PATH, ip, port);
+    const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
+    Logger.info('Requested to delete a sensor');
+    if (apikey !== '' && isAuthorized(apikey)) {
+        const ip = String(request.query[SENSOR_IP_FIELD]) || '';
+        const port = Number(request.query[SENSOR_PORT_FIELD]) || -1;
+        try {
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
+                basicHttpClient.deleteSensor(SHUT_DOWN_PATH, ip, port)
+                    .catch((error) => {
+                        Logger.error('Error while trying to turning off the sensor.');
+                    });
                 response.status(HttpStatus.OK);
             } else {
                 response.status(HttpStatus.NOT_FOUND);
             }
-        } else {
-            response.status(HttpStatus.UNAUTHORIZED);
+        } catch (error) {
+            response.status(HttpStatus.BAD_GATEWAY);
         }
     } else {
-        response.status(HttpStatus.BAD_REQUEST);
+        response.status(HttpStatus.UNAUTHORIZED);
     }
     response.end();
 };
@@ -116,7 +118,7 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
             case (UPDATE_NAME_ACTION): {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 updateSensorName(ip, port, name);
-                basicHttpClient.updateSensorName()
+                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name);
                 return;
             }
         }
