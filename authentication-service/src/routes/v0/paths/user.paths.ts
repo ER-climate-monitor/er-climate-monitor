@@ -1,6 +1,6 @@
 const REGISTER_PATH = '/register';
 const LOGIN_PATH = '/login';
-const DELETE_PATH = '/delete/:userEmail';
+const DELETE_PATH = '/delete';
 const ADMIN = '/admin';
 const REGISTER_ADMIN_PATH = ADMIN + REGISTER_PATH;
 const LOGIN_ADMIN_PATH = ADMIN + LOGIN_PATH;
