@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { createServer, dropTestDatabase } from '../../..';
+import { createServer, dropTestDatabase } from '../../../appUtils';
 import dotenv from 'dotenv';
 import HttpStatus from 'http-status-codes';
 import { shutDownSensor, createSensor } from './utils/sensorUtils';
@@ -192,6 +192,7 @@ describe('Registering a new Sensor using IPv4', () => {
                     fail(`Something went wrong (HTTP 1.1: ${res.status}): ${JSON.stringify(res)}`);
                 }
                 const info: { name: string; type: string; queries: string[] }[] = res.body;
+                console.log(info);
                 if (info.length === 0) {
                     fail(`Expected at least 1 sensorInfo, but got: ${info.length}`);
                 }

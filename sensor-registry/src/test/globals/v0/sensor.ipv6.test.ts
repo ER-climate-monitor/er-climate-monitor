@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { createServer, dropTestDatabase } from '../../..';
+import { createServer, dropTestDatabase } from '../../../appUtils';
 import dotenv from 'dotenv';
 import HttpStatus from 'http-status-codes';
 import { shutDownSensor, createSensor } from './utils/sensorUtils';
