@@ -7,14 +7,15 @@ const ALL_PATH = '/all';
 const ALL_ROUTE = BASE_SENSOR_PATH_V0 + ALL_PATH;
 
 const ALL_INFO_PATH = '/infos';
-const ALL_INFO_ROUTE = BASE_SENSOR_PATH_V0 + ALL_PATH + ALL_INFO_PATH;
+const ALL_INFO_ROUTE = BASE_SENSOR_PATH_V0 + ALL_INFO_PATH;
+
+const TYPE_PATH = '/type';
+const TYPE_ROUTE = BASE_SENSOR_PATH_V0 + TYPE_PATH;
 
 const SHUT_DOWN_PATH = '/shutdown';
 const SHUT_DOWN_ROUTE = BASE_SENSOR_PATH_V0 + SHUT_DOWN_PATH;
 
 const UPDATE_SENSOR_NAME_PATH = '/'
-
-const TYPE_PATH = '/type';
 
 export {
     BASE_SENSOR_PATH_V0,
@@ -24,6 +25,8 @@ export {
     REGISTER_ROUTE,
     ALL_ROUTE,
     SHUT_DOWN_ROUTE,
+    ALL_INFO_PATH,
     ALL_INFO_ROUTE,
     TYPE_PATH,
+    TYPE_ROUTE,
 };

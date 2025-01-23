@@ -16,9 +16,8 @@ import {
 import {
     ALL_ROUTE,
     ALL_INFO_ROUTE,
-    BASE_SENSOR_PATH_V0,
     REGISTER_ROUTE,
-    TYPE_PATH,
+    TYPE_ROUTE,
 } from '../../../routes/v0/paths/sensorPaths';
 import { beforeEach, it, describe } from 'mocha';
 
@@ -185,13 +184,9 @@ describe('Registering a new Sensor using IPv4', () => {
     });
 
     it('Should be possibile to retrieve all sensors basic infos', async () => {
+        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation);
         await request(app)
-            .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
-            .send(sensorInformation)
-            .expect(HttpStatus.CREATED);
-        await request(app)
-            .get(BASE_SENSOR_PATH_V0 + ALL_INFO_ROUTE)
+            .get(ALL_INFO_ROUTE)
             .expect((res) => {
                 if (res.status !== HttpStatus.OK) {
                     fail(`Something went wrong (HTTP 1.1: ${res.status}): ${JSON.stringify(res)}`);
@@ -212,13 +207,9 @@ describe('Registering a new Sensor using IPv4', () => {
     });
 
     it('Getting an existing sensor from its type', async () => {
+        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation);
         await request(app)
-            .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
-            .send(sensorInformation)
-            .expect(HttpStatus.CREATED);
-        await request(app)
-            .get(BASE_SENSOR_PATH_V0 + TYPE_PATH + `?${SENSOR_TYPE}=${sensorType}`)
+            .get(TYPE_ROUTE + `?${SENSOR_TYPE}=${sensorType}`)
             .set(API_KEY_FIELD, SECRET_API_KEY)
             .expect(HttpStatus.OK)
             .expect((res) => {
