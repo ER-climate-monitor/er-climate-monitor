@@ -213,7 +213,7 @@ paths:
             description: User's email
             example: 'gatteoMare98909@gmail.com'
         - in: header
-          name: X-User-Token
+          name: x-user-token
           required: true
           schema:
             type: string
@@ -229,19 +229,27 @@ paths:
   /admin/delete:
     delete:
       summary: Delete an admin
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userEmail:
-                  type: string
-                  description: Admin's email address
-                apiKey:
-                  type: string
-                  description: Admin API key
+      parameters:
+        - in: path
+          name: userEmail
+          required: true
+          schema:
+            type: string
+            description: User's email
+            example: 'gatteoMare98909@gmail.com'
+        - in: header
+          name: x-user-token
+          required: true
+          schema:
+            type: string
+            description: User's token
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+        - in: header
+          name: x-api-key
+          required: true
+          schema:
+            type: string
+            description: Admin api key
       responses:
         200:
           description: Admin deleted successfully
