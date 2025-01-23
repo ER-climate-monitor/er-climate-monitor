@@ -1,35 +1,9 @@
-import express, { Application } from 'express';
-import dotenv from 'dotenv';
-import { userRouter } from './routes/v0/userRouter';
-import { healthRouter } from './routes/v0/healthRouter';
-import mongoose from 'mongoose';
-import SwaggerUi from 'swagger-ui-express';
-import fs from 'fs';
-import YAML from 'yaml';
-
-dotenv.config();
+import { createProdServer } from "./appUtils";
 
 const PORT = process.env.PORT || 3000;
+const URL: string = process.env.DB_URL || 'mongodb://localhost:27017';
 
-export default function createServer(): Application {
-    const app = express();
-    const URL: string = process.env.DB_URL || '';
-    mongoose.connect(URL, { dbName: 'authorization-database' });
-
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    if (!process.env.CI || process.env.CI == 'False') {
-        const file: string = fs.readFileSync('src/doc/openapi/swagger.yaml', 'utf8');
-        const swaggerDocument = YAML.parse(file);
-        app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
-    }
-
-    app.use('/v0/health', healthRouter);
-    app.use('/v0/user', userRouter);
-    return app;
-}
-
-const app = createServer();
+const app = createProdServer(URL);
 
 app.listen(PORT, () => {
     console.log('listening', PORT);
