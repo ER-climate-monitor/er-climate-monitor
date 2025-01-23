@@ -8,12 +8,14 @@ const API_KEY_FIELD = 'apiKey';
 const USER_ROLE_FIELD = 'userRole';
 const ERROR_FIELD = 'error';
 
+const USER_TOKEN_HEADER = 'x-user-token';
+
 // User roles
 const NORMAL_USER = 'normal';
 const ADMIN_USER = 'admin';
 
 // HTTP header constants
-const ERROR_HEADER = 'X-Error-Message';
+const ERROR_HEADER = 'x-error-message';
 
 export {
     USER_EMAIL_FIELD,
@@ -27,4 +29,5 @@ export {
     API_KEY_FIELD,
     ERROR_FIELD,
     USER_ACTION_FIELD,
+    USER_TOKEN_HEADER
 };
