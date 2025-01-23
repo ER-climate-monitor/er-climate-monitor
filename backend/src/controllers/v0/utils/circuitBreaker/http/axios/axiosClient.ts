@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 import { API_KEY_HEADER } from '../../../../../../models/v0/sensor/headers/sensorHeaders';
-import { USER_TOKEN_HEADER } from '../../../../../../models/v0/authentication/headers/authenticationHeaders';
 import { BasicHttpResponse, HttpResponse } from '../httpResponse';
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
@@ -9,6 +8,27 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
 
 class AxiosHttpClient implements HttpClient {
     constructor() {
+        axios.defaults.headers.common[API_KEY_HEADER.toLowerCase()] = '';
+    }
+    private makeAxiosHeaders(headers: Record<string, string>): AxiosHeaders {
+        const axiosHeaders = new AxiosHeaders();
+        if (headers) {
+            Object.keys(headers).forEach((key) => {
+                axiosHeaders[String(key)] = headers[key];
+            });
+        }
+        return axiosHeaders;
+    }
+
+    private setSecret(headers: Record<string, string>) {
+        const axiosHeaders = this.makeAxiosHeaders(headers);
+        if (axiosHeaders.has(API_KEY_HEADER.toLowerCase())) {
+            axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = axiosHeaders[API_KEY_HEADER.toLowerCase()];
+        }
+    }
+
+    private removeSecret() {
+        axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = '';
     }
 
     private fromAxiosHeadersToRecord(axiosHeaders: any): Record<string, string> {
@@ -40,33 +60,19 @@ class AxiosHttpClient implements HttpClient {
         }
     }
 
-    httpGet(
-        endpoint: string,
-        headers: Record<string, string>,
-    ): Promise<HttpResponse> {
+    httpGet(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
         return this.sendRequest(() => axios.get(endpoint));
     }
-    httpPost(
-        endpoint: string,
-        headers: Record<string, string>,
-        data: object,
-    ): Promise<HttpResponse> {
+    httpPost(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
         return this.sendRequest(() => axios.post(endpoint, data, headers));
     }
 
-    httpPut(
-        endpoint: string,
-        headers: Record<string, string>,
-        data: object,
-    ): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.put(endpoint, data, {headers}));
+    httpPut(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
+        return this.sendRequest(() => axios.put(endpoint, data, { headers }));
     }
 
-    httpDelete(
-        endpoint: string,
-        headers: Record<string, string>,
-    ): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.delete(endpoint, {headers}));
+    httpDelete(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
+        return this.sendRequest(() => axios.delete(endpoint, { headers }));
     }
 }
 
