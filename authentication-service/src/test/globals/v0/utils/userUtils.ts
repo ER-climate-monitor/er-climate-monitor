@@ -9,8 +9,8 @@ import {
     REGISTER_ADMIN_ROUTE,
     REGISTER_USER_ROUTE,
 } from '../routes/globalRoutes.v0';
-import { API_KEY_FIELD, USER_ACTION_FIELD, USER_EMAIL_FIELD, USER_JWT_TOKEN_FIELD, USER_TOKEN_HEADER } from '../../../../models/v0/headers/userHeaders';
-import { DELETE, LOGIN, REGISTER } from '../../../../controllers/v0/utils/userActions';
+import { API_KEY_HEADER, USER_ACTION_FIELD, USER_EMAIL_FIELD, USER_JWT_TOKEN_FIELD, USER_TOKEN_HEADER } from '../../../../models/v0/headers/userHeaders';
+import { LOGIN, REGISTER } from '../../../../controllers/v0/utils/userActions';
 
 const api_key = process.env.SECRET_API_KEY || '';
 
@@ -31,7 +31,7 @@ async function deleteAdmin(app: Application, adminInformation: any) {
         await request(app)
             .delete(DELETE_ADMIN_ROUTE)
             .query({[USER_EMAIL_FIELD]:adminInformation[USER_EMAIL_FIELD]})
-            .set(API_KEY_FIELD, api_key)
+            .set(API_KEY_HEADER, api_key)
             .set(USER_TOKEN_HEADER, token)
             .expect(HttpStatus.OK);
     }
