@@ -1,5 +1,5 @@
 import { jest, test, expect, describe, beforeEach, afterEach } from '@jest/globals';
-import { DetectionBroker, NotificationCallback } from '../../src/DetectionBroker';
+import { DetectionBroker, NotificationCallback } from '../../src/components/detectionBroker';
 import { Channel, Connection, connect } from 'amqplib';
 
 jest.mock('amqplib', () => ({

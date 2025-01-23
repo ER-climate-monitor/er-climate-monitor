@@ -1,20 +1,23 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
-import { router, setMessageBroker, setSocketManger } from './routes/notificationRoutes';
+import { router, setMessageBroker, setSocketManger } from './notificationRoutes';
 import Logger from 'js-logger';
-import path from 'path';
-import { DetectionBroker, DetectionEvent } from './DetectionBroker';
-import { SocketManager, createSocketNotificationCallback } from './socketManager';
+import { SocketManager, createSocketNotificationCallback } from './components/socketManager';
+import { config } from 'dotenv';
+import { DetectionBroker, DetectionEvent } from './components/detectionBroker';
 
+config();
 Logger.useDefaults();
 
 const app = express();
 const server = createServer(app);
-const port = 4444;
+const port = process.env.PORT || 4444;
+const host = process.env.HOST || 'localhost';
 
 const messageBroker = new DetectionBroker<DetectionEvent>();
 const socketManager = new SocketManager(server);
+
 messageBroker.connect();
 
 messageBroker.notificationCallback = createSocketNotificationCallback(socketManager);
@@ -22,11 +25,9 @@ messageBroker.notificationCallback = createSocketNotificationCallback(socketMana
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
-app.get('/', (_: Request, res: Response) => res.sendFile(path.join(__dirname, 'index.html')));
 
 setMessageBroker(messageBroker);
 setSocketManger(socketManager);
 
-app.use('/topics', router);
-
-server.listen(4444, () => Logger.log(`Server listening on http://localhost:${port}`));
+app.use('v0/alert', router);
+server.listen(4444, () => Logger.log(`Server listening on http://${host}:${port}`));

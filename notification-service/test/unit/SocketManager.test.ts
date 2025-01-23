@@ -2,11 +2,10 @@ import { describe, beforeEach, afterEach, test, expect } from '@jest/globals';
 import { Server as HttpServer } from 'http';
 import { createServer } from 'http';
 import { io as ClientIO } from 'socket.io-client';
-import { SocketManager } from '../../src/socketManager';
+import { SocketManager } from '../../src/components/socketManager';
 import { AddressInfo } from 'net';
 import Logger from 'js-logger';
-import { parseSubscription, stringifySubscription, SubscriptionTopic } from '../../src/DetectionBroker';
-import exp from 'constants';
+import { SubscriptionTopic } from '../../src/components/detectionBroker';
 
 Logger.useDefaults();
 

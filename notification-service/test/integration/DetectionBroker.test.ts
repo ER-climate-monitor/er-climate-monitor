@@ -1,11 +1,13 @@
-import { test, expect, describe, beforeAll, beforeEach, afterAll, afterEach } from '@jest/globals';
-import { DetectionBroker, DetectionEvent, NotificationCallback, SubscriptionTopic } from '../../src/DetectionBroker';
+import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/globals';
+import {
+    DetectionBroker,
+    DetectionEvent,
+    NotificationCallback,
+    SubscriptionTopic,
+} from '../../src/components/detectionBroker';
 import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import { Channel, connect, Connection } from 'amqplib';
 import Logger from 'js-logger';
-import { resolveObjectURL } from 'buffer';
-import { exec } from 'child_process';
-import { executionAsyncId } from 'async_hooks';
 
 interface Sensor {
     sensorName: string;

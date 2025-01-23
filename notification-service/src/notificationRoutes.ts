@@ -1,15 +1,19 @@
 import express from 'express';
-import { DetectionBroker, DetectionEvent, parseSubscription } from '../DetectionBroker';
-import { SocketManager } from '../socketManager';
+import { DetectionBroker, DetectionEvent, SubscriptionTopic } from './components/detectionBroker';
+import { SocketManager } from './components/socketManager';
 import { HttpStatusCode } from 'axios';
 const router = express.Router();
 
 let messageBroker: DetectionBroker<DetectionEvent> | undefined;
 let socketManager: SocketManager | undefined;
 
-router.route('/sub').post((req, res) => {
-    const { userId, subTopic } = req.body;
-    subUser(userId, subTopic)
+type Subscription = {
+    userId: string;
+    topic: SubscriptionTopic;
+};
+
+router.route('/subscribe').post((req, res) => {
+    subUser(req.body)
         ?.then((subInfo) => {
             if (subInfo) res.status(HttpStatusCode.Ok).json(subInfo);
             else throw new Error('Something went wrong during subscription');
@@ -17,12 +21,9 @@ router.route('/sub').post((req, res) => {
         .catch((err) => res.status(HttpStatusCode.BadRequest).json({ error: `something went wrong: ${err}` }));
 });
 
-async function subUser(
-    userId: string,
-    subTopic: string
-): Promise<{ uid: string; topicAddr: string } | null | undefined> {
-    return messageBroker?.subscribeUser(userId, parseSubscription(subTopic))?.then((success) => {
-        if (success) return socketManager?.registerUser(userId, parseSubscription(subTopic));
+async function subUser(sub: Subscription): Promise<{ uid: string; topicAddr: string } | null | undefined> {
+    return messageBroker?.subscribeUser(sub.userId, sub.topic)?.then((success) => {
+        if (success) return socketManager?.registerUser(sub.userId, sub.topic);
         else return null;
     });
 }
