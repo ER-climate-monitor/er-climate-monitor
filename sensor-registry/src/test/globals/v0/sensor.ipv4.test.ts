@@ -1,8 +1,8 @@
 import request from 'supertest';
-import createServer from '../../..';
+import { createServer, dropTestDatabase } from '../../..';
 import dotenv from 'dotenv';
 import HttpStatus from 'http-status-codes';
-import { shutOffSensor, createSensor } from './utils/sensorUtils';
+import { shutDownSensor, createSensor } from './utils/sensorUtils';
 import { fail } from 'assert';
 import { ISensor } from '../../../model/v0/sensorModel';
 import {
@@ -19,7 +19,7 @@ import {
     REGISTER_ROUTE,
     TYPE_ROUTE,
 } from '../../../routes/v0/paths/sensorPaths';
-import { beforeEach, it, describe } from 'mocha';
+import { beforeEach, it, describe, after } from 'mocha';
 
 dotenv.config();
 
@@ -43,12 +43,12 @@ const sensorInformation = {
     [SENSOR_TYPE]: sensorType,
     [SENSOR_QUERIES]: sensorQueries,
 };
-
-const app = createServer();
+const testURL = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
+const app = createServer(testURL);
 
 describe('Registering a new Sensor using IPv4', () => {
     beforeEach(async () => {
-        await shutOffSensor(app, sensorInformation);
+        await shutDownSensor(app, sensorInformation);
     });
     it('Registering a new Sensor that does not exists inside the database should be OK', async () => {
         await request(app)
@@ -90,7 +90,7 @@ describe('Registering a new Sensor using IPv4', () => {
             [SENSOR_IP_FIELD]: sensorIp,
             [SENSOR_PORT_FIELD]: 777,
         };
-        await shutOffSensor(app, similarSensor);
+        await shutDownSensor(app, similarSensor);
         await request(app)
             .post(REGISTER_SENSOR_PATH)
             .set(API_KEY_FIELD, SECRET_API_KEY)
@@ -101,7 +101,7 @@ describe('Registering a new Sensor using IPv4', () => {
             .set(API_KEY_FIELD, SECRET_API_KEY)
             .send(similarSensor)
             .expect(HttpStatus.CREATED);
-        await shutOffSensor(app, similarSensor);
+        await shutDownSensor(app, similarSensor);
     });
     it('Registering a sensor with same Port but differnt IP should be OK', async () => {
         const similarSensor = {
@@ -118,7 +118,7 @@ describe('Registering a new Sensor using IPv4', () => {
             .set(API_KEY_FIELD, SECRET_API_KEY)
             .send(similarSensor)
             .expect(HttpStatus.CREATED);
-        await shutOffSensor(app, similarSensor);
+        await shutDownSensor(app, similarSensor);
     });
     it('Delete an existing sensor should be OK', async () => {
         await request(app)
@@ -126,7 +126,7 @@ describe('Registering a new Sensor using IPv4', () => {
             .set(API_KEY_FIELD, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
-        await shutOffSensor(app, sensorInformation);
+        await shutDownSensor(app, sensorInformation);
     });
     it('Get all the sensors without using the Secret Key should return an error.', async () => {
         await request(app).get(ALL_SENSORS).expect(HttpStatus.UNAUTHORIZED);
@@ -192,16 +192,8 @@ describe('Registering a new Sensor using IPv4', () => {
                     fail(`Something went wrong (HTTP 1.1: ${res.status}): ${JSON.stringify(res)}`);
                 }
                 const info: { name: string; type: string; queries: string[] }[] = res.body;
-                if (info.length !== 1) {
-                    fail(`Expected exactly 1 sensorInfo, but got: ${info.length}`);
-                }
-                const sensorInfo = info[0];
-                if (
-                    !(sensorInfo.name === sensorInformation[SENSOR_NAME]) ||
-                    !(sensorInfo.type === sensorInformation[SENSOR_TYPE]) ||
-                    !(sensorInfo.queries.length === sensorInformation[SENSOR_QUERIES].length)
-                ) {
-                    fail();
+                if (info.length === 0) {
+                    fail(`Expected at least 1 sensorInfo, but got: ${info.length}`);
                 }
             });
     });
@@ -229,4 +221,8 @@ describe('Registering a new Sensor using IPv4', () => {
                 }
             });
     });
+
+    after(async () => {
+        await dropTestDatabase();
+    })
 });

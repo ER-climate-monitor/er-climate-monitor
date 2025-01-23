@@ -1,8 +1,8 @@
 import request from 'supertest';
-import createServer from '../../..';
+import { createServer, dropTestDatabase } from '../../..';
 import dotenv from 'dotenv';
 import HttpStatus from 'http-status-codes';
-import { shutOffSensor, createSensor } from './utils/sensorUtils';
+import { shutDownSensor, createSensor } from './utils/sensorUtils';
 import { fail } from 'assert';
 import { ISensor } from '../../../model/v0/sensorModel';
 import randomIpv6 from 'random-ipv6';
@@ -14,7 +14,7 @@ import {
     API_KEY_FIELD,
 } from '../../../model/v0/headers/sensorHeaders';
 import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
-import { afterEach, it, describe } from 'mocha';
+import { afterEach, it, describe, after } from 'mocha';
 
 dotenv.config();
 
@@ -38,9 +38,17 @@ const sensorInfomration = {
     [SENSOR_QUERIES]: sensorQueries,
 };
 
-const app = createServer();
+const testURL = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
+const app = createServer(testURL);
 
 describe('Registering a new Sensor using IPv6', () => {
+    beforeEach(async () => {
+        await shutDownSensor(app, sensorInfomration);
+        for (const sensor of createdSensors) {
+            await shutDownSensor(app, sensor);
+        }
+        createdSensors = [];
+    });
     it('Registering a new Sensor using an IPv6 and using a PORT that are not used should be OK', async () => {
         createdSensors.push(sensorInfomration);
         await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInfomration).expect(HttpStatus.CREATED);
@@ -110,11 +118,7 @@ describe('Registering a new Sensor using IPv6', () => {
         await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInfomration).expect(HttpStatus.CREATED);
         await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInfomration).expect(HttpStatus.CONFLICT);
     });
-    afterEach(async () => {
-        await shutOffSensor(app, sensorInfomration);
-        for (const sensor of createdSensors) {
-            await shutOffSensor(app, sensor);
-        }
-        createdSensors = [];
-    });
+    after(async () => {
+        await dropTestDatabase();
+    })
 });
