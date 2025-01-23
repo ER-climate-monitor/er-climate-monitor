@@ -8,16 +8,18 @@ import {
     SENSOR_NAME,
     SENSOR_QUERIES,
 } from '../../../../model/v0/headers/sensorHeaders';
-import { SHUT_DOWN_PATH } from '../../../../routes/v0/paths/sensorPaths';
+import { SHUT_DOWN_ROUTE } from '../../../../routes/v0/paths/sensorPaths';
 
 dotenv.config();
 
-const DELETE_SENSOR_PATH = SHUT_DOWN_PATH;
 
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 
-async function shutOffSensor(app: Application, data: any) {
-    await request(app).delete(DELETE_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(data);
+async function shutDownSensor(app: Application, data: any) {
+    await request(app).delete(SHUT_DOWN_ROUTE)
+    .set(API_KEY_FIELD, SECRET_API_KEY)
+    .query({[SENSOR_IP_FIELD]: data[SENSOR_IP_FIELD]})
+    .query({[SENSOR_PORT_FIELD]: data[SENSOR_PORT_FIELD]})
 }
 
 function createSensor(ip: string, port: number, name: string, queries: string[]) {
@@ -29,4 +31,4 @@ function createSensor(ip: string, port: number, name: string, queries: string[])
     };
 }
 
-export { shutOffSensor, createSensor };
+export { shutDownSensor, createSensor };
