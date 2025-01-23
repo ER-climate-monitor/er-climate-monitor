@@ -1,33 +1,14 @@
 import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 import { API_KEY_HEADER } from '../../../../../../models/v0/sensor/headers/sensorHeaders';
+import { USER_TOKEN_HEADER } from '../../../../../../models/v0/authentication/headers/authenticationHeaders';
 import { BasicHttpResponse, HttpResponse } from '../httpResponse';
-
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
 }
 
 class AxiosHttpClient implements HttpClient {
     constructor() {
-        axios.defaults.headers.common[API_KEY_HEADER.toLowerCase()] = '';
-    }
-    private makeAxiosHeaders(headers: Record<string, string>): AxiosHeaders {
-        const axiosHeaders = new AxiosHeaders();
-        Object.keys(headers).forEach((key) => {
-            axiosHeaders[String(key)] = headers[key];
-        });
-        return axiosHeaders;
-    }
-
-    private setSecret(headers: Record<string, string>) {
-        const axiosHeaders = this.makeAxiosHeaders(headers);
-        if (axiosHeaders.has(API_KEY_HEADER.toLowerCase())) {
-            axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = axiosHeaders[API_KEY_HEADER.toLowerCase()];
-        }
-    }
-
-    private removeSecret() {
-        axios.defaults.headers[API_KEY_HEADER.toLowerCase()] = '';
     }
 
     private fromAxiosHeadersToRecord(axiosHeaders: any): Record<string, string> {
@@ -45,6 +26,7 @@ class AxiosHttpClient implements HttpClient {
                 response.data,
             );
         } catch (error) {
+            console.log(error);
             if (error instanceof AxiosError && error.response !== undefined) {
                 return new BasicHttpResponse(
                     error.response.status,
@@ -56,7 +38,6 @@ class AxiosHttpClient implements HttpClient {
             }
             return new BasicHttpResponse(HttpStatusCode.BadRequest);
         } finally {
-            this.removeSecret();
         }
     }
 
@@ -64,7 +45,6 @@ class AxiosHttpClient implements HttpClient {
         endpoint: string,
         headers: Record<string, string>,
     ): Promise<HttpResponse> {
-        this.setSecret(headers);
         return this.sendRequest(() => axios.get(endpoint));
     }
     httpPost(
@@ -72,7 +52,6 @@ class AxiosHttpClient implements HttpClient {
         headers: Record<string, string>,
         data: object,
     ): Promise<HttpResponse> {
-        this.setSecret(headers);
         return this.sendRequest(() => axios.post(endpoint, data, headers));
     }
 
@@ -81,7 +60,6 @@ class AxiosHttpClient implements HttpClient {
         headers: Record<string, string>,
         data: object,
     ): Promise<HttpResponse> {
-        this.setSecret(headers);
         return this.sendRequest(() => axios.put(endpoint, data, headers));
     }
 
@@ -90,8 +68,9 @@ class AxiosHttpClient implements HttpClient {
         headers: Record<string, string>,
         data: object,
     ): Promise<HttpResponse> {
-        this.setSecret(headers);
-        return this.sendRequest(() => axios.delete(endpoint, { data }));
+        console.log(endpoint);
+        console.log(headers)
+        return this.sendRequest(() => axios.delete(endpoint, headers));
     }
 }
 
