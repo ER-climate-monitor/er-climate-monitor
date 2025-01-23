@@ -40,7 +40,7 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return true;
         }
-        const expired = this.checkExpirationDate(result.expiration);
+        const expired = this.checkIsExpired(result.expiration);
         if (expired) {
             this.deleteToken(token);
         }
@@ -64,15 +64,15 @@ class AuthenticationClient implements IAuthenticationClient {
         if (result === null) {
             return false;
         }
-        return this.checkTokenRole(result.role, USER_ADMIN.toLowerCase()) && this.checkExpirationDate(result.expiration);
+        return this.checkTokenRole(result.role, USER_ADMIN.toLowerCase()) && !this.checkIsExpired(result.expiration);
     }
 
     public checkTokenRole(tokenRole: string, role: string) {
         return tokenRole.toLowerCase() === role.toLowerCase();
     }
 
-    private checkExpirationDate(expiration: number) {
-        return new Date().getTime() < expiration;
+    private checkIsExpired(expiration: number) {
+        return new Date().getTime() >= expiration;
     }
 
     private checkTokenValue(tokenValue: TokenValue) {
