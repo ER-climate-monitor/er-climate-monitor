@@ -4,40 +4,55 @@ import HttpStatus from 'http-status-codes';
 import {
     DELETE_ADMIN_ROUTE,
     DELETE_USER_ROUTE,
+    LOGIN_ADMIN_ROUTE,
+    LOGIN_USER_ROUTE,
     REGISTER_ADMIN_ROUTE,
     REGISTER_USER_ROUTE,
 } from '../routes/globalRoutes.v0';
-import { USER_ACTION_FIELD } from '../../../../models/v0/headers/userHeaders';
-import { DELETE, REGISTER } from '../../../../controllers/v0/utils/userActions';
+import { API_KEY_FIELD, USER_ACTION_FIELD, USER_EMAIL_FIELD, USER_JWT_TOKEN_FIELD, USER_TOKEN_HEADER } from '../../../../models/v0/headers/userHeaders';
+import { DELETE, LOGIN, REGISTER } from '../../../../controllers/v0/utils/userActions';
+
+const api_key = process.env.SECRET_API_KEY || '';
 
 async function deleteUser(app: Application, userInformation: any) {
-    const registered = await isUserRegistered(app, userInformation);
-    if (registered) {
+    const token = await isUserRegistered(app, userInformation);
+    if (token) {
         await request(app)
             .delete(DELETE_USER_ROUTE)
-            .send(createBodyUser(DELETE, userInformation))
+            .query({[USER_EMAIL_FIELD]:userInformation[USER_EMAIL_FIELD]})
+            .set(USER_TOKEN_HEADER, token)
             .expect(HttpStatus.OK);
     }
 }
 
 async function deleteAdmin(app: Application, adminInformation: any) {
-    const registered = await isAdminRegistered(app, adminInformation);
-    if (registered) {
+    const token = await isAdminRegistered(app, adminInformation);
+    if (token) {
         await request(app)
             .delete(DELETE_ADMIN_ROUTE)
-            .send(createBodyUser(DELETE, adminInformation))
+            .query({[USER_EMAIL_FIELD]:adminInformation[USER_EMAIL_FIELD]})
+            .set(API_KEY_FIELD, api_key)
+            .set(USER_TOKEN_HEADER, token)
             .expect(HttpStatus.OK);
     }
 }
 
 async function isUserRegistered(app: Application, userInformation: {}) {
     const response = await request(app).post(REGISTER_USER_ROUTE).send(createBodyUser(REGISTER, userInformation));
-    return response.statusCode == HttpStatus.CONFLICT || response.statusCode == HttpStatus.CREATED;
+    if (response.status === HttpStatus.CREATED) {
+        return response.body[USER_JWT_TOKEN_FIELD];
+    }
+    const login = await request(app).post(LOGIN_USER_ROUTE).send(createBodyUser(LOGIN, userInformation));
+    return login.body[USER_JWT_TOKEN_FIELD];
 }
 
 async function isAdminRegistered(app: Application, adminInformation: {}) {
     const response = await request(app).post(REGISTER_ADMIN_ROUTE).send(createBodyUser(REGISTER, adminInformation));
-    return response.statusCode == HttpStatus.CONFLICT || response.statusCode == HttpStatus.CREATED;
+    if (response.status === HttpStatus.CREATED) {
+        return response.body[USER_JWT_TOKEN_FIELD];
+    }
+    const login = await request(app).post(LOGIN_ADMIN_ROUTE).send(createBodyUser(LOGIN, adminInformation));
+    return login.body[USER_JWT_TOKEN_FIELD];
 }
 
 function createBodyUser(action: string, info: { [key: string]: string }) {
