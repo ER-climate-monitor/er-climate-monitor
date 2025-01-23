@@ -9,6 +9,7 @@ const USER_ROLE_FIELD = 'userRole';
 const ERROR_FIELD = 'error';
 
 const USER_TOKEN_HEADER = 'x-user-token';
+const API_KEY_HEADER = 'x-api-key'
 
 // User roles
 const NORMAL_USER = 'normal';
@@ -29,5 +30,6 @@ export {
     API_KEY_FIELD,
     ERROR_FIELD,
     USER_ACTION_FIELD,
-    USER_TOKEN_HEADER
+    USER_TOKEN_HEADER,
+    API_KEY_HEADER
 };
