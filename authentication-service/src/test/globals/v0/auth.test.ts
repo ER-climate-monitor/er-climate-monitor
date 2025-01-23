@@ -19,7 +19,7 @@ import { REGISTER, LOGIN, DELETE } from '../../../controllers/v0/utils/userActio
 
 dotenv.config();
 
-const email = 'testemail1@gmail.com';
+const email = 'testemail10@gmail.com';
 const password = 'AVeryStrongPassword1010';
 const api_key = process.env.SECRET_API_KEY || '';
 
@@ -87,7 +87,7 @@ describe('User Authentication', () => {
             await request(app)
                 .delete(DELETE_USER_ROUTE)
                 .send(createBodyUser(DELETE, badInformation))
-                .expect(HttpStatus.NOT_ACCEPTABLE);
+                .expect(HttpStatus.UNAUTHORIZED);
         }
     });
     it('Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered', async () => {
@@ -108,7 +108,7 @@ describe('User Authentication', () => {
             await request(app)
                 .delete(DELETE_ADMIN_ROUTE)
                 .send(createBodyUser(DELETE, badInformation))
-                .expect(HttpStatus.NOT_ACCEPTABLE);
+                .expect(HttpStatus.UNAUTHORIZED);
         }
     });
     it('should return OK if I register an Admin using the correct API key and using an email that does not exist', async () => {
