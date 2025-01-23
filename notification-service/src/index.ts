@@ -29,5 +29,5 @@ app.use(express.static('public'));
 setMessageBroker(messageBroker);
 setSocketManger(socketManager);
 
-app.use('v0/alert', router);
+app.use('/v0/alert', router);
 server.listen(4444, () => Logger.log(`Server listening on http://${host}:${port}`));

@@ -95,7 +95,14 @@ class DetectionBroker<T> {
             for (const [pattern, subscription] of this.subscriptions.entries()) {
                 if (this.matchesPattern(routingKey, pattern) && this.notificationCallback) {
                     const topic = this.routingKeyToTopic(routingKey);
-                    this.notificationCallback(subscription.userIds, topic, content);
+                    Logger.info('Invoking notificationCallback with the following details:', {
+                        pattern,
+                        subscription,
+                        userIds: subscription.userIds,
+                        topic,
+                        content,
+                    });
+                    this.notificationCallback(subscription.userIds, parseSubscription(pattern), content);
                 }
             }
             this.channel.ack(msg);
