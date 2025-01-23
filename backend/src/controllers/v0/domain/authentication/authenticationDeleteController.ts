@@ -12,7 +12,7 @@ const authenticationDeleteHandler = async (request: Request, response: Response)
     const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
     try {
         Logger.info('Requested to delete a user');
-        const httpResponse = await authenticationService.deleteOperation(endpointPath, request.headers, request.body);
+        const httpResponse = await authenticationService.deleteOperation(endpointPath, request.headers, request.query);
         response = fromHttpResponseToExpressResponse(httpResponse, response);
         response.send(httpResponse.data);
     } catch (error) {
