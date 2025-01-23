@@ -29,4 +29,5 @@ export {
     ALL_INFO_ROUTE,
     TYPE_PATH,
     TYPE_ROUTE,
+    UPDATE_SENSOR_NAME_PATH
 };
