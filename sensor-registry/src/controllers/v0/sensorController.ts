@@ -116,6 +116,7 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
             case (UPDATE_NAME_ACTION): {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 updateSensorName(ip, port, name);
+                basicHttpClient.updateSensorName()
                 return;
             }
         }
