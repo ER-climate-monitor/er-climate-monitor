@@ -26,7 +26,6 @@ class AxiosHttpClient implements HttpClient {
                 response.data,
             );
         } catch (error) {
-            console.log(error);
             if (error instanceof AxiosError && error.response !== undefined) {
                 return new BasicHttpResponse(
                     error.response.status,
@@ -60,17 +59,14 @@ class AxiosHttpClient implements HttpClient {
         headers: Record<string, string>,
         data: object,
     ): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.put(endpoint, data, headers));
+        return this.sendRequest(() => axios.put(endpoint, data, {headers}));
     }
 
     httpDelete(
         endpoint: string,
         headers: Record<string, string>,
-        data: object,
     ): Promise<HttpResponse> {
-        console.log(endpoint);
-        console.log(headers)
-        return this.sendRequest(() => axios.delete(endpoint, headers));
+        return this.sendRequest(() => axios.delete(endpoint, {headers}));
     }
 }
 
