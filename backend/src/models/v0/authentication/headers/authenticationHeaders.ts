@@ -9,7 +9,7 @@ const REGISTER_ACTION = 'register';
 const LOGIN_ACTION = 'login';
 const AUTHENTICATE_ACTION = 'authenticate';
 const USER_ADMIN = 'admin';
-const USER_NORMA = 'normal';
+const USER_TOKEN_HEADER = 'x-user-token';
 
 export {
     USER_EMAIL_BODY,
@@ -22,4 +22,5 @@ export {
     REGISTER_ACTION,
     LOGIN_ACTION,
     AUTHENTICATE_ACTION,
+    USER_TOKEN_HEADER
 };
