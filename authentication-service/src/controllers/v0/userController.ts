@@ -16,6 +16,7 @@ import {
     USER_ACTION_FIELD,
     USER_ROLE_FIELD,
     USER_TOKEN_HEADER,
+    API_KEY_HEADER,
 } from '../../models/v0/headers/userHeaders';
 import { AUTHENTICATE, DELETE, LOGIN, REGISTER } from './utils/userActions';
 import Logger from 'js-logger';
@@ -129,7 +130,7 @@ const deleteUser = async (request: Request, response: Response) => {
 
 const deleteAdmin = async (request: Request, response: Response) => {
     Logger.info('Received a request for deleting an admin');
-    if (isAdmin(request.headers, API_KEY_FIELD.toLocaleLowerCase())) {
+    if (isAdmin(request.headers, API_KEY_HEADER.toLocaleLowerCase())) {
         const userEmail = String(request.query[USER_EMAIL_FIELD]) || '';
         const jwtToken = String(request.headers[USER_TOKEN_HEADER]) || '';
         if (await canBeDeleted(jwtToken, userEmail)) {
