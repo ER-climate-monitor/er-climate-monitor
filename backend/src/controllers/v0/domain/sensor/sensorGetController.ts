@@ -33,7 +33,7 @@ const sensorGetHandler = async (request: Request, response: Response) => {
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);
         } else {
-            endpointPath = endpointPath + '/infos';
+            endpointPath = endpointPath.replace('all', 'infos');
             const httpResponse = await sensorService.getAllSensorsOperation(
                 endpointPath,
                 request.headers,
