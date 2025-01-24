@@ -27,7 +27,7 @@ async function saveToken(response: HttpResponse) {
         String(response.data[USER_ROLE_BODY]),
         Number(response.data[USER_JWT_TOKEN_EXPIRATION_BODY]),
     );
-    authenticationService.authenticationClient.setToken(String(response.data[USER_JWT_TOKEN_BODY]), tokenValue);
+    await authenticationService.authenticationClient.setToken(String(response.data[USER_JWT_TOKEN_BODY]), tokenValue);
 }
 
 function isExpired(expiration: number, token: string, response: Response) {
