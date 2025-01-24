@@ -24,7 +24,7 @@ import dotenv from 'dotenv';
 import { fromBody, fromHeaders } from './utils/requestUtils';
 import { BasicHttpClient } from './utils/http/httpClient';
 import Logger from "js-logger";
-import { SHUT_DOWN_PATH, UPDATE_SENSOR_NAME_PATH } from '../../routes/v0/paths/sensorPaths';
+import { SHUTDOWN_SENSOR_PATH, UPDATE_SENSOR_NAME_PATH } from '../../routes/v0/paths/physicalSensorPaths';
 
 Logger.useDefaults();
 
@@ -88,7 +88,7 @@ const shutDown = async (request: Request, response: Response) => {
         const port = Number(request.query[SENSOR_PORT_FIELD]) || -1;
         try {
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
-                basicHttpClient.deleteSensor(SHUT_DOWN_PATH, ip, port)
+                basicHttpClient.deleteSensor(SHUTDOWN_SENSOR_PATH, ip, port)
                     .catch((error) => {
                         Logger.error('Error while trying to turning off the sensor.');
                     });
