@@ -12,7 +12,7 @@ import {
 } from './utils/sensorUtils';
 import {
     ACTION,
-    API_KEY_FIELD,
+    API_KEY_HEADER,
     SENSOR_IP_FIELD,
     SENSOR_NAME,
     SENSOR_PORT_FIELD,
@@ -41,7 +41,7 @@ function isAuthorized(key: string): boolean {
 const registerSensor = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData) {
-        const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
+        const apikey = fromHeaders(request.headers, API_KEY_HEADER.toLowerCase(), '');
         Logger.info('Received a request for saving a new sensor');
         if (isAuthorized(apikey)) {
             const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
@@ -70,7 +70,7 @@ const registerSensor = async (request: Request, response: Response) => {
 };
 
 const allSensors = async (request: Request, response: Response) => {
-    const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
+    const apikey = fromHeaders(request.headers, API_KEY_HEADER.toLowerCase(), '');
     Logger.info('Received a request for returing all the sensors');
     if (apikey !== '' && isAuthorized(apikey)) {
         response.send({ sensors: await findAllSensors() });
@@ -81,7 +81,7 @@ const allSensors = async (request: Request, response: Response) => {
 };
 
 const shutDown = async (request: Request, response: Response) => {
-    const apikey = fromHeaders(request.headers, API_KEY_FIELD.toLowerCase(), '');
+    const apikey = fromHeaders(request.headers, API_KEY_HEADER.toLowerCase(), '');
     Logger.info('Requested to delete a sensor');
     if (apikey !== '' && isAuthorized(apikey)) {
         const ip = String(request.query[SENSOR_IP_FIELD]) || '';
@@ -108,7 +108,8 @@ const shutDown = async (request: Request, response: Response) => {
 const updateSensorInfo= async (request: Request, respone: Response) => {
     const modelData = request.body;
     try {
-        if (!modelData) {
+        const apiKey = String(request.headers[API_KEY_HEADER.toLowerCase()]) || '';
+        if (!modelData || !isAuthorized(apiKey)) {
             return;
         }
         const action = request.body[ACTION];

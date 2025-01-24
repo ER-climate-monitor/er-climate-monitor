@@ -8,7 +8,7 @@ import { ISensor } from '../../../model/v0/sensorModel';
 import {
     SENSOR_IP_FIELD,
     SENSOR_PORT_FIELD,
-    API_KEY_FIELD,
+    API_KEY_HEADER,
     SENSOR_NAME,
     SENSOR_QUERIES,
     SENSOR_TYPE,
@@ -53,7 +53,7 @@ describe('Registering a new Sensor using IPv4', () => {
     it('Registering a new Sensor that does not exists inside the database should be OK', async () => {
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
     });
@@ -69,19 +69,19 @@ describe('Registering a new Sensor using IPv4', () => {
         await request(app).post(REGISTER_SENSOR_PATH).send(noAPI).expect(HttpStatus.UNAUTHORIZED);
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, 'anotherKey')
+            .set(API_KEY_HEADER, 'anotherKey')
             .send(wrongAPI)
             .expect(HttpStatus.UNAUTHORIZED);
     });
     it('Registering a sensor with a duplicate pair IP-Port should return an error', async () => {
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CONFLICT);
     });
@@ -93,12 +93,12 @@ describe('Registering a new Sensor using IPv4', () => {
         await shutDownSensor(app, similarSensor);
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(similarSensor)
             .expect(HttpStatus.CREATED);
         await shutDownSensor(app, similarSensor);
@@ -110,12 +110,12 @@ describe('Registering a new Sensor using IPv4', () => {
         };
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(similarSensor)
             .expect(HttpStatus.CREATED);
         await shutDownSensor(app, similarSensor);
@@ -123,7 +123,7 @@ describe('Registering a new Sensor using IPv4', () => {
     it('Delete an existing sensor should be OK', async () => {
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
         await shutDownSensor(app, sensorInformation);
@@ -134,12 +134,12 @@ describe('Registering a new Sensor using IPv4', () => {
     it('Register a sensor and query for all the sensors should be able to find the registered sensor', async () => {
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(sensorInformation)
             .expect(HttpStatus.CREATED);
         await request(app)
             .get(ALL_SENSORS)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .expect(HttpStatus.OK)
             .expect((res) => {
                 const allSensors: Array<ISensor> = res.body['sensors'];
@@ -156,13 +156,13 @@ describe('Registering a new Sensor using IPv4', () => {
         };
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(wrongSensor)
             .expect(HttpStatus.NOT_ACCEPTABLE);
         wrongSensor[SENSOR_PORT_FIELD] = MAX_PORT + 1;
         await request(app)
             .post(REGISTER_SENSOR_PATH)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .send(wrongSensor)
             .expect(HttpStatus.NOT_ACCEPTABLE);
     });
@@ -177,14 +177,14 @@ describe('Registering a new Sensor using IPv4', () => {
         for (const sensor of wrongSensors) {
             await request(app)
                 .post(REGISTER_SENSOR_PATH)
-                .set(API_KEY_FIELD, SECRET_API_KEY)
+                .set(API_KEY_HEADER, SECRET_API_KEY)
                 .send(sensor)
                 .expect(HttpStatus.NOT_ACCEPTABLE);
         }
     });
 
     it('Should be possibile to retrieve all sensors basic infos', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation);
+        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_HEADER, SECRET_API_KEY).send(sensorInformation);
         await request(app)
             .get(ALL_INFO_ROUTE)
             .expect((res) => {
@@ -200,10 +200,10 @@ describe('Registering a new Sensor using IPv4', () => {
     });
 
     it('Getting an existing sensor from its type', async () => {
-        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_FIELD, SECRET_API_KEY).send(sensorInformation);
+        await request(app).post(REGISTER_SENSOR_PATH).set(API_KEY_HEADER, SECRET_API_KEY).send(sensorInformation);
         await request(app)
             .get(TYPE_ROUTE + `?${SENSOR_TYPE}=${sensorType}`)
-            .set(API_KEY_FIELD, SECRET_API_KEY)
+            .set(API_KEY_HEADER, SECRET_API_KEY)
             .expect(HttpStatus.OK)
             .expect((res) => {
                 const sensors: ISensor[] = res.body;

@@ -4,7 +4,7 @@ import { Application } from 'express';
 import {
     SENSOR_IP_FIELD,
     SENSOR_PORT_FIELD,
-    API_KEY_FIELD,
+    API_KEY_HEADER,
     SENSOR_NAME,
     SENSOR_QUERIES,
 } from '../../../../model/v0/headers/sensorHeaders';
@@ -17,7 +17,7 @@ const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 
 async function shutDownSensor(app: Application, data: any) {
     await request(app).delete(SHUT_DOWN_ROUTE)
-    .set(API_KEY_FIELD, SECRET_API_KEY)
+    .set(API_KEY_HEADER, SECRET_API_KEY)
     .query({[SENSOR_IP_FIELD]: data[SENSOR_IP_FIELD]})
     .query({[SENSOR_PORT_FIELD]: data[SENSOR_PORT_FIELD]})
 }
