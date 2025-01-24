@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode, InternalAxiosRequestConfig } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
-import { API_KEY_HEADER } from '../../../../../../models/v0/sensor/headers/sensorHeaders';
 import { BasicHttpResponse, HttpResponse } from '../httpResponse';
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
