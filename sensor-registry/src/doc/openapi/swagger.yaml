@@ -35,4 +35,69 @@ paths:
           description: The user is not authorized in performing this operation.
         '409':
           description: Another sensor with the same IP and the same PORT has already been saved inside the registry.
+  /v0/sensor/all:
+    get:
+      description: Get all the stored sensors.
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sensors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ip:
+                          type: string
+                          format: ip
+                          description: The IP address of the sensor.
+                          example: "30.0.0.0"
+                        port:
+                          type: integer
+                          description: The port number used by the sensor.
+                          example: 1926
+                        name:
+                          type: string
+                          description: The name of the sensor.
+                          example: "diomerda"
+                        type:
+                          type: string
+                          description: The type of the sensor.
+                          example: "rain"
+                        queries:
+                          type: array
+                          items:
+                            type: string
+                            description: A query related to the sensor.
+                            example: "25%-threshold"
+                example:
+                  sensors:
+                    - ip: "30.0.0.0"
+                      port: 1926
+                      name: "gatteo-mare-sensor"
+                      type: "rain"
+                      queries:
+                        - "25%-threshold"
+                        - "50%-threshold"
+                        - "75%-threshold"
+                        - "100%-threshold"
+                    - ip: "2001:db8:3333:4444:5555:6666:7777:8888"
+                      port: 1926
+                      name: "napoli-sensor"
+                      type: "unknown"
+                      queries:
+                        - "25%-threshold"
+                        - "50%-threshold"
+                        - "75%-threshold"
+                        - "100%-threshold"
           
