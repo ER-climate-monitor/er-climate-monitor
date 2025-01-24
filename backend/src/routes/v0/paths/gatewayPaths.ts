@@ -18,7 +18,7 @@ const notificationServices = {
 const NOTIFICATIONS_API = {
     SERVICE: notificationServices,
     PATHS: {
-        SUBSCRIPTION: '/subscribe',
+        SUBSCRIPTION: '/subscription',
     },
 };
 
