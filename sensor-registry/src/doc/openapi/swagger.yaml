@@ -100,4 +100,35 @@ paths:
                         - "50%-threshold"
                         - "75%-threshold"
                         - "100%-threshold"
+  /v0/sensor/shutdown:
+    delete:
+      description: Shut down the input sensor.
+      parameters:
+        - in: query
+          required: true
+          name: sensorIp
+          schema:
+            type: string
+            description: Sensor's Ip
+            example: '19.26.0.0'
+        - in: query
+          required: true
+          name: sensorPort
+          schema:
+            type: number
+            description: Sensor's port
+            example: 100
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+            description: Api Key
+      responses:
+        '200':
+          description: The input Sensor has been turned off.
+        '404':
+          description: The input sensor does not exists.
+        '401':
+          description: The Inut user is not authorized.
           
