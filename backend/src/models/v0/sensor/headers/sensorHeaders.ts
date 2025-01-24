@@ -1,6 +1,6 @@
 const SENSOR_IP_BODY = 'sensorIp';
 const SENSOR_PORT_BODY = 'sensorPort';
-const API_KEY_HEADER = 'apiKey';
+const API_KEY_HEADER = 'x-api-key';
 const SENSOR_ACTION = 'action';
 
 const REGISTER_ACTION = 'register';
