@@ -109,27 +109,38 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
     const modelData = request.body;
     try {
         const apiKey = String(request.headers[API_KEY_HEADER.toLowerCase()]) || '';
+        Logger.info('Received a request for updating a sensor, checking if He is authorized');
         if (!modelData || !isAuthorized(apiKey)) {
             respone.status(HttpStatus.UNAUTHORIZED);
             return;
         }
-        const action: String = fromBody(modelData, request.body[ACTION], '');
+        const action: String = fromBody(modelData, ACTION, '');
         const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
         const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
         Logger.info(`Requested to update the input sensor: ${ip}-${port}`);
         switch (action) {
             case (UPDATE_NAME_ACTION): {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
-                updateSensorName(ip, port, name);
-                Logger.info(`Changing the name for the input sensor: ${ip}-${port}`);
-                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name);
+                Logger.info(`Changing the name for the input sensor: ${ip} port: ${port}`);
+                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name)
+                    .then(async (_) => {
+                        await updateSensorName(ip, port, name);
+                        Logger.info('Name changed correctly');
+                    })
+                    .catch((error) => {
+                        Logger.error('The sensor is down');
+                    })
                 return;
             } default: {
                 Logger.error('Unknown input action: ' + action);
                 respone.status(HttpStatus.BAD_REQUEST).send({errorMessage: 'Unknown action to do'});
             }
+        }   
+    } catch (error) {
+        Logger.info('Error: ' + error);
+        if (error instanceof Error) {
+            respone.status(HttpStatus.BAD_REQUEST).send(error.message);
         }
-
     } finally {
         respone.end();
     }
