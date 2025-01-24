@@ -70,6 +70,7 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
         }
         case LOGIN_ACTION: {
             try {
+                Logger.info('Received a request for logging a user.');
                 const httpResponse = await authenticationService.loginOperation(
                     endpointPath,
                     request.headers,
