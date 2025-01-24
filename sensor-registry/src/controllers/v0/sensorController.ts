@@ -110,9 +110,10 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
     try {
         const apiKey = String(request.headers[API_KEY_HEADER.toLowerCase()]) || '';
         if (!modelData || !isAuthorized(apiKey)) {
+            respone.status(HttpStatus.UNAUTHORIZED);
             return;
         }
-        const action = request.body[ACTION];
+        const action: String = fromBody(modelData, request.body[ACTION], '');
         const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
         const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
         switch (action) {
@@ -121,6 +122,8 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
                 updateSensorName(ip, port, name);
                 basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name);
                 return;
+            } default: {
+                respone.status(HttpStatus.BAD_REQUEST).send({errorMessage: 'Unknown action to do'});
             }
         }
 
