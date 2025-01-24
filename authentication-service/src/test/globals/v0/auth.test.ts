@@ -20,7 +20,7 @@ import { REGISTER, LOGIN, DELETE } from '../../../controllers/v0/utils/userActio
 dotenv.config();
 
 const email = 'testemail10@gmail.com';
-const password = 'AVeryStrongPassword1010';
+const password = 'Forzanapoli10!';
 const api_key = process.env.SECRET_API_KEY || '';
 
 const userInformation = {

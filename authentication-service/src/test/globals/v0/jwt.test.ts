@@ -16,7 +16,7 @@ import { REGISTER_ADMIN_ROUTE, REGISTER_USER_ROUTE, JWT_AUTHORIZED_ROUTE } from 
 import { AUTHENTICATE, REGISTER } from '../../../controllers/v0/utils/userActions';
 
 const email = 'testemail1@gmail.com';
-const password = 'AVeryStrongPassword1010';
+const password = 'Forzanapoli10!';
 const api_key = process.env.SECRET_API_KEY || '';
 
 const userInformation = {
