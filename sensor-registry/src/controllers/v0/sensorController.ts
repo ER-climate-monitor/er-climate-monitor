@@ -13,18 +13,20 @@ import {
 import {
     ACTION,
     API_KEY_HEADER,
+    SENSOR_CRONJOB_DAYS,
     SENSOR_IP_FIELD,
     SENSOR_NAME,
     SENSOR_PORT_FIELD,
     SENSOR_QUERIES,
     SENSOR_TYPE,
+    UPDATE_CRONJOB_DAYS_ACTION,
     UPDATE_NAME_ACTION,
 } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
 import { fromBody, fromHeaders } from './utils/requestUtils';
 import { BasicHttpClient } from './utils/http/httpClient';
 import Logger from "js-logger";
-import { SHUTDOWN_SENSOR_PATH, UPDATE_SENSOR_NAME_PATH } from '../../routes/v0/paths/physicalSensorPaths';
+import { SHUTDOWN_SENSOR_PATH, UPDATE_SENSOR_CRONJOB_DAYS_PATH, UPDATE_SENSOR_CRONJOB_TIME_PATH, UPDATE_SENSOR_NAME_PATH } from '../../routes/v0/paths/physicalSensorPaths';
 
 Logger.useDefaults();
 
@@ -122,16 +124,18 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
             case (UPDATE_NAME_ACTION): {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 Logger.info(`Changing the name for the input sensor: ${ip} port: ${port}`);
-                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name)
-                    .then(async (_) => {
-                        await updateSensorName(ip, port, name);
-                        Logger.info('Name changed correctly');
-                    })
-                    .catch((error) => {
-                        Logger.error('The sensor is down');
-                    })
+                await basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name)
+                await updateSensorName(ip, port, name);
+                Logger.info('Name changed correctly');
                 return;
-            } default: {
+            } case (UPDATE_CRONJOB_DAYS_ACTION): {
+                const days = fromBody(modelData, SENSOR_CRONJOB_DAYS, '');
+                Logger.info('Received a request for updating the sensor\'s cronjob days');
+                await basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days)
+                return;
+            } case (UPDATE_SENSOR_CRONJOB_TIME_PATH):  {
+                return;
+            }default: {
                 Logger.error('Unknown input action: ' + action);
                 respone.status(HttpStatus.BAD_REQUEST).send({errorMessage: 'Unknown action to do'});
             }
