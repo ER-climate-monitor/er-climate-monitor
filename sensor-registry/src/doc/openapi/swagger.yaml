@@ -37,7 +37,7 @@ paths:
           description: Another sensor with the same IP and the same PORT has already been saved inside the registry.
   /v0/sensor/all:
     get:
-      description: Get all the stored sensors.
+      summary: Get all the stored sensors.
       parameters:
         - in: header
           required: true
@@ -102,7 +102,7 @@ paths:
                         - "100%-threshold"
   /v0/sensor/shutdown:
     delete:
-      description: Shut down the input sensor.
+      summary: Shut down the input sensor.
       parameters:
         - in: query
           required: true
@@ -133,7 +133,7 @@ paths:
           description: The Inut user is not authorized.
   /v0/sensor/update:
     put:
-      description: Update one of the registered sensors.
+      summary: Update one of the registered sensors.
       requestBody:
         required: true
         content:
