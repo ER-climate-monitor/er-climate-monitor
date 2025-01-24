@@ -41,8 +41,8 @@ class SocketManager {
             socket.on('register', async (uid: string, topicAddr: string) => {
                 try {
                     const sub = parseSubscription(topicAddr, this.topicPrefix);
-                    if (!this.subscriptionsToUID.get(JSON.stringify(sub))?.has(uid)) {
-                        throw new Error(`User ${uid} is not subscribed for topic: ${JSON.stringify(sub)}`);
+                    if (!this.subscriptionsToUID.get(stringifySubscription(sub))?.has(uid)) {
+                        throw new Error(`User ${uid} is not subscribed for topic: ${stringifySubscription(sub)}`);
                     }
                     this.registerUserSocket(uid, sub, socket);
                     socket.emit('registered', { success: true });
@@ -119,10 +119,26 @@ class SocketManager {
         if (uid) return { uid: uid, topicAddr: `${this.topicPrefix}.${stringifySubscription(sub)}` };
         uid = generateUID();
         this.usersUIDs.set(userId, uid);
-        const topicSubs = this.subscriptionsToUID.get(JSON.stringify(sub)) ?? new Set();
+        const topicSubs = this.subscriptionsToUID.get(stringifySubscription(sub)) ?? new Set();
         topicSubs.add(uid);
-        this.subscriptionsToUID.set(JSON.stringify(sub), topicSubs);
+        this.subscriptionsToUID.set(stringifySubscription(sub), topicSubs);
         return { uid: uid, topicAddr: `${this.topicPrefix}.${stringifySubscription(sub)}` };
+    }
+
+    unregisterUser(userId: string, sub: SubscriptionTopic) {
+        let uid = this.usersUIDs.get(userId);
+        if (!uid) {
+            return true;
+        }
+
+        const conn = this.usersConnections.get(uid);
+        if (!conn) {
+            return true;
+        }
+
+        conn.socket.disconnect();
+        this.usersUIDs.delete(userId);
+        return this.subscriptionsToUID.get(uid)?.delete(stringifySubscription(sub));
     }
 
     close() {

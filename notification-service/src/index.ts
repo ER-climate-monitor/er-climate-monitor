@@ -1,11 +1,12 @@
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
-import { router, setMessageBroker, setSocketManger } from './notificationRoutes';
+import { router } from './notificationRoutes';
 import Logger from 'js-logger';
 import { SocketManager, createSocketNotificationCallback } from './components/socketManager';
 import { config } from 'dotenv';
 import { DetectionBroker, DetectionEvent } from './components/detectionBroker';
+import { setMessageBroker, setSocketManger } from './handlers/notificationHttpHandler';
 
 config();
 Logger.useDefaults();

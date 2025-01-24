@@ -153,6 +153,10 @@ class DetectionBroker<T> {
         return sub.userIds.delete(userId);
     }
 
+    retrieveUserSubscriptions(userId: string): Set<string> {
+        return this.userSubscriptions.get(userId) || new Set();
+    }
+
     private getRoutingPattern(topic: SubscriptionTopic): string {
         return stringifySubscription(topic);
     }
