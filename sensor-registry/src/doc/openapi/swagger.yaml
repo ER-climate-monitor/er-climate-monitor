@@ -1,0 +1,38 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: API documentation for Sensor Registry service.
+paths:
+  /v0/sensor/register:
+    post:
+      summary: Register a new Sensor.
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sensorIp:
+                  type: string
+                  example: '10.9.0.4'
+                  description: Input Sensor's ip
+                sensorPort:
+                  type: number
+                  example: 65535
+                  description: Input Sensor's port
+      responses:
+        '201':
+          description: The input Sensor has been saved.
+        '401':
+          description: The user is not authorized in performing this operation.
+        '409':
+          description: Another sensor with the same IP and the same PORT has already been saved inside the registry.
+          
