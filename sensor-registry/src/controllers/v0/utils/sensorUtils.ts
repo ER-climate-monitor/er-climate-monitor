@@ -11,7 +11,7 @@ async function saveSensor(ip: string, port: number, name: string, type: string, 
 }
 
 async function updateSensorName(ip: string, port: number, newName: string) {
-    await sensorModel.updateOne({ip: ip, port: port}, {$set: {name: newName}});
+    await sensorModel.updateOne({ ip: ip, port: port }, { $set: { name: newName } });
 }
 
 async function findAllSensors(): Promise<Iterable<ISensor>> {

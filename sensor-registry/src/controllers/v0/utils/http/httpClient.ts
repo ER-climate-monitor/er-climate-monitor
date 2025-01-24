@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { SENSOR_CRONJOB_DAYS, SENSOR_CRONJOB_TIME_HOUR, SENSOR_CRONJOB_TIME_MINUTE, SENSOR_NAME } from '../../../../model/v0/headers/sensorHeaders';
+import {
+    SENSOR_CRONJOB_DAYS,
+    SENSOR_CRONJOB_TIME_HOUR,
+    SENSOR_CRONJOB_TIME_MINUTE,
+    SENSOR_NAME,
+} from '../../../../model/v0/headers/sensorHeaders';
 
 interface HttpClient {
     deleteSensor(endpoint: string, ip: string, port: number): Promise<boolean>;
@@ -8,7 +13,7 @@ interface HttpClient {
     updateCronJobTime(endpoint: string, ip: string, port: number, hour: string, minute: string): Promise<boolean>;
 }
 
-class BasicHttpClient implements HttpClient{
+class BasicHttpClient implements HttpClient {
     constructor() {}
 
     private makeURL(ip: string, port: number, endpoint: string) {
@@ -22,18 +27,24 @@ class BasicHttpClient implements HttpClient{
 
     async updateSensorName(endpoint: string, ip: string, port: number, newName: string): Promise<boolean> {
         const url = this.makeURL(ip, port, endpoint);
-        return axios.put(url, {[SENSOR_NAME]: newName});
+        return axios.put(url, { [SENSOR_NAME]: newName });
     }
 
     async updateCronJobDays(endpoint: string, ip: string, port: number, newDays: string): Promise<boolean> {
         const url = this.makeURL(ip, port, endpoint);
-        return axios.put(url, {[SENSOR_CRONJOB_DAYS]: newDays});
+        return axios.put(url, { [SENSOR_CRONJOB_DAYS]: newDays });
     }
 
-    async updateCronJobTime(endpoint: string, ip: string, port: number, hour: string, minute: string): Promise<boolean> {
+    async updateCronJobTime(
+        endpoint: string,
+        ip: string,
+        port: number,
+        hour: string,
+        minute: string,
+    ): Promise<boolean> {
         const url = this.makeURL(ip, port, endpoint);
-        return axios.put(url, {[SENSOR_CRONJOB_TIME_HOUR]: hour, [SENSOR_CRONJOB_TIME_MINUTE]: minute});
+        return axios.put(url, { [SENSOR_CRONJOB_TIME_HOUR]: hour, [SENSOR_CRONJOB_TIME_MINUTE]: minute });
     }
 }
 
-export  { BasicHttpClient }
+export { BasicHttpClient };

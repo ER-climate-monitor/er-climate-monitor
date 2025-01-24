@@ -12,14 +12,14 @@ import { SHUT_DOWN_ROUTE } from '../../../../routes/v0/paths/sensorPaths';
 
 dotenv.config();
 
-
 const SECRET_API_KEY = String(process.env.SECRET_API_KEY);
 
 async function shutDownSensor(app: Application, data: any) {
-    await request(app).delete(SHUT_DOWN_ROUTE)
-    .set(API_KEY_HEADER, SECRET_API_KEY)
-    .query({[SENSOR_IP_FIELD]: data[SENSOR_IP_FIELD]})
-    .query({[SENSOR_PORT_FIELD]: data[SENSOR_PORT_FIELD]})
+    await request(app)
+        .delete(SHUT_DOWN_ROUTE)
+        .set(API_KEY_HEADER, SECRET_API_KEY)
+        .query({ [SENSOR_IP_FIELD]: data[SENSOR_IP_FIELD] })
+        .query({ [SENSOR_PORT_FIELD]: data[SENSOR_PORT_FIELD] });
 }
 
 function createSensor(ip: string, port: number, name: string, queries: string[]) {

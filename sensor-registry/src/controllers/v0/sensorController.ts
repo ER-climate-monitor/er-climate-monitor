@@ -28,8 +28,13 @@ import {
 import dotenv from 'dotenv';
 import { fromBody, fromHeaders } from './utils/requestUtils';
 import { BasicHttpClient } from './utils/http/httpClient';
-import Logger from "js-logger";
-import { SHUTDOWN_SENSOR_PATH, UPDATE_SENSOR_CRONJOB_DAYS_PATH, UPDATE_SENSOR_CRONJOB_TIME_PATH, UPDATE_SENSOR_NAME_PATH } from '../../routes/v0/paths/physicalSensorPaths';
+import Logger from 'js-logger';
+import {
+    SHUTDOWN_SENSOR_PATH,
+    UPDATE_SENSOR_CRONJOB_DAYS_PATH,
+    UPDATE_SENSOR_CRONJOB_TIME_PATH,
+    UPDATE_SENSOR_NAME_PATH,
+} from '../../routes/v0/paths/physicalSensorPaths';
 
 Logger.useDefaults();
 
@@ -93,10 +98,9 @@ const shutDown = async (request: Request, response: Response) => {
         const port = Number(request.query[SENSOR_PORT_FIELD]) || -1;
         try {
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
-                basicHttpClient.deleteSensor(SHUTDOWN_SENSOR_PATH, ip, port)
-                    .catch((error) => {
-                        Logger.error('Error while trying to turning off the sensor.');
-                    });
+                basicHttpClient.deleteSensor(SHUTDOWN_SENSOR_PATH, ip, port).catch((error) => {
+                    Logger.error('Error while trying to turning off the sensor.');
+                });
                 response.status(HttpStatus.OK);
             } else {
                 response.status(HttpStatus.NOT_FOUND);
@@ -110,7 +114,7 @@ const shutDown = async (request: Request, response: Response) => {
     response.end();
 };
 
-const updateSensorInfo= async (request: Request, respone: Response) => {
+const updateSensorInfo = async (request: Request, respone: Response) => {
     const modelData = request.body;
     try {
         const apiKey = String(request.headers[API_KEY_HEADER.toLowerCase()]) || '';
@@ -124,29 +128,32 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
         const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
         Logger.info(`Requested to update the input sensor: ${ip}-${port}`);
         switch (action) {
-            case (UPDATE_NAME_ACTION): {
+            case UPDATE_NAME_ACTION: {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 Logger.info(`Changing the name for the input sensor: ${ip} port: ${port}`);
-                await basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name)
+                await basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name);
                 await updateSensorName(ip, port, name);
                 Logger.info('Name changed correctly');
                 return;
-            } case (UPDATE_CRONJOB_DAYS_ACTION): {
+            }
+            case UPDATE_CRONJOB_DAYS_ACTION: {
                 const days = fromBody(modelData, SENSOR_CRONJOB_DAYS, '');
-                Logger.info('Received a request for updating the sensor\'s cronjob days');
-                await basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days)
+                Logger.info("Received a request for updating the sensor's cronjob days");
+                await basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days);
                 return;
-            } case (UPDATE_CRONJOB_TIME_ACTION):  {
+            }
+            case UPDATE_CRONJOB_TIME_ACTION: {
                 const hour = fromBody(modelData, SENSOR_CRONJOB_TIME_HOUR, '');
                 const minute = fromBody(modelData, SENSOR_CRONJOB_TIME_MINUTE, '');
                 Logger.info('Received a new request for updating the sensor cronjob time of work');
                 await basicHttpClient.updateCronJobTime(UPDATE_SENSOR_CRONJOB_TIME_PATH, ip, port, hour, minute);
                 return;
-            }default: {
-                Logger.error('Unknown input action: ' + action);
-                respone.status(HttpStatus.BAD_REQUEST).send({errorMessage: 'Unknown action to do'});
             }
-        }   
+            default: {
+                Logger.error('Unknown input action: ' + action);
+                respone.status(HttpStatus.BAD_REQUEST).send({ errorMessage: 'Unknown action to do' });
+            }
+        }
     } catch (error) {
         Logger.info('Error: ' + error);
         if (error instanceof Error) {
@@ -155,7 +162,7 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
     } finally {
         respone.end();
     }
-}
+};
 
 const allSensorsInfo = async (_: Request, response: Response) => {
     findAllSensors()

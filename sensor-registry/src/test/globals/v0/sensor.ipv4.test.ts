@@ -13,12 +13,7 @@ import {
     SENSOR_QUERIES,
     SENSOR_TYPE,
 } from '../../../model/v0/headers/sensorHeaders';
-import {
-    ALL_ROUTE,
-    ALL_INFO_ROUTE,
-    REGISTER_ROUTE,
-    TYPE_ROUTE,
-} from '../../../routes/v0/paths/sensorPaths';
+import { ALL_ROUTE, ALL_INFO_ROUTE, REGISTER_ROUTE, TYPE_ROUTE } from '../../../routes/v0/paths/sensorPaths';
 import { beforeEach, it, describe, after } from 'mocha';
 
 dotenv.config();
@@ -225,5 +220,5 @@ describe('Registering a new Sensor using IPv4', () => {
 
     after(async () => {
         await dropTestDatabase();
-    })
+    });
 });

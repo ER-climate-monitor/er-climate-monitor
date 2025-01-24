@@ -7,8 +7,6 @@ import cors from 'cors';
 
 dotenv.config();
 
-
-
 function createServer(url: string): Application {
     const app: Application = express();
     mongoose.connect(url, { dbName: 'sensor-database' });
@@ -18,13 +16,10 @@ function createServer(url: string): Application {
 }
 
 async function dropTestDatabase() {
-    const url: string =  String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
-    mongoose.connect(url, { dbName: 'sensor-database' })
-        .then((mongodb) => {
-            mongodb.connection.dropDatabase();
-        });
+    const url: string = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
+    mongoose.connect(url, { dbName: 'sensor-database' }).then((mongodb) => {
+        mongodb.connection.dropDatabase();
+    });
 }
 
-
-
-export { createServer, dropTestDatabase }
+export { createServer, dropTestDatabase };
