@@ -116,6 +116,7 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
         const action: String = fromBody(modelData, request.body[ACTION], '');
         const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
         const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
+        Logger.info(`Requested to update the input sensor: ${ip}-${port}`);
         switch (action) {
             case (UPDATE_NAME_ACTION): {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
