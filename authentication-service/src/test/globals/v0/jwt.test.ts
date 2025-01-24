@@ -3,14 +3,11 @@ import { createTestServer, dropTestDatabase } from '../../../appUtils';
 import { describe, it } from 'mocha';
 import HttpStatus from 'http-status-codes';
 import {
-    API_KEY_FIELD,
+    API_KEY_HEADER,
     USER_EMAIL_FIELD,
     USER_PASSWORD_FIELD,
     USER_JWT_TOKEN_EXPIRATION_FIELD,
     USER_JWT_TOKEN_FIELD,
-    ADMIN_USER,
-    NORMAL_USER,
-    ERROR_HEADER,
 } from '../../../models/v0/headers/userHeaders';
 import { Application } from 'express';
 import { createBodyUser, deleteAdmin, deleteUser } from './utils/userUtils';
@@ -30,7 +27,6 @@ const userInformation = {
 const adminInformation = {
     [USER_EMAIL_FIELD]: email,
     [USER_PASSWORD_FIELD]: password,
-    [API_KEY_FIELD]: api_key,
 };
 
 const app: Application = createTestServer();
@@ -64,6 +60,7 @@ describe('JWT token for registered users', () => {
         const response = await request(app)
             .post(REGISTER_ADMIN_ROUTE)
             .send(createBodyUser(REGISTER, adminInformation))
+            .set(API_KEY_HEADER, api_key)
             .expect(HttpStatus.CREATED);
         const jwtToken = response.body[USER_JWT_TOKEN_FIELD];
         await request(app)

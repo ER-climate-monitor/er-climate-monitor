@@ -1,24 +1,21 @@
 import { Request, Response } from 'express';
 import HttpStatus from 'http-status-codes';
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
 import { login, register, deleteInputUser } from './utils/auth';
 import { getInfosFromToken, tokenExpiration, verifyToken } from './utils/jwt';
 import {
-    API_KEY_FIELD,
     USER_EMAIL_FIELD,
     USER_PASSWORD_FIELD,
     USER_JWT_TOKEN_EXPIRATION_FIELD,
     USER_JWT_TOKEN_FIELD,
     ADMIN_USER,
     NORMAL_USER,
-    ERROR_HEADER,
     USER_ACTION_FIELD,
     USER_ROLE_FIELD,
     USER_TOKEN_HEADER,
     API_KEY_HEADER,
 } from '../../models/v0/headers/userHeaders';
-import { AUTHENTICATE, DELETE, LOGIN, REGISTER } from './utils/userActions';
+import { AUTHENTICATE, LOGIN, REGISTER } from './utils/userActions';
 import Logger from 'js-logger';
 
 Logger.useDefaults();
@@ -71,7 +68,7 @@ const loginAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
     Logger.info('Received a request for loggin an admin');
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
-        if (isAdmin(modelData, API_KEY_FIELD)) {
+        if (isAdmin(request.headers, API_KEY_HEADER.toLowerCase())) {
             response = await login(
                 fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
                 fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
@@ -102,7 +99,7 @@ const registerAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
     Logger.info('Received a request for registering a new Admin');
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, REGISTER)) {
-        if (isAdmin(modelData, API_KEY_FIELD)) {
+        if (isAdmin(request.headers, API_KEY_HEADER.toLowerCase())) {
             response = await register(
                 fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
                 fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),

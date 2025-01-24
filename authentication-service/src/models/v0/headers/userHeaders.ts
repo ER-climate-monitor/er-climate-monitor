@@ -4,7 +4,6 @@ const USER_PASSWORD_FIELD = 'userPassword';
 const USER_JWT_TOKEN_FIELD = 'userToken';
 const USER_JWT_TOKEN_EXPIRATION_FIELD = 'userTokenExpiration';
 const USER_ACTION_FIELD = 'action';
-const API_KEY_FIELD = 'apiKey';
 const USER_ROLE_FIELD = 'userRole';
 const ERROR_FIELD = 'error';
 
@@ -27,7 +26,6 @@ export {
     ADMIN_USER,
     USER_ROLE_FIELD,
     ERROR_HEADER,
-    API_KEY_FIELD,
     ERROR_FIELD,
     USER_ACTION_FIELD,
     USER_TOKEN_HEADER,

@@ -3,7 +3,7 @@ import { createTestServer, dropTestDatabase } from '../../../appUtils';
 import { describe, it, afterEach } from 'mocha';
 import { fail, ok } from 'node:assert';
 import HttpStatus from 'http-status-codes';
-import { USER_EMAIL_FIELD, USER_PASSWORD_FIELD, API_KEY_FIELD } from '../../../models/v0/headers/userHeaders';
+import { USER_EMAIL_FIELD, USER_PASSWORD_FIELD, API_KEY_HEADER } from '../../../models/v0/headers/userHeaders';
 import { Application } from 'express';
 import { createBodyUser, deleteAdmin, deleteUser } from './utils/userUtils';
 import {
@@ -31,7 +31,6 @@ const userInformation = {
 const adminInformation = {
     [USER_EMAIL_FIELD]: email,
     [USER_PASSWORD_FIELD]: password,
-    [API_KEY_FIELD]: api_key,
 };
 
 const maliciousEmails: Array<String> = [
@@ -95,14 +94,15 @@ describe('User Authentication', () => {
             const badInformation = {
                 [USER_EMAIL_FIELD]: maliciousEmail,
                 [USER_PASSWORD_FIELD]: password,
-                [API_KEY_FIELD]: api_key,
             };
             await request(app)
                 .post(REGISTER_ADMIN_ROUTE)
+                .set(API_KEY_HEADER, api_key)
                 .send(createBodyUser(REGISTER, badInformation))
                 .expect(HttpStatus.NOT_ACCEPTABLE);
             await request(app)
                 .post(LOGIN_ADMIN_ROUTE)
+                .set(API_KEY_HEADER, api_key)
                 .send(createBodyUser(LOGIN, badInformation))
                 .expect(HttpStatus.NOT_ACCEPTABLE);
             await request(app)
@@ -115,6 +115,7 @@ describe('User Authentication', () => {
         await request(app)
             .post(REGISTER_ADMIN_ROUTE)
             .send(createBodyUser(REGISTER, adminInformation))
+            .set(API_KEY_HEADER, api_key)
             .expect(HttpStatus.CREATED)
             .expect((response) => {
                 const responseEmail = response.body[USER_EMAIL_FIELD];
@@ -126,7 +127,7 @@ describe('User Authentication', () => {
     it('Should return and error if I try to create a new Admin without speciifying the API key', async () => {
         await request(app)
             .post(REGISTER_ADMIN_ROUTE)
-            .send(createBodyUser(REGISTER, userInformation))
+            .send(createBodyUser(REGISTER, adminInformation))
             .expect(HttpStatus.UNAUTHORIZED);
     });
     it('After user registration, It should be possible to use the same credentials for the login', async () => {
@@ -154,6 +155,7 @@ describe('User Authentication', () => {
     it('After admin registration, It should be possible to use the same credentials for the login', async () => {
         await request(app)
             .post(REGISTER_ADMIN_ROUTE)
+            .set(API_KEY_HEADER, api_key)
             .send(createBodyUser(REGISTER, adminInformation))
             .expect(HttpStatus.CREATED)
             .expect((response) => {
@@ -162,7 +164,10 @@ describe('User Authentication', () => {
                     fail();
                 }
             });
-        await request(app).post(LOGIN_ADMIN_ROUTE).send(createBodyUser(LOGIN, adminInformation)).expect(HttpStatus.OK);
+        await request(app).post(LOGIN_ADMIN_ROUTE)
+            .set(API_KEY_HEADER, api_key)
+            .send(createBodyUser(LOGIN, adminInformation))
+            .expect(HttpStatus.OK);
     });
     after(async () => {
         await dropTestDatabase();
