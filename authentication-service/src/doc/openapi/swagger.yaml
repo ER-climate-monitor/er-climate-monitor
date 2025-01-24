@@ -49,6 +49,12 @@ paths:
   /admin/register:
     post:
       summary: Register a new admin
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -65,9 +71,6 @@ paths:
                 userPassword:
                   type: string
                   description: Admin's password
-                apiKey:
-                  type: string
-                  description: Admin API key
       responses:
         201:
           description: Admin registered successfully
@@ -129,6 +132,12 @@ paths:
   /admin/login:
     post:
       summary: Login as an admin
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -145,9 +154,6 @@ paths:
                 userPassword:
                   type: string
                   description: Admin's password
-                apiKey:
-                  type: string
-                  description: Admin API key
       responses:
 
         200:
