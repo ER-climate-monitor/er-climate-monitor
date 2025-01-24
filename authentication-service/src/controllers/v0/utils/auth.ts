@@ -10,12 +10,12 @@ import {
     ERROR_FIELD,
     USER_ROLE_FIELD,
 } from '../../../models/v0/headers/userHeaders';
-import { checkEmail, checkUser, createUser, deleteOneUser } from './userUtils';
+import { checkEmail, checkPassword, checkUser, createUser, deleteOneUser } from './userUtils';
 import { Token } from '../../../models/v0/tokenModel';
 
 async function login(email: string, password: string, role: string, response: Response): Promise<Response> {
     try {
-        if (checkEmail(email)) {
+        if (checkEmail(email) && checkPassword(password)) {
             const userExist = await checkUser(email);
             if (userExist) {
                 const user = (await userModel.findOne({ email: email })) || null;
@@ -55,7 +55,7 @@ async function login(email: string, password: string, role: string, response: Re
 
 async function register(email: string, password: string, role: string, response: Response): Promise<Response> {
     try {
-        if (checkEmail(email)) {
+        if (checkEmail(email) && checkPassword(password)) {
             const userExist = await checkUser(email);
             if (!userExist) {
                 const user = await createUser(email, password, role);
@@ -74,7 +74,7 @@ async function register(email: string, password: string, role: string, response:
         } else {
             response.status(HttpStatus.NOT_ACCEPTABLE);
             response.setHeader(ERROR_FIELD, 'true');
-            response.send({ ERROR_FIELD: 'The input email is not well formatted' });
+            response.send({ ERROR_FIELD: 'The input email or password is not well formatted' });
         }
     } catch (error) {
         response.status(HttpStatus.BAD_REQUEST);
