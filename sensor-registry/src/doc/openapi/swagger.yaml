@@ -131,4 +131,63 @@ paths:
           description: The input sensor does not exists.
         '401':
           description: The Inut user is not authorized.
-          
+  /v0/sensor/update:
+    put:
+      description: Update one of the registered sensors.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/UpdateNameAction'
+                - $ref: '#/components/schemas/UpdateCronjobDays'
+              discriminator:
+                propertyName: action
+                mapping:
+                  update-name: '#/components/schemas/UpdateNameAction'
+                  update-cronjob-days: '#/components/schemas/UpdateCronjobDays'
+      responses:
+        '200':
+          description: Successfully performed the action.
+components:
+  schemas:
+    BaseRequest:
+      type: object
+      required:
+        - sensorIp
+        - sensorPort
+        - action
+      properties:
+        sensorIp:
+          type: string
+          description: Sensor's Ip
+          example: "10.9.93.9"
+        sensorPort:
+          type: number
+          description: Sensor's Port
+          example: 1926
+        action:
+          type: string
+          description: Specifies the action type.
+          example: "update-name"
+
+    UpdateNameAction:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorName:
+              type: string
+              description: The name of the sensor for action update-name.
+              example: "TemperatureSensor"
+
+    UpdateCronjobDays:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorDays:
+              type: string
+              description: New Cronjob days in the format dd-dd where dd is in [0, 6]
+              example: "0-5"
