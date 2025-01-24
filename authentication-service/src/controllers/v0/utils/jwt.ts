@@ -7,7 +7,7 @@ import { checkUserById } from './userUtils';
 
 dotenv.config();
 
-const jwtSecretKey: jwt.Secret = process.env.JWT_SECRET_KEY || 'somesecret';
+const jwtSecretKey: jwt.Secret = String(process.env.JWT_SECRET_KEY) || 'somesecret';
 
 function decodeToken(token: string): JwtPayload {
     return jwtDecode(token);
@@ -24,7 +24,7 @@ function getInfosFromToken(token: string): Token {
 }
 
 async function createToken(inputEmail: string, role: string): Promise<Token> {
-    const EXPIRATION = process.env.EXPIRATION || '1h';
+    const EXPIRATION: any = String(process.env.EXPIRATION) || '1h';
     const user = await userModel.findOne({ email: inputEmail });
     if (user == null) {
         throw new Error('The input user is not registered.');
