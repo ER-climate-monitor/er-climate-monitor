@@ -120,9 +120,11 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
             case (UPDATE_NAME_ACTION): {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 updateSensorName(ip, port, name);
+                Logger.info(`Changing the name for the input sensor: ${ip}-${port}`);
                 basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name);
                 return;
             } default: {
+                Logger.error('Unknown input action: ' + action);
                 respone.status(HttpStatus.BAD_REQUEST).send({errorMessage: 'Unknown action to do'});
             }
         }
