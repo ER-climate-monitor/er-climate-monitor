@@ -50,7 +50,7 @@ class AxiosHttpClient implements HttpClient {
     }
 
     httpGet(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.get(endpoint));
+        return this.sendRequest(() => axios.get(endpoint, {headers: this.clearHeaders(headers)}));
     }
     httpPost(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
         return this.sendRequest(() => axios.post(endpoint, data, {
