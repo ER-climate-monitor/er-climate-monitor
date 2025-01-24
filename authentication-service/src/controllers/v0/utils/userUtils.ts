@@ -32,4 +32,9 @@ function checkEmail(email: string): boolean {
     return emailRegex.test(sanitizedEmail);
 }
 
-export { checkUser, checkUserById, createUser, deleteOneUser, checkEmail };
+function checkPassword(password: string): boolean {
+    const passwordRegex =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+}
+
+export { checkUser, checkUserById, createUser, deleteOneUser, checkEmail, checkPassword };
