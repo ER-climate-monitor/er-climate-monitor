@@ -14,12 +14,15 @@ import {
     ACTION,
     API_KEY_HEADER,
     SENSOR_CRONJOB_DAYS,
+    SENSOR_CRONJOB_TIME_HOUR,
+    SENSOR_CRONJOB_TIME_MINUTE,
     SENSOR_IP_FIELD,
     SENSOR_NAME,
     SENSOR_PORT_FIELD,
     SENSOR_QUERIES,
     SENSOR_TYPE,
     UPDATE_CRONJOB_DAYS_ACTION,
+    UPDATE_CRONJOB_TIME_ACTION,
     UPDATE_NAME_ACTION,
 } from '../../model/v0/headers/sensorHeaders';
 import dotenv from 'dotenv';
@@ -133,7 +136,11 @@ const updateSensorInfo= async (request: Request, respone: Response) => {
                 Logger.info('Received a request for updating the sensor\'s cronjob days');
                 await basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days)
                 return;
-            } case (UPDATE_SENSOR_CRONJOB_TIME_PATH):  {
+            } case (UPDATE_CRONJOB_TIME_ACTION):  {
+                const hour = fromBody(modelData, SENSOR_CRONJOB_TIME_HOUR, '');
+                const minute = fromBody(modelData, SENSOR_CRONJOB_TIME_MINUTE, '');
+                Logger.info('Received a new request for updating the sensor cronjob time of work');
+                await basicHttpClient.updateCronJobTime(UPDATE_SENSOR_CRONJOB_TIME_PATH, ip, port, hour, minute);
                 return;
             }default: {
                 Logger.error('Unknown input action: ' + action);
