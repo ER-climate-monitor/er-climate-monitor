@@ -6,22 +6,12 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
 }
 
 class AxiosHttpClient implements HttpClient {
-    problematicHeaders: Array<string> = new Array();
     constructor() {
-        this.problematicHeaders.push('content-length');
     }
 
     private fromAxiosHeadersToRecord(axiosHeaders: any): Record<string, string> {
         const headers: Record<string, string> = {};
         Object.keys(axiosHeaders).forEach((key) => (headers[key] = axiosHeaders[key]));
-        return headers;
-    }
-
-    private clearHeaders(headers: Record<any, any>) {
-        this.problematicHeaders.filter(h => h in headers)
-            .forEach(h => {
-                delete headers[h];
-            });
         return headers;
     }
 
@@ -49,20 +39,20 @@ class AxiosHttpClient implements HttpClient {
     }
 
     httpGet(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.get(endpoint, {headers: this.clearHeaders(headers)}));
+        return this.sendRequest(() => axios.get(endpoint, {headers: headers}));
     }
     httpPost(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
         return this.sendRequest(() => axios.post(endpoint, data, {
-            headers: this.clearHeaders(headers)
+            headers: headers
         }));
     }
 
     httpPut(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.put(endpoint, data, { headers: this.clearHeaders(headers)}));
+        return this.sendRequest(() => axios.put(endpoint, data, { headers: headers}));
     }
 
     httpDelete(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.delete(endpoint, { headers: this.clearHeaders(headers) }));
+        return this.sendRequest(() => axios.delete(endpoint, { headers: headers }));
     }
 }
 
