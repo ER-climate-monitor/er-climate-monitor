@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: .
+    container_name: "notification-service"
+    ports:
+      - 4444:4444
+    environment:
+      - AMQP_URL=amqp://rabbitmq:5672
+    networks:
+      - notification-service-network
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    container_name: "rabbitmq"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - notification-service-network
+    restart: unless-stopped
+
+networks:
+  notification-service-network:
+    driver: bridge

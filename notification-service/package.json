@@ -5,57 +5,47 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
+    "test": "jest --silent",
+    "test:unit": "jest test/unit",
+    "test:integration": "jest test/integration",
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
-    "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "mocha --exit dist/test/**/*.test.js"
+    "format": "prettier --write 'src/**/*.{ts,js}'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-<<<<<<<< HEAD:authentication-service/package.json
-    "bcrypt": "^5.1.1",
-========
-    "@types/amqplib": "^0.10.6",
     "amqplib": "^0.10.5",
     "axios": "^1.7.9",
->>>>>>>> feat/notifications:detection-service/package.json
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "format": "^0.2.2",
     "http-status-codes": "^2.3.0",
     "js-logger": "^1.6.1",
-<<<<<<<< HEAD:authentication-service/package.json
-    "jsonwebtoken": "^9.0.2",
-    "jwt-decode": "^4.0.0",
-    "mongo-sanitize": "^1.1.0",
-    "mongoose": "^8.9.2",
-    "swagger-ui-express": "^5.0.1",
-    "yaml": "^2.6.1"
-========
-    "mongoose": "^8.9.4"
->>>>>>>> feat/notifications:detection-service/package.json
+    "mongoose": "^8.9.4",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/bcrypt": "^5.0.2",
+    "@jest-mock/express": "^2.1.0",
+    "@types/amqplib": "^0.10.6",
     "@types/express": "^5.0.0",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/mocha": "^10.0.10",
-    "@types/mongo-sanitize": "^1.0.3",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",
-    "@types/supertest": "^6.0.2",
-    "@types/swagger-ui-express": "^4.1.7",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.14.0",
-    "mocha": "^11.0.1",
-    "prettier": "^3.4.2",
-    "supertest": "^7.0.0",
+    "jest": "^29.7.0",
+    "prettier": "3.4.2",
+    "socket.io-client": "^4.8.1",
+    "testcontainers": "^10.16.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.18.1"
