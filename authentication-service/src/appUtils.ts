@@ -29,21 +29,20 @@ function configureServer() {
 
 function createProdServer(url: string) {
     mongoose.connect(url, { dbName: 'authorization-database' });
-    return configureServer(); 
+    return configureServer();
 }
 
 function createTestServer(): Application {
-    const url: string =  String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
+    const url: string = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
     mongoose.connect(url, { dbName: 'authorization-database' });
     return configureServer();
 }
 
 async function dropTestDatabase() {
-    const url: string =  String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
-    mongoose.connect(url, { dbName: 'sensor-database' })
-        .then((mongodb) => {
-            mongodb.connection.dropDatabase();
-        });
+    const url: string = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
+    mongoose.connect(url, { dbName: 'sensor-database' }).then((mongodb) => {
+        mongodb.connection.dropDatabase();
+    });
 }
 
-export { createProdServer, createTestServer, dropTestDatabase }
+export { createProdServer, createTestServer, dropTestDatabase };

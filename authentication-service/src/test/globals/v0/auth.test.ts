@@ -164,12 +164,13 @@ describe('User Authentication', () => {
                     fail();
                 }
             });
-        await request(app).post(LOGIN_ADMIN_ROUTE)
+        await request(app)
+            .post(LOGIN_ADMIN_ROUTE)
             .set(API_KEY_HEADER, api_key)
             .send(createBodyUser(LOGIN, adminInformation))
             .expect(HttpStatus.OK);
     });
     after(async () => {
         await dropTestDatabase();
-    })
+    });
 });

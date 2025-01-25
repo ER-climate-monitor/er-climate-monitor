@@ -33,7 +33,7 @@ async function canBeDeleted(token: string, userEmail: string): Promise<boolean> 
         return false;
     }
     try {
-        return await verifyToken(token) && getInfosFromToken(token).email === userEmail 
+        return (await verifyToken(token)) && getInfosFromToken(token).email === userEmail;
     } catch (error) {
         return false;
     }

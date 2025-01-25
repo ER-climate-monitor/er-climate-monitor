@@ -16,18 +16,18 @@ import { Token } from '../../../models/v0/tokenModel';
 function checkEmailAndPassword(email: string, password: string, response: Response) {
     if (!checkEmail(email)) {
         response.status(HttpStatus.NOT_ACCEPTABLE).send({ ERROR_FIELD: 'The input email is not well formatted' });
-        return false
+        return false;
     }
     if (!checkPassword(password)) {
         response.status(HttpStatus.NOT_ACCEPTABLE).send({ ERROR_FIELD: 'The password is not well formatted' });
-        return false
+        return false;
     }
-    return true
+    return true;
 }
 
 async function login(email: string, password: string, role: string, response: Response): Promise<void> {
     try {
-        if(!checkEmailAndPassword(email, password, response)) {
+        if (!checkEmailAndPassword(email, password, response)) {
             return;
         }
         const userExist = await checkUser(email);
@@ -80,7 +80,7 @@ async function register(email: string, password: string, role: string, response:
     } catch (error) {
         response.status(HttpStatus.BAD_REQUEST).send({ ERROR_FIELD: error });
     } finally {
-        response.end()
+        response.end();
     }
 }
 

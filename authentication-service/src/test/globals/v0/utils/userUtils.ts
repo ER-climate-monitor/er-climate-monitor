@@ -9,7 +9,13 @@ import {
     REGISTER_ADMIN_ROUTE,
     REGISTER_USER_ROUTE,
 } from '../routes/globalRoutes.v0';
-import { API_KEY_HEADER, USER_ACTION_FIELD, USER_EMAIL_FIELD, USER_JWT_TOKEN_FIELD, USER_TOKEN_HEADER } from '../../../../models/v0/headers/userHeaders';
+import {
+    API_KEY_HEADER,
+    USER_ACTION_FIELD,
+    USER_EMAIL_FIELD,
+    USER_JWT_TOKEN_FIELD,
+    USER_TOKEN_HEADER,
+} from '../../../../models/v0/headers/userHeaders';
 import { LOGIN, REGISTER } from '../../../../controllers/v0/utils/userActions';
 
 const api_key = process.env.SECRET_API_KEY || '';
@@ -19,7 +25,7 @@ async function deleteUser(app: Application, userInformation: any) {
     if (token) {
         await request(app)
             .delete(DELETE_USER_ROUTE)
-            .query({[USER_EMAIL_FIELD]:userInformation[USER_EMAIL_FIELD]})
+            .query({ [USER_EMAIL_FIELD]: userInformation[USER_EMAIL_FIELD] })
             .set(USER_TOKEN_HEADER, token)
             .expect(HttpStatus.OK);
     }
@@ -30,7 +36,7 @@ async function deleteAdmin(app: Application, adminInformation: any) {
     if (token) {
         await request(app)
             .delete(DELETE_ADMIN_ROUTE)
-            .query({[USER_EMAIL_FIELD]:adminInformation[USER_EMAIL_FIELD]})
+            .query({ [USER_EMAIL_FIELD]: adminInformation[USER_EMAIL_FIELD] })
             .set(API_KEY_HEADER, api_key)
             .set(USER_TOKEN_HEADER, token)
             .expect(HttpStatus.OK);

@@ -112,5 +112,5 @@ describe('JWT token for registered users', () => {
 
     after(async () => {
         await dropTestDatabase();
-    })
+    });
 });
