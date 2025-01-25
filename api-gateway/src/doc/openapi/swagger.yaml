@@ -168,16 +168,16 @@ paths:
         - in: query
           name: userEmail
           required: true
+          description: User's email
           schema:
             type: string
-            description: User's email
             example: 'gatteoMare98909@gmail.com'
         - in: header
           name: x-user-token
           required: true
+          description: User's token
           schema:
             type: string
-            description: User's token
             example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
       responses:
         '200':
