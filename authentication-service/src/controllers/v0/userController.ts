@@ -3,6 +3,7 @@ import HttpStatus from 'http-status-codes';
 import dotenv from 'dotenv';
 import { login, register, deleteInputUser } from './utils/auth';
 import { getInfosFromToken, tokenExpiration, verifyToken } from './utils/jwt';
+import { isUserRoleAdmin } from './utils/userUtils';
 import {
     USER_EMAIL_FIELD,
     USER_PASSWORD_FIELD,
@@ -69,7 +70,7 @@ const loginAdmin = async (request: Request, response: Response) => {
     const modelData = request.body;
     Logger.info('Received a request for loggin an admin');
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
-        if (isAdmin(request.headers, API_KEY_HEADER.toLowerCase())) {
+        if (isAdmin(request.headers, API_KEY_HEADER.toLowerCase()) && await isUserRoleAdmin(fromBody<string>(modelData, USER_EMAIL_FIELD, ''))) {
             await login(
                 fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
                 fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
@@ -130,7 +131,7 @@ const deleteUser = async (request: Request, response: Response) => {
 
 const deleteAdmin = async (request: Request, response: Response) => {
     Logger.info('Received a request for deleting an admin');
-    if (isAdmin(request.headers, API_KEY_HEADER.toLocaleLowerCase())) {
+    if (isAdmin(request.headers, API_KEY_HEADER.toLocaleLowerCase()) && await isUserRoleAdmin(String(request.query[USER_EMAIL_FIELD]) || '')) {
         const userEmail = String(request.query[USER_EMAIL_FIELD]) || '';
         const jwtToken = String(request.headers[USER_TOKEN_HEADER]) || '';
         if (await canBeDeleted(jwtToken, userEmail)) {
