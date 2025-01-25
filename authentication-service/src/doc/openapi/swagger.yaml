@@ -54,7 +54,11 @@ paths:
                     description: User's role inside the system
                     example: 'normal'
         400:
-          description: Bad request
+          description: Bad request.
+        409: 
+          description: The input email is already in use.
+        406:
+          description: The input email or the password is not well formatted.
 
   /admin/register:
     post:
