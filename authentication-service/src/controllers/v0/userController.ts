@@ -115,11 +115,10 @@ const deleteUser = async (request: Request, response: Response) => {
     const userEmail = String(request.query[USER_EMAIL_FIELD]) || '';
     const jwtToken = String(request.headers[USER_TOKEN_HEADER]) || '';
     if (await canBeDeleted(jwtToken, userEmail)) {
-        response = await deleteInputUser(userEmail, response);
+        await deleteInputUser(userEmail, response);
     } else {
         response.status(HttpStatus.UNAUTHORIZED);
     }
-    response.end();
 };
 
 const deleteAdmin = async (request: Request, response: Response) => {
@@ -128,12 +127,11 @@ const deleteAdmin = async (request: Request, response: Response) => {
         const userEmail = String(request.query[USER_EMAIL_FIELD]) || '';
         const jwtToken = String(request.headers[USER_TOKEN_HEADER]) || '';
         if (await canBeDeleted(jwtToken, userEmail)) {
-            response = await deleteInputUser(userEmail, response);
+            await deleteInputUser(userEmail, response);
         }
     } else {
         response.status(HttpStatus.UNAUTHORIZED);
     }
-    response.end();
 };
 
 const checkToken = async (request: Request, response: Response) => {

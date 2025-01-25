@@ -44,9 +44,7 @@ async function login(email: string, password: string, role: string, response: Re
                         [USER_ROLE_FIELD]: role,
                     });
                 } else {
-                    response.status(HttpStatus.CONFLICT);
-                    response.setHeader(ERROR_FIELD, 'true');
-                    response.send({ ERROR_FIELD: 'Wrong password' });
+                    response.status(HttpStatus.CONFLICT).send({ ERROR_FIELD: 'Wrong password' });
                 }
             }
         } else {
@@ -84,7 +82,7 @@ async function register(email: string, password: string, role: string, response:
     }
 }
 
-async function deleteInputUser(email: string, response: Response): Promise<Response> {
+async function deleteInputUser(email: string, response: Response): Promise<void> {
     try {
         const userExist = await checkUser(email);
         if (checkEmail(email)) {
@@ -96,21 +94,16 @@ async function deleteInputUser(email: string, response: Response): Promise<Respo
                     response.status(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.status(HttpStatus.BAD_REQUEST);
-                response.setHeader(ERROR_FIELD, 'true');
-                response.send({ ERROR_FIELD: 'The input user does not exist' });
+                response.status(HttpStatus.BAD_REQUEST).send({ ERROR_FIELD: 'The input user does not exist' });
             }
         } else {
-            response.status(HttpStatus.NOT_ACCEPTABLE);
-            response.setHeader(ERROR_FIELD, 'true');
-            response.send({ ERROR_FIELD: 'Error, the current email is already in use.' });
+            response.status(HttpStatus.NOT_ACCEPTABLE).send({ ERROR_FIELD: 'Error, the current email is already in use.' });
         }
     } catch (error) {
-        response.status(HttpStatus.BAD_REQUEST);
-        response.setHeader(ERROR_FIELD, 'true');
-        response.send({ ERROR_FIELD: error });
+        response.status(HttpStatus.BAD_REQUEST).send({ ERROR_FIELD: error });
+    } finally { 
+        response.end();
     }
-    return response;
 }
 
 export { login, register, deleteInputUser };
