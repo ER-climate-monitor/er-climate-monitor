@@ -188,9 +188,11 @@ paths:
                 action:
                   type: string
                   description: User's actions (Authenticate)
+                  example: 'authenticate'
                 userToken:
                   type: string
                   description: JWT token
+                  example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzkzNzA0OGU3YmZlZWY3MDUyMGIyMWUiLCJ1c2VyRW1haWwiOiJ0ZXN0LmVtYWlsLmFkbWluMDFsZ21haWwuY29tIiwidXNlclJvbGUiOiJhZG1pbiIsImlhdCI6MTczNzgwMDcwNiwiZXhwIjoxNzM3ODA0MzA2fQ.X3boYKYuPM4MgoaArOYyex3N0gsxwFgFiXYSwf62K6M'
       responses:
         202:
           description: Token verified successfully
@@ -202,6 +204,15 @@ paths:
                   userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
+                    example: 1737804306000
+                  userEmail:
+                    type: string
+                    description: The user's email linked to the input token
+                    example: test.email.admin01@gmail.com
+                  userRole:
+                    type: string
+                    description: The user's role linked to the input token
+                    example: 'normal'
         401:
           description: Unauthorized
         400:
