@@ -3,7 +3,7 @@ import Logger from 'js-logger';
 import { NOTIFICATIONS_API } from '../../../../routes/v0/paths/gatewayPaths';
 import HttpStatus from 'http-status-codes';
 import { notificationService } from './notificationConfig';
-import { USER_JWT_TOKEN_BODY } from '../../../../models/v0/authentication/headers/authenticationHeaders';
+import { USER_TOKEN_HEADER } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils';
 
 type Topic = {
@@ -18,11 +18,16 @@ type Subscription = {
 };
 
 const subscribeUser = async (req: Request, res: Response) => {
-    const jwtToken = req.headers[USER_JWT_TOKEN_BODY.toLowerCase()] as string | undefined;
-    if (!jwtToken) {
-        res.status(HttpStatus.UNAUTHORIZED);
+    const jwtToken = String(req.headers[USER_TOKEN_HEADER.toLowerCase()]);
+
+    const isExpired = await notificationService.authenticationClient.isExpired(jwtToken);
+
+    if (isExpired) {
+        Logger.info('The token is expired');
+        response.status(HttpStatus.UNAUTHORIZED);
         return;
     }
+
     const userId = await notificationService.authenticationClient.searchToken(jwtToken).then((res) => res?.email);
     if (!userId) {
         res.status(HttpStatus.UNAUTHORIZED);
