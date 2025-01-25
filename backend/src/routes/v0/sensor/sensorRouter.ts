@@ -7,6 +7,11 @@ import { sensorPutHandler } from '../../../controllers/v0/domain/sensor/sensorPu
 
 const sensorRouter = express.Router();
 
-sensorRouter.route(SENSOR_REGISTRY_PATHS).post(sensorPostHandler).get(sensorGetHandler).delete(sensorDeleteHandler).put(sensorPutHandler);
+sensorRouter
+    .route(SENSOR_REGISTRY_PATHS)
+    .post(sensorPostHandler)
+    .get(sensorGetHandler)
+    .delete(sensorDeleteHandler)
+    .put(sensorPutHandler);
 
 export { sensorRouter };

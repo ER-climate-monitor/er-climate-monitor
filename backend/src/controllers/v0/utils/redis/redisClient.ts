@@ -48,7 +48,7 @@ class AuthenticationClient implements IAuthenticationClient {
     }
 
     public async deleteToken(token: string) {
-        this.authenticationRedisClient.unlink(token); 
+        this.authenticationRedisClient.unlink(token);
     }
 
     public async isAdmin(token: string) {

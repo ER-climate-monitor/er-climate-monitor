@@ -1,5 +1,3 @@
-const problematicHeaders = [
-   'content-length' 
-]
+const problematicHeaders = ['content-length'];
 
-export { problematicHeaders }
+export { problematicHeaders };

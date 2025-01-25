@@ -3,7 +3,6 @@ import { DELETE, GET, POST, PUT } from '../api/httpMethods';
 import { AbstractHttpClient, HttpClient } from './http/httpClient';
 import { AxiosService, axiosCheckServerError } from './http/axios/axiosClient';
 import { HttpResponse } from './http/httpResponse';
-import { problematicHeaders } from './http/problematicHeaders';
 
 const defaultOptions = {
     timeout: 6000, // If our function takes longer than 3 seconds, trigger a failure
@@ -33,14 +32,6 @@ class CircuitBreakerClient<T extends HttpClient> {
         return this.breaker.fire(service, method, path, headers, body, params, queries) as Promise<HttpResponse>;
     }
 
-    protected cleanHeaders(headers: Record<string, string>): Record<string, string> {
-        problematicHeaders.filter(h => h in headers)
-            .forEach(h => {
-                delete headers[h];
-            });
-        return headers;
-    }
-
     private async makeRequest(
         service: string,
         method: string,
@@ -51,19 +42,18 @@ class CircuitBreakerClient<T extends HttpClient> {
         queries: any = {},
     ): Promise<HttpResponse> {
         const endpoint = service + path;
-        const newHeaders = this.cleanHeaders(headers);
         switch (method) {
             case GET: {
-                return this.httpClient.getRequest(endpoint, newHeaders, body, params, queries);
+                return this.httpClient.getRequest(endpoint, headers, body, params, queries);
             }
             case POST: {
-                return this.httpClient.postRequest(endpoint, newHeaders, body, params, queries);
+                return this.httpClient.postRequest(endpoint, headers, body, params, queries);
             }
             case PUT: {
-                return this.httpClient.putRequest(endpoint, newHeaders, body, params, queries);
+                return this.httpClient.putRequest(endpoint, headers, body, params, queries);
             }
             case DELETE: {
-                return this.httpClient.deleteRequest(endpoint, newHeaders, body, params, queries);
+                return this.httpClient.deleteRequest(endpoint, headers, body, params, queries);
             }
             default: {
                 throw new Error('Http method not supported: ' + method);

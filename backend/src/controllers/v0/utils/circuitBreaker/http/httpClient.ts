@@ -1,4 +1,5 @@
 import { HttpResponse } from './httpResponse';
+import { problematicHeaders } from './problematicHeaders';
 
 interface HttpClient {
     httpGet(
@@ -41,6 +42,15 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         return request();
     }
 
+    protected cleanHeaders(headers: Record<string, string>): Record<string, string> {
+        problematicHeaders
+            .filter((h) => h in headers)
+            .forEach((h) => {
+                delete headers[h];
+            });
+        return headers;
+    }
+
     async getRequest(
         endpoint: string,
         headers: Record<string, string>,
@@ -48,7 +58,9 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         params: Record<string, string>,
         queries: Record<string, string>,
     ): Promise<HttpResponse> {
-        return this.makeRequest(() => this.clientTechnology.httpGet(endpoint, headers, data, params, queries));
+        return this.makeRequest(() =>
+            this.clientTechnology.httpGet(endpoint, this.cleanHeaders(headers), data, params, queries),
+        );
     }
     async postRequest(
         endpoint: string,
@@ -57,7 +69,9 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         params: Record<string, string>,
         queries: Record<string, string>,
     ): Promise<HttpResponse> {
-        return this.makeRequest(() => this.clientTechnology.httpPost(endpoint, headers, data, params, queries));
+        return this.makeRequest(() =>
+            this.clientTechnology.httpPost(endpoint, this.cleanHeaders(headers), data, params, queries),
+        );
     }
     async putRequest(
         endpoint: string,
@@ -66,7 +80,9 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         params: Record<string, string>,
         queries: Record<string, string>,
     ): Promise<HttpResponse> {
-        return this.makeRequest(() => this.clientTechnology.httpPut(endpoint, headers, data, params, queries));
+        return this.makeRequest(() =>
+            this.clientTechnology.httpPut(endpoint, this.cleanHeaders(headers), data, params, queries),
+        );
     }
     async deleteRequest(
         endpoint: string,
@@ -75,7 +91,9 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         params: Record<string, string>,
         queries: Record<string, string>,
     ): Promise<HttpResponse> {
-        return this.makeRequest(() => this.clientTechnology.httpDelete(endpoint, headers, data, params, queries));
+        return this.makeRequest(() =>
+            this.clientTechnology.httpDelete(endpoint, this.cleanHeaders(headers), data, params, queries),
+        );
     }
 }
 

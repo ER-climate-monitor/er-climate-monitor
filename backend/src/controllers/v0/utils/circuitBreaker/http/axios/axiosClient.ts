@@ -6,8 +6,7 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
 }
 
 class AxiosHttpClient implements HttpClient {
-    constructor() {
-    }
+    constructor() {}
 
     private fromAxiosHeadersToRecord(axiosHeaders: any): Record<string, string> {
         const headers: Record<string, string> = {};
@@ -39,16 +38,18 @@ class AxiosHttpClient implements HttpClient {
     }
 
     httpGet(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.get(endpoint, {headers: headers}));
+        return this.sendRequest(() => axios.get(endpoint, { headers: headers }));
     }
     httpPost(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.post(endpoint, data, {
-            headers: headers
-        }));
+        return this.sendRequest(() =>
+            axios.post(endpoint, data, {
+                headers: headers,
+            }),
+        );
     }
 
     httpPut(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.put(endpoint, data, { headers: headers}));
+        return this.sendRequest(() => axios.put(endpoint, data, { headers: headers }));
     }
 
     httpDelete(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
