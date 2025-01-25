@@ -54,7 +54,7 @@ function fromBody<X>(body: any, key: string, defaultValue: X): X {
 const loginUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
-        response = await login(
+        await login(
             fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
             fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
             NORMAL_USER,
@@ -69,7 +69,7 @@ const loginAdmin = async (request: Request, response: Response) => {
     Logger.info('Received a request for loggin an admin');
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, LOGIN)) {
         if (isAdmin(request.headers, API_KEY_HEADER.toLowerCase())) {
-            response = await login(
+            await login(
                 fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
                 fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
                 ADMIN_USER,
@@ -79,7 +79,6 @@ const loginAdmin = async (request: Request, response: Response) => {
             response.status(HttpStatus.UNAUTHORIZED);
         }
     }
-    response.end();
 };
 
 const registerUser = async (request: Request, response: Response) => {
