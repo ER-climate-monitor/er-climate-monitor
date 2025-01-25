@@ -43,6 +43,9 @@ abstract class AbstractHttpClient<T extends HttpClient> {
     }
 
     protected cleanHeaders(headers: Record<string, string>): Record<string, string> {
+        if (!headers) {
+            return {};
+        }
         problematicHeaders
             .filter((h) => h in headers)
             .forEach((h) => {
