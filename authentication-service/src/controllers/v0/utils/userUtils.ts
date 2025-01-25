@@ -2,12 +2,21 @@ import { UserDocument, userModel } from '../../../models/v0/userModel';
 import bcrypt from 'bcrypt';
 import { DeleteResult, ObjectId } from 'mongoose';
 import mongoSanitize from 'mongo-sanitize';
+import { ADMIN_USER } from '../../../models/v0/headers/userHeaders';
 
 const saltRounds = Number(process.env.saltRounds) || 10;
 
 async function checkUser(inputEmail: String): Promise<Boolean> {
     const existingUser = await userModel.exists({ email: inputEmail });
     return existingUser !== null;
+}
+
+async function isUserRoleAdmin(inputEmail:string): Promise<boolean> {
+    const user = await userModel.findOne({email: inputEmail});
+    if (user === null) {
+        return false
+    }
+    return user.role === ADMIN_USER;
 }
 
 async function checkUserById(id: ObjectId): Promise<Boolean> {
@@ -37,4 +46,4 @@ function checkPassword(password: string): boolean {
     return passwordRegex.test(password);
 }
 
-export { checkUser, checkUserById, createUser, deleteOneUser, checkEmail, checkPassword };
+export { checkUser, checkUserById, createUser, deleteOneUser, checkEmail, checkPassword, isUserRoleAdmin };
