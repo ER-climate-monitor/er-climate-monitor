@@ -1,0 +1,195 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/google-31f/API/1.0.0
+info:
+  version: "1.0.0"
+  title: API-Gateway
+  description: The API for the EatBacon IOT project
+paths:
+  /v0/api/authentication/user/login:
+    post:
+      description: Login for a normal user
+      requestBody:
+        description: User's information
+        required: true
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    description: User's action, in this case 'login'
+                    example: 'login'
+                  userEmail:
+                    type: string
+                    description: User's email
+                    example: 'napoli98909@gmail.com'
+                  userPassword:
+                    type: string
+                    description: User's password
+                    example: 'AVeryStrongPassword1010'
+      responses:
+        '200':
+          description: The user has logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: User's email
+                    example: 'napoli98909@gmail.com'
+                  userToken:
+                    type: string
+                    description: User's JWT token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+                  userTokenExpiration:
+                    type: number
+                    description: Token's expiration date
+                    example: '1737630945000'
+                  userRole:
+                    type: string
+                    description: User's role, in this case normal
+                    example: 'normal'
+  /v0/api/authentication/user/admin/login:
+    post:
+      description: Login for an admin user
+      requestBody:
+        description: User's information
+        required: true
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                    description: User's action, in this case 'login'
+                    example: 'login'
+                  apiKey:
+                    type: string
+                  userEmail:
+                    type: string
+                    description: User's email
+                    example: 'napoli98909@gmail.com'
+                  userPassword:
+                    type: string
+                    description: User's password
+                    example: 'AVeryStrongPassword1010'
+      responses:
+        '200':
+          description: The user has logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: User's email
+                    example: 'napoli98909@gmail.com'
+                  userToken:
+                    type: string
+                    description: User's token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+                  userTokenExpiration:
+                    type: number
+                    description: Token's expiration date
+                    example: '1737630945000'
+                  userRole:
+                    type: string
+                    description: User's role, in this case normal
+                    example: 'admin'
+        '401':
+          description: The user has forgot the apikey or the apikey is invalid
+  /v0/api/authentication/user/register:
+    post:
+      description: New user registration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: User's action
+                  example: 'register'
+                userEmail:
+                  type: string
+                  description: User's email
+                  example: 'gatteoMare98909@gmail.com'
+                userPassword:
+                  type: string
+                  description: User's password
+      responses:
+        '201':
+          description: User correctly registered inside the system
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: User's input email
+                    example: 'gatteoMare98909@gmail.com'
+                  userToken:
+                    type: string
+                    description: User's token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+                  userTokenExpiration:
+                    type: number
+                    description: Token's expiration date
+                    example: '1737630945000'
+                  userRole:
+                    type: string
+                    description: User's role, in this case normal
+                    example: 'normal'
+        '409':
+          description: There is a conflict inside the system. It is possible that another user has the same email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ERROR_FIELD:
+                    type: string
+                    description: Error's message
+                    example: 'Error, the current email is already in use.'
+  /v0/api/authentication/user/delete:
+    delete:
+      description: Remove a registered user
+      parameters:
+        - in: query
+          name: userEmail
+          required: true
+          schema:
+            type: string
+            description: User's email
+            example: 'gatteoMare98909@gmail.com'
+        - in: header
+          name: x-user-token
+          required: true
+          schema:
+            type: string
+            description: User's token
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+      responses:
+        '200':
+          description: The input user has been correctly removed
+        '400':
+          description: The input user does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ERROR_FIELD:
+                    type: string
+                    description: Error's message
+                    example: 'The input user does not exist.'
