@@ -20,12 +20,15 @@ paths:
                 action:
                   type: string
                   description: User's actions (Register)
+                  example: 'register'
                 userEmail:
                   type: string
                   description: User's email address
+                  example: test.email01@gmail.com
                 userPassword:
                   type: string
                   description: User's password
+                  example: AVeryStrongPassword1010!
       responses:
         201:
           description: User registered successfully
@@ -37,12 +40,19 @@ paths:
                   userEmail:
                     type: string
                     description: Admin's email address
+                    example: test.email01@gmail.com
                   userToken:
                     type: string
                     description: User's JWT token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk0YzA4N2MyOTRiOWQ2OTNlNjdhMzQiLCJ1c2VyRW1haWwiOiJ0ZXM1MzRwb3Jjb2Rpb3RlbWFpbDA4OEBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6Im5vcm1hbCIsImlhdCI6MTczNzgwMTg2MywiZXhwIjoxNzM3ODA1NDYzfQ.XFhpp_rKc8gfKdmLVWAWL2nCJJpJfVtbg41jQxyexaQ'
                   userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
+                    example: 1737805463000
+                  userRole:
+                    type: string
+                    description: User's role inside the system
+                    example: 'normal'
         400:
           description: Bad request
 
