@@ -53,35 +53,34 @@ async function login(email: string, password: string, role: string, response: Re
     return response;
 }
 
-async function register(email: string, password: string, role: string, response: Response): Promise<Response> {
+async function register(email: string, password: string, role: string, response: Response): Promise<void> {
     try {
-        if (checkEmail(email) && checkPassword(password)) {
-            const userExist = await checkUser(email);
-            if (!userExist) {
-                const user = await createUser(email, password, role);
-                const jwtToken: Token = await createToken(email, role);
-                response.status(HttpStatus.CREATED).send({
-                    [USER_EMAIL_FIELD]: email,
-                    [USER_JWT_TOKEN_FIELD]: jwtToken.token,
-                    [USER_JWT_TOKEN_EXPIRATION_FIELD]: jwtToken.expiration.getTime(),
-                    [USER_ROLE_FIELD]: role,
-                });
-            } else {
-                response.status(HttpStatus.CONFLICT);
-                response.setHeader(ERROR_FIELD, 'true');
-                response.send({ ERROR_FIELD: 'Error, the current email is already in use.' });
-            }
+        if (!checkEmail(email)) {
+            response.status(HttpStatus.NOT_ACCEPTABLE).send({ ERROR_FIELD: 'The input email is not well formatted' });
+            return
+        }
+        if (!checkPassword(password)) {
+            response.status(HttpStatus.NOT_ACCEPTABLE).send({ ERROR_FIELD: 'The password is not well formatted' });
+            return
+        }
+        const userExist = await checkUser(email);
+        if (!userExist) {
+            await createUser(email, password, role);
+            const jwtToken: Token = await createToken(email, role);
+            response.status(HttpStatus.CREATED).send({
+                [USER_EMAIL_FIELD]: email,
+                [USER_JWT_TOKEN_FIELD]: jwtToken.token,
+                [USER_JWT_TOKEN_EXPIRATION_FIELD]: jwtToken.expiration.getTime(),
+                [USER_ROLE_FIELD]: role,
+            });
         } else {
-            response.status(HttpStatus.NOT_ACCEPTABLE);
-            response.setHeader(ERROR_FIELD, 'true');
-            response.send({ ERROR_FIELD: 'The input email or password is not well formatted' });
+            response.status(HttpStatus.CONFLICT).send({ ERROR_FIELD: 'Error, the current email is already in use.' });
         }
     } catch (error) {
-        response.status(HttpStatus.BAD_REQUEST);
-        response.setHeader(ERROR_FIELD, 'true');
-        response.send({ ERROR_FIELD: error });
+        response.status(HttpStatus.BAD_REQUEST).send({ ERROR_FIELD: error });
+    } finally {
+        response.end()
     }
-    return response;
 }
 
 async function deleteInputUser(email: string, response: Response): Promise<Response> {
