@@ -10,23 +10,18 @@
     "test:integration": "jest test/integration",
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
-    "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "mocha --exit dist/test/**/*.test.js"
+    "format": "prettier --write 'src/**/*.{ts,js}'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-<<<<<<<< HEAD:notification-service/package.json
     "amqplib": "^0.10.5",
-========
->>>>>>>> feat/sensor-registry:sensor-registry/package.json
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-<<<<<<<< HEAD:notification-service/package.json
     "format": "^0.2.2",
     "http-status-codes": "^2.3.0",
     "js-logger": "^1.6.1",
@@ -39,22 +34,6 @@
     "@types/amqplib": "^0.10.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
-========
-    "http-status-codes": "^2.3.0",
-    "js-logger": "^1.6.1",
-    "mocha": "^11.0.1",
-    "mongoose": "^8.9.2",
-    "random-ipv6": "^1.0.2",
-    "supertest": "^7.0.0",
-    "swagger-ui-express": "^5.0.1",
-    "yaml": "^2.7.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/mocha": "^10.0.10",
->>>>>>>> feat/sensor-registry:sensor-registry/package.json
     "@types/node": "^22.10.2",
     "@types/random-ipv6": "^1.0.4",
     "@types/supertest": "^6.0.2",
