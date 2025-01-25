@@ -85,14 +85,13 @@ const loginAdmin = async (request: Request, response: Response) => {
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, REGISTER)) {
-        response = await register(
+        await register(
             fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
             fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
             NORMAL_USER,
             response,
         );
     }
-    response.end();
 };
 
 const registerAdmin = async (request: Request, response: Response) => {
@@ -100,7 +99,7 @@ const registerAdmin = async (request: Request, response: Response) => {
     Logger.info('Received a request for registering a new Admin');
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, REGISTER)) {
         if (isAdmin(request.headers, API_KEY_HEADER.toLowerCase())) {
-            response = await register(
+            await register(
                 fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
                 fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
                 ADMIN_USER,
@@ -110,7 +109,6 @@ const registerAdmin = async (request: Request, response: Response) => {
             response.status(HttpStatus.UNAUTHORIZED);
         }
     }
-    response.end();
 };
 
 const deleteUser = async (request: Request, response: Response) => {
