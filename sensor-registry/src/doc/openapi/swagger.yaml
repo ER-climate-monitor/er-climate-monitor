@@ -107,23 +107,23 @@ paths:
         - in: query
           required: true
           name: sensorIp
+          description: Sensor's Ip
           schema:
             type: string
-            description: Sensor's Ip
             example: '19.26.0.0'
         - in: query
           required: true
           name: sensorPort
+          description: Sensor's Port
           schema:
             type: number
-            description: Sensor's port
             example: 100
         - in: header
           required: true
           name: x-api-key
+          description: Api Key
           schema:
             type: string
-            description: Api Key
       responses:
         '200':
           description: The input Sensor has been turned off.
