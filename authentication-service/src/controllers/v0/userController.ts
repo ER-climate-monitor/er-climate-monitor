@@ -60,8 +60,9 @@ const loginUser = async (request: Request, response: Response) => {
             NORMAL_USER,
             response,
         );
+    } else {
+        response.status(HttpStatus.BAD_REQUEST).end();
     }
-    response.end();
 };
 
 const loginAdmin = async (request: Request, response: Response) => {
@@ -76,8 +77,10 @@ const loginAdmin = async (request: Request, response: Response) => {
                 response,
             );
         } else {
-            response.status(HttpStatus.UNAUTHORIZED);
+            response.status(HttpStatus.UNAUTHORIZED).end();
         }
+    } else {
+        response.end();
     }
 };
 
@@ -90,6 +93,8 @@ const registerUser = async (request: Request, response: Response) => {
             NORMAL_USER,
             response,
         );
+    } else {
+        response.status(HttpStatus.BAD_REQUEST).end();
     }
 };
 
@@ -105,8 +110,10 @@ const registerAdmin = async (request: Request, response: Response) => {
                 response,
             );
         } else {
-            response.status(HttpStatus.UNAUTHORIZED);
+            response.status(HttpStatus.UNAUTHORIZED).end();
         }
+    } else {
+        response.status(HttpStatus.BAD_REQUEST).end();
     }
 };
 
@@ -117,7 +124,7 @@ const deleteUser = async (request: Request, response: Response) => {
     if (await canBeDeleted(jwtToken, userEmail)) {
         await deleteInputUser(userEmail, response);
     } else {
-        response.status(HttpStatus.UNAUTHORIZED);
+        response.status(HttpStatus.UNAUTHORIZED).end();
     }
 };
 
@@ -130,7 +137,7 @@ const deleteAdmin = async (request: Request, response: Response) => {
             await deleteInputUser(userEmail, response);
         }
     } else {
-        response.status(HttpStatus.UNAUTHORIZED);
+        response.status(HttpStatus.UNAUTHORIZED).end();
     }
 };
 
@@ -152,10 +159,10 @@ const checkToken = async (request: Request, response: Response) => {
             }
         }
     } catch (error) {
-        response.status(HttpStatus.BAD_REQUEST);
-        response.send({ ERROR_TAG: error });
+        response.status(HttpStatus.BAD_REQUEST).send({ ERROR_TAG: error });
+    } finally {
+        response.end();
     }
-    response.end();
 };
 
 export { registerUser, registerAdmin, loginUser, loginAdmin, deleteUser, deleteAdmin, checkToken };
