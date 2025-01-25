@@ -189,14 +189,16 @@ paths:
                 action:
                   type: string
                   description: User's actions (Login)
+                  example: 'login'
                 userEmail:
                   type: string
                   description: Admin's email address
+                  example: mario.rossi.admin444222@gmail.com
                 userPassword:
                   type: string
                   description: Admin's password
+                  example: FabioMatteoStefano30L!@
       responses:
-
         200:
           description: Login successful
           content:
@@ -207,14 +209,23 @@ paths:
                   userEmail:
                     type: string
                     description: Admin's email address
+                    example: mario.rossi.admin444222@gmail.com
                   userToken:
                     type: string
-                    description: U  ser's JWT token
+                    description: User's JWT token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk0szgwYjA3ODk4ZTVmMzUyNjgwOGEiLCJ1c2VyRW1haWwiOiJ0ZXM1MzRwb3Jjb2Rpb3N0ZW1haWwwODhAZ21haWwuY29tIiwidXNlclJvbGUiOiJub3JtYWwiLCJpYXQiOjE3Mzc4MDM3OTQsImV4cCI6MTczNzgwNzM5NH0.vebMqwl4i2MtP9qjaECLj2WKKcLNAnKMRkPD7S02ttA
                   userTokenExpiration:
                     type: number
                     description: User's JWT token expiration date
+                    example: 1737807823000
+                  userRole:
+                    type: string
+                    description: User's role inside the system
+                    example: admin
         401:
-          description: Unauthorized
+          description: Unauthorized.
+        406:
+          description: The input email or password is not well formatted.
 
   /authorized:
     post:
