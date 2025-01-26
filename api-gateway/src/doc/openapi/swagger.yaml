@@ -30,7 +30,7 @@ paths:
                   userPassword:
                     type: string
                     description: User's password
-                    example: 'AVeryStrongPassword1010'
+                    example: 'AVeryStrongPa!ssword1010'
       responses:
         '200':
           description: The user has logged in
@@ -79,7 +79,7 @@ paths:
                   userPassword:
                     type: string
                     description: User's password
-                    example: 'AVeryStrongPassword1010'
+                    example: 'AVeryStro!ngPassword1010'
       responses:
         '200':
           description: The user has logged in
@@ -126,6 +126,7 @@ paths:
                 userPassword:
                   type: string
                   description: User's password
+                  example: Averystrongpassword1121!
       responses:
         '201':
           description: User correctly registered inside the system
@@ -193,3 +194,22 @@ paths:
                     type: string
                     description: Error's message
                     example: 'The input user does not exist.'
+  /v0/api/sensor/register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sensorIp:
+                  type: string
+                  description: Sensor's ip
+                  example: '1.1.0.20'
+                sensorPort:
+                  type: number
+                  description: Sensor's port
+                  minimum: 0
+                  maximum: 65535
+                  example: 100
+                
