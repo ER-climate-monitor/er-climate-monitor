@@ -25,6 +25,7 @@ const sensorGetHandler = async (request: Request, response: Response) => {
             return;
         }
         if (await sensorService.authenticationClient.isAdmin(jwtToken)) {
+            Logger.info('The input user is admin');
             request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
             const httpResponse = await sensorService.getAllSensorsOperation(
                 endpointPath,
