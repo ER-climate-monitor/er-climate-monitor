@@ -10,7 +10,9 @@ info:
 paths:
   /v0/api/authentication/user/login:
     post:
-      description: Login for a normal user
+      summary: Login for a normal user
+      tags:
+        - User
       requestBody:
         description: User's information
         required: true
@@ -57,7 +59,9 @@ paths:
                     example: 'normal'
   /v0/api/authentication/user/admin/login:
     post:
-      description: Login for an admin user
+      summary: Login for an admin user
+      tags:
+        - User
       requestBody:
         description: User's information
         required: true
@@ -108,7 +112,9 @@ paths:
           description: The user has forgot the apikey or the apikey is invalid
   /v0/api/authentication/user/register:
     post:
-      description: New user registration
+      summary: New user registration
+      tags:
+        - User
       requestBody:
         content:
           application/json:
@@ -164,7 +170,9 @@ paths:
                     example: 'Error, the current email is already in use.'
   /v0/api/authentication/user/delete:
     delete:
-      description: Remove a registered user
+      summary: Remove a registered user
+      tags:
+        - User
       parameters:
         - in: query
           name: userEmail
@@ -196,6 +204,17 @@ paths:
                     example: 'The input user does not exist.'
   /v0/api/sensor/register:
     post:
+      summary: Add a new Sensor
+      tags:
+        - Sensor
+      parameters:
+        - in : header
+          name: x-user-token
+          required: true
+          description: A valid user token
+          schema:
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
       requestBody:
         content:
           application/json:
@@ -212,4 +231,85 @@ paths:
                   minimum: 0
                   maximum: 65535
                   example: 100
-                
+                sensorName:
+                  type: string
+                  description: Sensor's name
+                  example: 'Gambettola Water Sensor'
+      responses:
+        '201':
+          description: The Sensor has been registered correctly
+        '401':
+          description: The User is not authorized.
+  /v0/api/sensor/all:
+    get:
+      summary: Get all the different sensors
+      tags:
+        - Sensor
+      parameters:
+        - in: header
+          required: true
+          name: x-user-token
+          description: User's token
+          schema:
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+      responses:
+        '200':
+          description: Everything went well, the server has returned a list with all the different sensors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sensors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ip:
+                          type: string
+                          format: ip
+                          description: A sensor's ip
+                          example: '10.9.3.4'
+                        port:
+                          type: integer
+                          description: The port number used by the sensor.
+                          example: 1926
+                        name:
+                          type: string
+                          description: The name of the sensor.
+                          example: "diomerda"
+                        type:
+                          type: string
+                          description: The type of the sensor.
+                          example: "rain"
+                        queries:
+                          type: array
+                          items:
+                            type: string
+                            description: A query related to the sensor.
+                            example: "25%-threshold"
+                example:
+                  sensors:
+                    - ip: "30.0.0.100"
+                      port: 1926
+                      name: "gatteo-mare-sensor"
+                      type: "rain"
+                      queries:
+                        - "25%-threshold"
+                        - "50%-threshold"
+                        - "75%-threshold"
+                        - "100%-threshold"
+                    - ip: "2001:db8:3333:4444:5555:6666:7777:8888"
+                      port: 1926
+                      name: "napoli-sensor"
+                      type: "unknown"
+                      queries:
+                        - "25%-threshold"
+                        - "50%-threshold"
+                        - "75%-threshold"
+                        - "100%-threshold"
+
+
+
+
