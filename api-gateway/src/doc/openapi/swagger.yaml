@@ -347,6 +347,92 @@ paths:
           description: The user is not authorized
         '404':
           description: The input sensor was not found
+  /v0/api/sensor/update:
+    put:
+      tags:
+        - Sensor
+      summary: Update one of the registered sensors.
+      parameters:
+        - in: header
+          name: x-user-token
+          description: User's token
+          schema:
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/UpdateNameAction'
+                - $ref: '#/components/schemas/UpdateCronjobDays'
+                - $ref: '#/components/schemas/UpdateCronjobTime'
+              discriminator:
+                propertyName: action
+                mapping:
+                  update-name: '#/components/schemas/UpdateNameAction'
+                  update-cronjob-days: '#/components/schemas/UpdateCronjobDays'
+                  update-cronjob-time: '#/components/schemas/UpdateCronjobTime'
+      responses:
+        '200':
+          description: Successfully performed the action.
+        '401':
+          description: The user is not authorized
+components:
+  schemas:
+    BaseRequest:
+      type: object
+      required:
+        - sensorIp
+        - sensorPort
+        - action
+      properties:
+        sensorIp:
+          type: string
+          description: Sensor's Ip
+          example: "10.9.93.9"
+        sensorPort:
+          type: number
+          description: Sensor's Port
+          example: 1926
+        action:
+          type: string
+          description: Specifies the action type.
+          example: "update-name"
+
+    UpdateNameAction:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorName:
+              type: string
+              description: The name of the sensor for action update-name.
+              example: "TemperatureSensor"
+
+    UpdateCronjobDays:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorCronJobDays:
+              type: string
+              description: New Cronjob days in the format dd-dd where dd is in [0, 6]
+              example: "0-5"
+
+    UpdateCronjobTime:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorCronJobTimeHour:
+              type: string
+              description: New cronjob hour in the interval [0, 23]
+              example: "23"
+            sensorCronJobTimeMinute:
+              type: string
+              description: New cronjob minute in the interval [0, 59]
 
 
 
