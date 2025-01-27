@@ -309,7 +309,8 @@ paths:
                         - "50%-threshold"
                         - "75%-threshold"
                         - "100%-threshold"
-
+        '401':
+          description: The user is not authorized
 
 
 
