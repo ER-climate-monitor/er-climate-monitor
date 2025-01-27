@@ -311,6 +311,43 @@ paths:
                         - "100%-threshold"
         '401':
           description: The user is not authorized
+  /v0/api/sensor/shutdown:
+    delete:
+      summary: Delete one of the stored sensors
+      tags:
+        - Sensor
+      parameters:
+        - in: query
+          name: sensorIp
+          required: true
+          description: Input sensor's ip
+          schema:
+            type: string
+            example: '10.2.3.5'
+        - in: query
+          name: sensorPort
+          required: true
+          description: Input sensor's port
+          schema:
+            type: number
+            example: 100
+            minimum: 0
+            maximum: 65535
+        - in: header
+          name: x-user-token
+          required: true
+          description: User's token
+          schema:
+            type: string
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+      responses:
+        '200':
+          description: The input sensor has been turned off
+        '401':
+          description: The user is not authorized
+        '404':
+          description: The input sensor was not found
+
 
 
 
