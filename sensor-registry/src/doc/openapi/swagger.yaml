@@ -134,6 +134,12 @@ paths:
   /v0/sensor/update:
     put:
       summary: Update one of the registered sensors.
+      parameters:
+        - in: header
+          name: x-api-key
+          description: Secret api key
+          schema:
+            type: string
       requestBody:
         required: true
         content:
