@@ -114,24 +114,32 @@ const shutDown = async (request: Request, response: Response) => {
     response.end();
 };
 
-const updateSensorInfo = async (request: Request, respone: Response) => {
+const updateSensorInfo = async (request: Request, response: Response) => {
     const modelData = request.body;
     try {
         const apiKey = String(request.headers[API_KEY_HEADER.toLowerCase()]) || '';
         Logger.info('Received a request for updating a sensor, checking if He is authorized');
         if (!modelData || !isAuthorized(apiKey)) {
-            respone.status(HttpStatus.UNAUTHORIZED);
+            response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
         const action: String = fromBody(modelData, ACTION, '');
         const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
         const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
+        if (! await exists(ip, port)) {
+            Logger.info('The input sensor was not found.');
+            response.status(HttpStatus.NOT_FOUND);
+            return;
+        }
         Logger.info(`Requested to update the input sensor: ${ip}-${port}`);
         switch (action) {
             case UPDATE_NAME_ACTION: {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 Logger.info(`Changing the name for the input sensor: ${ip} port: ${port}`);
-                await basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name);
+                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name)
+                    .catch((error) => {
+                        Logger.error('This was a mock sensor.');
+                    });
                 await updateSensorName(ip, port, name);
                 Logger.info('Name changed correctly');
                 return;
@@ -139,28 +147,34 @@ const updateSensorInfo = async (request: Request, respone: Response) => {
             case UPDATE_CRONJOB_DAYS_ACTION: {
                 const days = fromBody(modelData, SENSOR_CRONJOB_DAYS, '');
                 Logger.info("Received a request for updating the sensor's cronjob days");
-                await basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days);
+                basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days)
+                    .catch((error) => {
+                        Logger.error('This was a mock sensor.');
+                    });
                 return;
             }
             case UPDATE_CRONJOB_TIME_ACTION: {
                 const hour = fromBody(modelData, SENSOR_CRONJOB_TIME_HOUR, '');
                 const minute = fromBody(modelData, SENSOR_CRONJOB_TIME_MINUTE, '');
                 Logger.info('Received a new request for updating the sensor cronjob time of work');
-                await basicHttpClient.updateCronJobTime(UPDATE_SENSOR_CRONJOB_TIME_PATH, ip, port, hour, minute);
+                basicHttpClient.updateCronJobTime(UPDATE_SENSOR_CRONJOB_TIME_PATH, ip, port, hour, minute)
+                    .catch((error) =>{
+                        Logger.info('This was a mock sensor.');
+                    })
                 return;
             }
             default: {
                 Logger.error('Unknown input action: ' + action);
-                respone.status(HttpStatus.BAD_REQUEST).send({ errorMessage: 'Unknown action to do' });
+                response.status(HttpStatus.BAD_REQUEST).send({ errorMessage: 'Unknown action to do' });
             }
         }
     } catch (error) {
         Logger.info('Error: ' + error);
         if (error instanceof Error) {
-            respone.status(HttpStatus.BAD_REQUEST).send(error.message);
+            response.status(HttpStatus.BAD_REQUEST).send(error.message);
         }
     } finally {
-        respone.end();
+        response.end();
     }
 };
 
