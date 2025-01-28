@@ -22,6 +22,7 @@ class DetectionBroker<T> {
     private connected: boolean = false;
     private notificationCallbacks: NotificationCallback<T>[] = [];
 
+    private readonly routingUser = 'rtUser-' + crypto.randomUUID();
     private readonly EXCHANGE_NAME = process.env.EXCHANGE_NAME ?? 'sensor.notifications';
     private readonly QUEUE_NAME: string;
     private readonly connectionUrl: string;
@@ -67,6 +68,7 @@ class DetectionBroker<T> {
             });
 
             this.connected = true;
+            await this.subscribeUser(this.routingUser, { topic: '*' });
             Logger.info('✅ Succesfully connected to broker!');
         } catch (_) {
             this.reconnect();
@@ -79,8 +81,10 @@ class DetectionBroker<T> {
             const content = JSON.parse(msg.content.toString());
             const routingKey = msg.fields.routingKey;
 
+            Logger.info(`RECEIVED: ${content}`);
+
             for (const [pattern, subscription] of this.subscriptions.entries()) {
-                if (this.matchesPattern(routingKey, pattern) && this.notificationCallbacks.length !== 0) {
+                if (this.matchesPattern(routingKey, pattern)) {
                     const topic = this.routingKeyToTopic(routingKey);
                     Logger.info('Invoking notificationCallback with the following details:', {
                         pattern,

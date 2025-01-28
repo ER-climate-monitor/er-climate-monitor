@@ -27,7 +27,16 @@ messageBroker.addNotificationCallback(createDbCallback());
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost';
 const dbName = process.env.DB_NAME || 'notifications-database';
-mongoose.connect(dbUrl, { dbName: dbName });
+mongoose
+    .connect(dbUrl, { dbName: dbName })
+    .then((_) => Logger.info('✅ Succesfully connected to Mongo Database!'))
+    .catch((error) => {
+        Logger.error('An error occurred during mongo connections: ', error);
+        messageBroker.close().then(() => {
+            socketManager.close();
+            server.close();
+        });
+    });
 
 app.use(cors());
 app.use(express.json());
