@@ -47,6 +47,9 @@ interface AuthenticationClient {
     deleteToken(token: string): void;
 }
 
+/**
+ * Class that uses Redis as technology for storing all the different tokens.
+ */
 class RedisAuthenticationClient implements AuthenticationClient {
     private authenticationRedisClient: Redis;
     constructor() {
