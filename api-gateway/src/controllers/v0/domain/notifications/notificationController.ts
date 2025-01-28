@@ -5,8 +5,6 @@ import HttpStatus from 'http-status-codes';
 import { notificationService } from './notificationConfig';
 import { USER_TOKEN_HEADER } from '../../../../models/v0/authentication/headers/authenticationHeaders';
 import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils';
-import { resolvePtr } from 'dns';
-import { TokenValue } from '../../../../models/v0/tokenModel';
 
 type Topic = {
     topic: string;
