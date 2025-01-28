@@ -17,7 +17,7 @@ const sensorPostHandler = async (request: Request, response: Response) => {
     try {
         Logger.info('Received a request for registering a new sensor');
         const token = String(request.headers[USER_TOKEN_HEADER.toLowerCase()]) || '';
-        if (!sensorService.authenticationClient.isAdminAndNotExpired(token)) {
+        if (! await sensorService.authenticationClient.isAdminAndNotExpired(token)) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
