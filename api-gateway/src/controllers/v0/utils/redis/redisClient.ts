@@ -6,13 +6,44 @@ import { USER_ADMIN } from '../../../../models/v0/authentication/headers/authent
 
 dotenv.config();
 
-
+/**
+ * Interface that is used for saving, searching, deleting and validating the input authentication token.
+ */
 interface AuthenticationClient {
+    /**
+     * Save the input token using a specific technology.
+     * @param {string} token - Input token returned from the authentication service.
+     * @param {string} tokenValue - Different information linked to the input token.
+     */
     setToken(token: string, tokenValue: TokenValue): Promise<void>;
+    /**
+     * Search the input token.
+     * @param {string} token - Input token given by the user.
+     * @returns {Promise<TokenValue | null>} A promise with the Token value if the input token is found otherwise the promise will contains the value null.
+     */
     searchToken(token: string): Promise<TokenValue | null>;
+    /**
+     * Search and check if the input token is expired.
+     * @param {string} token - Input token given by the user.
+     * @returns {Promise<boolean>} If the token is found the system checks if It is still valid otherwise It will return false even if the token is not found.
+     */
     isExpired(token: string): Promise<boolean>;
+    /**
+     * Check if the input token is linked to an Admin.
+     * @param {string} token - Input token given by the user.
+     * @returns {Promise<boolean>} True if the token is linked to an Admin otherwise It will return false.
+     */
     isAdmin(token: string): Promise<boolean>;
+    /**
+     * Check if the input token is linked to an Admin and If it has not expired yet.
+     * @param {string} token - Input token given by the user.
+     * @returns {Promise<boolean>} True if the user is an Admin and also his token is not expired, otherwise It will return false.
+     */
     isAdminAndNotExpired(token: string): Promise<boolean>;
+    /**
+     * Delete the input token from the collection.
+     * @param {string} token - Input token.
+     */
     deleteToken(token: string): void;
 }
 
