@@ -2,8 +2,30 @@ openapi: 3.0.0
 info:
   title: Notification Subscriptions API
   version: 0.1.0
+servers:
+  - url: http://notification-service:4444/v0/alert
+  - url: http://localhost:4444/v0/alert
 paths:
-  /subscribe:
+  /:
+    get:
+      summary: Get alert list for input user
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all users alerts to which he subscribed to.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationAlert'
+
+  /subscriptions:
     post:
       summary: Create a new user subscription
       requestBody:
@@ -69,8 +91,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-  /subscriptions:
     get:
       summary: Retrieve user's subscriptions
       parameters:
@@ -135,6 +155,28 @@ components:
         topic:
           $ref: '#/components/schemas/SubscriptionTopic'
     
+    NotificationAlert:
+      type: object
+      properties:
+        sensorName:
+          type: string
+          example: 'gambettola-river'
+        type:
+          type: string
+          example: 'water'
+        value:
+          type: number
+          example: 10.2
+        unit:
+          type: string
+          example: 'm'
+        timestamp:
+          type: number
+          example: 1223123
+        query:
+          type: object
+          example: { value: 10.0, name: 'theshold-25%' }
+
     SubscriptionTopic:
       type: object
       required:
