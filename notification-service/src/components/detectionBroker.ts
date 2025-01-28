@@ -68,8 +68,7 @@ class DetectionBroker<T> {
 
             this.connected = true;
             Logger.info('✅ Succesfully connected to broker!');
-        } catch (error) {
-            Logger.error(`❌ An error occurred when attempting to connect to ${this.connectionUrl}: ` + error);
+        } catch (_) {
             this.reconnect();
         }
     }
@@ -175,7 +174,9 @@ class DetectionBroker<T> {
         const delay = Math.min(1000 * attempt, 5000); // Exponential backoff :)
 
         if (attempt > maxAttempts) {
-            Logger.error('Max reconnections attempts reached!');
+            Logger.error(
+                `❌ An error occurred when attempting to connect to ${this.connectionUrl}: max reconnection attempts reached! (${maxAttempts})`
+            );
             return;
         }
 
@@ -183,7 +184,7 @@ class DetectionBroker<T> {
             await new Promise((resolve) => setTimeout(resolve, delay));
             await this.connect();
         } catch (error) {
-            Logger.error(`Reconnection attempt ${attempt} failed: `, error);
+            Logger.error(`Reconnection attempt ${attempt}/${maxAttempts} failed: `, error);
             await this.reconnect(attempt + 1);
         }
     }
