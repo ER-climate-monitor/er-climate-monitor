@@ -1,5 +1,6 @@
 import Logger from 'js-logger';
 import { Connection, Channel, connect, ConsumeMessage } from 'amqplib';
+import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
 
 Logger.useDefaults();
 
@@ -8,22 +9,9 @@ interface Subscription {
     patterns: Set<string>;
 }
 
-interface SubscriptionTopic {
-    topic: string;
-    sensorName?: string;
-    query?: string;
-}
-
-interface DetectionEvent {
-    sensorName: string;
-    type: string;
-    value: number;
-    unit: string;
-    timestamp: number;
-    // TODO: If DetectionService cheks for queries leave this as is: in case this
-    // service must check, make this field an array of queries and check them.
-    // This will also mean that each detection must be sent to this service :(.
-    query: { value: number; name: string };
+interface UserSubscription {
+    userId: string;
+    subscription: SubscriptionTopic;
 }
 
 type NotificationCallback<T> = (_userIds: Set<string>, _topic: SubscriptionTopic, _mesasge: T) => Promise<void>;
@@ -247,12 +235,4 @@ function parseSubscription(sub: string, prefix: string | null = null): Subscript
 
 const detectionAlertBroker = new DetectionBroker<DetectionEvent>();
 
-export {
-    DetectionBroker,
-    NotificationCallback,
-    DetectionEvent,
-    SubscriptionTopic,
-    detectionAlertBroker,
-    stringifySubscription,
-    parseSubscription,
-};
+export { DetectionBroker, NotificationCallback, detectionAlertBroker, stringifySubscription, parseSubscription, UserSubscription };

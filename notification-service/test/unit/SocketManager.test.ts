@@ -5,7 +5,7 @@ import { io as ClientIO } from 'socket.io-client';
 import { SocketManager } from '../../src/components/socketManager';
 import { AddressInfo } from 'net';
 import Logger from 'js-logger';
-import { SubscriptionTopic } from '../../src/components/detectionBroker';
+import { SubscriptionTopic } from '../../src/model/notificationModel';
 
 Logger.useDefaults();
 

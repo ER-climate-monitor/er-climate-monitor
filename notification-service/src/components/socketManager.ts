@@ -1,7 +1,8 @@
 import Logger from 'js-logger';
 import { Socket, Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
-import { NotificationCallback, parseSubscription, stringifySubscription, SubscriptionTopic } from './detectionBroker';
+import { NotificationCallback, parseSubscription, stringifySubscription } from './detectionBroker';
+import { SubscriptionTopic } from '../model/notificationModel';
 
 Logger.useDefaults();
 

@@ -1,8 +1,10 @@
 import { HttpStatusCode } from 'axios';
 import { Request, Response } from 'express';
-import { DetectionBroker, DetectionEvent, parseSubscription, SubscriptionTopic } from '../components/detectionBroker';
+import { DetectionBroker, parseSubscription } from '../components/detectionBroker';
+import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
 import { SocketManager } from '../components/socketManager';
-import { parse } from 'path';
+import { request } from 'node:http';
+import { retrieveEventsForUser } from '../model/notificationOperations';
 
 type Subscription = {
     userId: string;
@@ -19,12 +21,6 @@ function setMessageBroker(mb: DetectionBroker<DetectionEvent>) {
 function setSocketManger(sm: SocketManager) {
     socketManager = sm;
 }
-
-/**
- * By now crud operations are just manipulating in-memory data structures.
- * Refactor the following functions in order to handle MongoDB when
- * persistency is implemented.
- */
 
 const subscribeUser = async (request: Request, response: Response) => {
     subUser(request.body)
@@ -81,6 +77,7 @@ const getUserSubscriptions = async (request: Request, response: Response) => {
     const userId: string | undefined = request.query['userId'] as string | undefined;
     if (!userId) {
         response.status(HttpStatusCode.BadRequest).json({ error: `Invalid provided userId (${userId})` });
+        return;
     }
 
     try {
@@ -91,4 +88,27 @@ const getUserSubscriptions = async (request: Request, response: Response) => {
     }
 };
 
-export { subscribeUser, deleteUserSubscription, getUserSubscriptions, setSocketManger, setMessageBroker };
+const getNotificationsForUser = async (request: Request, response: Response) => {
+    const userId: string | undefined = request.query['userId'] as string | undefined;
+
+    if (!userId) {
+        response.status(HttpStatusCode.BadRequest).json({ error: `Invalid provided userId (${userId})` });
+        return;
+    }
+
+    try {
+        const res = await retrieveEventsForUser(userId);
+        response.status(HttpStatusCode.Ok).json(Array.from(res));
+    } catch (err) {
+        response.status(HttpStatusCode.InternalServerError).json({ error: (err as Error).message });
+    }
+};
+
+export {
+    subscribeUser,
+    deleteUserSubscription,
+    getUserSubscriptions,
+    setSocketManger,
+    setMessageBroker,
+    getNotificationsForUser,
+};

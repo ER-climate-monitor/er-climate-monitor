@@ -1,10 +1,6 @@
 import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/globals';
-import {
-    DetectionBroker,
-    DetectionEvent,
-    NotificationCallback,
-    SubscriptionTopic,
-} from '../../src/components/detectionBroker';
+import { DetectionBroker, NotificationCallback } from '../../src/components/detectionBroker';
+import { DetectionEvent, SubscriptionTopic } from '../../src/model/notificationModel';
 import { GenericContainer, StartedTestContainer } from 'testcontainers';
 import { Channel, connect, Connection } from 'amqplib';
 import Logger from 'js-logger';
