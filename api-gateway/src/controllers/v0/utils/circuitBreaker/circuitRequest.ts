@@ -44,7 +44,7 @@ class CircuitBreakerClient<T extends HttpClient> {
         const endpoint = service + path;
         switch (method) {
             case GET: {
-                return this.httpClient.getRequest(endpoint, headers, body, params, queries);
+                return this.httpClient.getRequest(endpoint, headers, params, queries);
             }
             case POST: {
                 return this.httpClient.postRequest(endpoint, headers, body, params, queries);
@@ -53,7 +53,7 @@ class CircuitBreakerClient<T extends HttpClient> {
                 return this.httpClient.putRequest(endpoint, headers, body, params, queries);
             }
             case DELETE: {
-                return this.httpClient.deleteRequest(endpoint, headers, body, params, queries);
+                return this.httpClient.deleteRequest(endpoint, headers, params, queries);
             }
             default: {
                 throw new Error('Http method not supported: ' + method);
