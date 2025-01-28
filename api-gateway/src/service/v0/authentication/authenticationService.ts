@@ -2,7 +2,7 @@ import { HttpMethods } from '../../../controllers/v0/utils/api/httpMethods';
 import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { AbstractService } from '../abstractService';
 import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
-import { IAuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
+import { AuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
 import { HttpResponse } from '../../../controllers/v0/utils/circuitBreaker/http/httpResponse';
 
 interface AuthenticationOperations {
@@ -16,7 +16,7 @@ class AuthenticationService<T extends HttpClient> extends AbstractService<T> imp
     constructor(
         circuitBreaker: CircuitBreakerClient<T>,
         endpoint: string,
-        authenticationClient: IAuthenticationClient,
+        authenticationClient: AuthenticationClient,
     ) {
         super(circuitBreaker, endpoint, authenticationClient);
     }

@@ -2,11 +2,11 @@ import { HttpMethods } from '../../../controllers/v0/utils/api/httpMethods';
 import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
 import { AbstractService } from '../abstractService';
-import { IAuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
+import { AuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
 import { Subscription } from '../../../controllers/v0/domain/notifications/notificationController';
 
 export class NotificationService<T extends HttpClient> extends AbstractService<T> {
-    constructor(cb: CircuitBreakerClient<T>, endpoint: string, authenticationClient: IAuthenticationClient) {
+    constructor(cb: CircuitBreakerClient<T>, endpoint: string, authenticationClient: AuthenticationClient) {
         super(cb, endpoint, authenticationClient);
     }
 

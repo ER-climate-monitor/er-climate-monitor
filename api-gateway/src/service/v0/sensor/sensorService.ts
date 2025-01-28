@@ -2,7 +2,7 @@ import { AbstractService } from '../abstractService';
 import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
 import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { HttpMethods } from '../../../controllers/v0/utils/api/httpMethods';
-import { IAuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
+import { AuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
 import { HttpResponse } from '../../../controllers/v0/utils/circuitBreaker/http/httpResponse';
 
 interface SensorOperations {
@@ -16,7 +16,7 @@ class SensorService<T extends HttpClient> extends AbstractService<T> implements 
     constructor(
         circuitBreaker: CircuitBreakerClient<T>,
         endpoint: string,
-        authenticationClient: IAuthenticationClient,
+        authenticationClient: AuthenticationClient,
     ) {
         super(circuitBreaker, endpoint, authenticationClient);
     }
