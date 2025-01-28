@@ -21,7 +21,7 @@ const host = process.env.HOST || 'localhost';
 const messageBroker = new DetectionBroker<DetectionEvent>();
 const socketManager = new SocketManager(server);
 messageBroker.connect();
-messageBroker.notificationCallback = createSocketNotificationCallback(socketManager);
+messageBroker.addNotificationCallback(createSocketNotificationCallback(socketManager));
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost';
 const dbName = process.env.DB_NAME || 'notifications-database';

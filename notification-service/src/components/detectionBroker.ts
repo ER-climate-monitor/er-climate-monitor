@@ -20,7 +20,7 @@ class DetectionBroker<T> {
     private connection: Connection | undefined;
     private channel: Channel | undefined;
     private connected: boolean = false;
-    notificationCallback: NotificationCallback<T> | undefined;
+    private notificationCallbacks: NotificationCallback<T>[] = [];
 
     private readonly EXCHANGE_NAME = process.env.EXCHANGE_NAME ?? 'sensor.notifications';
     private readonly QUEUE_NAME: string;
@@ -81,7 +81,7 @@ class DetectionBroker<T> {
             const routingKey = msg.fields.routingKey;
 
             for (const [pattern, subscription] of this.subscriptions.entries()) {
-                if (this.matchesPattern(routingKey, pattern) && this.notificationCallback) {
+                if (this.matchesPattern(routingKey, pattern) && this.notificationCallbacks.length !== 0) {
                     const topic = this.routingKeyToTopic(routingKey);
                     Logger.info('Invoking notificationCallback with the following details:', {
                         pattern,
@@ -90,7 +90,10 @@ class DetectionBroker<T> {
                         topic,
                         content,
                     });
-                    this.notificationCallback(subscription.userIds, parseSubscription(pattern), content);
+
+                    this.notificationCallbacks.forEach((nc) =>
+                        nc(subscription.userIds, parseSubscription(pattern), content)
+                    );
                 }
             }
             this.channel.ack(msg);
@@ -194,6 +197,10 @@ class DetectionBroker<T> {
             this.connected = false;
         }
     }
+
+    addNotificationCallback(nc: NotificationCallback<T>) {
+        this.notificationCallbacks.push(nc);
+    }
 }
 
 function stringifySubscription(sub: SubscriptionTopic): string {
@@ -235,4 +242,11 @@ function parseSubscription(sub: string, prefix: string | null = null): Subscript
 
 const detectionAlertBroker = new DetectionBroker<DetectionEvent>();
 
-export { DetectionBroker, NotificationCallback, detectionAlertBroker, stringifySubscription, parseSubscription, UserSubscription };
+export {
+    DetectionBroker,
+    NotificationCallback,
+    detectionAlertBroker,
+    stringifySubscription,
+    parseSubscription,
+    UserSubscription,
+};

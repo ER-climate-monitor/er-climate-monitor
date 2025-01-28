@@ -131,7 +131,7 @@ describe('DetectionBroker - Integration Tests', () => {
         };
 
         await broker.connect();
-        broker.notificationCallback = mockCallback;
+        broker.addNotificationCallback(mockCallback);
         await broker.subscribeUser(testUserId, testSub);
         await broker.subscribeUser('user-321', {
             topic: testSub.topic,

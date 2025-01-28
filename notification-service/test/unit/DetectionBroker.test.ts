@@ -125,7 +125,7 @@ describe('DetectionBroker - Unit Tests', () => {
         expect(mockCallback).not.toHaveBeenCalled(); // Because we haven't set it yet
 
         // Now set the callback and try again
-        (broker as any).notificationCallback = mockCallback;
+        (broker as any).addNotificationCallback(mockCallback);
         await callback({
             content: Buffer.from(JSON.stringify(testEvent)),
             fields: { routingKey: 'temperature.sensor-001.high' },
