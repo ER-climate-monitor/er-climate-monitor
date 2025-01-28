@@ -1,16 +1,16 @@
 import { HttpClient } from '../../controllers/v0/utils/circuitBreaker/http/httpClient';
 import { CircuitBreakerClient } from '../../controllers/v0/utils/circuitBreaker/circuitRequest';
-import { IAuthenticationClient } from '../../controllers/v0/utils/redis/redisClient';
+import { AuthenticationClient } from '../../controllers/v0/utils/redis/redisClient';
 
 abstract class AbstractService<T extends HttpClient> {
     protected endpoint: string;
     protected circuitBreaker: CircuitBreakerClient<T>;
-    authenticationClient: IAuthenticationClient;
+    authenticationClient: AuthenticationClient;
 
     constructor(
         circuitBreaker: CircuitBreakerClient<T>,
         endpoint: string,
-        authenticationClient: IAuthenticationClient,
+        authenticationClient: AuthenticationClient,
     ) {
         this.endpoint = endpoint;
         this.circuitBreaker = circuitBreaker;
