@@ -9,6 +9,7 @@ import { DetectionBroker } from './components/detectionBroker';
 import { setMessageBroker, setSocketManger } from './handlers/notificationHttpHandler';
 import { DetectionEvent } from './model/notificationModel';
 import mongoose from 'mongoose';
+import { createDbCallback } from './model/dbCallback';
 
 config();
 Logger.useDefaults();
@@ -22,6 +23,7 @@ const messageBroker = new DetectionBroker<DetectionEvent>();
 const socketManager = new SocketManager(server);
 messageBroker.connect();
 messageBroker.addNotificationCallback(createSocketNotificationCallback(socketManager));
+messageBroker.addNotificationCallback(createDbCallback());
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost';
 const dbName = process.env.DB_NAME || 'notifications-database';
