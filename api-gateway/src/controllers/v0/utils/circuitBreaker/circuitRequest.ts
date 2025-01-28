@@ -28,13 +28,13 @@ class CircuitBreakerClient<T extends HttpClient> {
     /**
      * Fire the input request to the input service.
      * @param {string} service - Service that will receive our request.
-     * @param {string} method 
-     * @param path 
-     * @param headers 
-     * @param body 
-     * @param params 
-     * @param queries 
-     * @returns 
+     * @param {HttpMethods} method - Input Http method that will be used for doing the request.
+     * @param {string} path - Service url path where our request will be redirected.
+     * @param headers - Input headers.
+     * @param body - Input body.
+     * @param params - Input path parameters.
+     * @param queries - Input query parameters.
+     * @returns {HttpResponse} The service's http response.
      */
     async fireRequest(
         service: string,
