@@ -437,3 +437,9 @@ components:
 
 
 
+tags:
+  - name: Sensor
+    description: Here are grouped all the possible operations available for interacting with all the stored sensors. In order to perform any of the following operations, the user must be logged in as an admin. If the user is logged in as
+                  a normal user, then he will always receive a 401 response from the server.
+  - name: User
+    description: Here are grouped all the different apis regarding the User. More in particular here are listed the most impportant operations a user can do.
