@@ -67,6 +67,11 @@ interface HttpClient {
     ): Promise<HttpResponse>;
 }
 
+/**
+ * Abstract Http Client, this class will be extended by all the different technologies used for making different http requests to all the other
+ * services.
+ * @template {T extends HttpClient} - The type of the client that will be used for making all the http requests.
+ */
 abstract class AbstractHttpClient<T extends HttpClient> {
     clientTechnology: T;
     protected constructor(clientTechnology: T) {
@@ -88,7 +93,14 @@ abstract class AbstractHttpClient<T extends HttpClient> {
             });
         return headers;
     }
-
+    /**
+     * Make an async Get request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {Record<string, string>} headers - Input headers received from the User's request.
+     * @param {Record<string, string>} params - Path parameters received from the User's request.
+     * @param {Record<string, string>} queries  - Query parameters received from the User's request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
     async getRequest(
         endpoint: string,
         headers: Record<string, string>,
@@ -99,6 +111,15 @@ abstract class AbstractHttpClient<T extends HttpClient> {
             this.clientTechnology.httpGet(endpoint, this.cleanHeaders(headers), params, queries),
         );
     }
+    /**
+     * Make an async Post request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {Record<string, string>} headers - Input headers received from the User's request.
+     * @param {object} data - Input data to be sent to the endpoint service.
+     * @param {Record<string, string>} params - Path parameters received from the User's request.
+     * @param {Record<string, string>} queries  - Query parameters received from the User's request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
     async postRequest(
         endpoint: string,
         headers: Record<string, string>,
@@ -110,6 +131,15 @@ abstract class AbstractHttpClient<T extends HttpClient> {
             this.clientTechnology.httpPost(endpoint, this.cleanHeaders(headers), data, params, queries),
         );
     }
+    /**
+     * Make an async Put request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {Record<string, string>} headers - Input headers received from the User's request.
+     * @param {object} data - Input data to be sent to the endpoint service.
+     * @param {Record<string, string>} params - Path parameters received from the User's request.
+     * @param {Record<string, string>} queries  - Query parameters received from the User's request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
     async putRequest(
         endpoint: string,
         headers: Record<string, string>,
@@ -121,6 +151,14 @@ abstract class AbstractHttpClient<T extends HttpClient> {
             this.clientTechnology.httpPut(endpoint, this.cleanHeaders(headers), data, params, queries),
         );
     }
+    /**
+     * Make an async Delete request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {Record<string, string>} headers - Input headers received from the User's request.
+     * @param {Record<string, string>} params - Path parameters received from the User's request.
+     * @param {Record<string, string>} queries  - Query parameters received from the User's request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
     async deleteRequest(
         endpoint: string,
         headers: Record<string, string>,
