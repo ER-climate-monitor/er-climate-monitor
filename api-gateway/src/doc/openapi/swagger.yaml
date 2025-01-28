@@ -384,12 +384,6 @@ paths:
       summary: Retrieve user's subscriptions
       tags:
         - Subscriptions
-      parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Successfully retrieved subscriptions
@@ -399,8 +393,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TopicAddr'
-        '400':
-          description: Invalid user ID
+        '401':
+          description: Session expired or no user token has been set in header
         '500':
           description: Internal server error
 
@@ -409,11 +403,6 @@ paths:
       tags:
         - Subscriptions
       parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: string
         - in: query
           name: topicAddr
           description: "topic string representation of the form `notification.<topic>.<sensorName | * | #>.<query | #>`"
@@ -431,6 +420,8 @@ paths:
                   message:
                     type: string
                     example: "Subscription deleted"
+        '401':
+          descritpion: User session has expired or session token not set in header
         '400':
           description: Invalid parameters
         '404':
@@ -446,7 +437,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubscriptionRequest'
+              $ref: '#/components/schemas/SubscriptionTopic'
       responses:
         '200':
           description: Successful subscription
@@ -485,13 +476,9 @@ paths:
       summary: Get alert list for input user
       tags:
         - Subscriptions
-      parameters:
-        - in: query
-          name: userId
-          required: true
-          schema:
-            type: string
       responses:
+        '401':
+          description: User session expired or session token not set in request header.
         '200':
           description: List of all users alerts to which he subscribed to.
           content:
