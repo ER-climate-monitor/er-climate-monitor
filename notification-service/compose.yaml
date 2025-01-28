@@ -1,6 +1,6 @@
 services:
   backend:
-    build: .
+    image: sfuri/notification-service:0.1.0
     container_name: "notification-service"
     ports:
       - 4444:4444
