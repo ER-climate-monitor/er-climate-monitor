@@ -78,7 +78,14 @@ class CircuitBreakerClient<T extends HttpClient> {
     }
 }
 
+/**
+ * Factory class that will be used for creating new Circuit breaker clients.
+ */
 class BreakerFactory {
+    /**
+     * 
+     * @returns A new Circuit Breaker client that will use a http client technology Axios and It will use the default options for the breaker.
+     */
     static axiosBreakerWithDefaultOptions() {
         let options: { [key: string]: any } = defaultOptions;
         options[ERROR_FILTER] = axiosCheckServerError;
