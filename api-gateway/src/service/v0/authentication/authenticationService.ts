@@ -1,4 +1,4 @@
-import { DELETE, GET, POST } from '../../../controllers/v0/utils/api/httpMethods';
+import { HttpMethods } from '../../../controllers/v0/utils/api/httpMethods';
 import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreaker/circuitRequest';
 import { AbstractService } from '../abstractService';
 import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/httpClient';
@@ -22,19 +22,19 @@ class AuthenticationService<T extends HttpClient> extends AbstractService<T> imp
     }
 
     public async registerOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, POST, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, headers, body);
     }
 
     public loginOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, POST, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, headers, body);
     }
 
     public authenticateTokenOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, POST, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, headers, body);
     }
 
     public deleteOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, DELETE, endpointPath, headers, body);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.DELETE, endpointPath, headers, body);
     }
 }
 

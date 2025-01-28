@@ -1,5 +1,5 @@
 import CircuitBreaker from 'opossum';
-import { DELETE, GET, POST, PUT } from '../api/httpMethods';
+import { HttpMethods } from '../api/httpMethods';
 import { AbstractHttpClient, HttpClient } from './http/httpClient';
 import { AxiosService, axiosCheckServerError } from './http/axios/axiosClient';
 import { HttpResponse } from './http/httpResponse';
@@ -12,6 +12,11 @@ const defaultOptions = {
 
 const ERROR_FILTER = 'errorFilter';
 
+/**
+ * This class is used for implementing the Circuit Breaker Pattern using the library Opossum.
+ * This class will use a Http Client for making all the requests and then use the Circuit Breaker
+ * for avoiding possible requests to an unavailable service.
+ */
 class CircuitBreakerClient<T extends HttpClient> {
     private breaker: CircuitBreaker;
     private httpClient: AbstractHttpClient<T>;
@@ -20,9 +25,20 @@ class CircuitBreakerClient<T extends HttpClient> {
         this.httpClient = httpClient;
     }
 
+    /**
+     * Fire the input request to the input service.
+     * @param {string} service - Service that will receive our request.
+     * @param {string} method 
+     * @param path 
+     * @param headers 
+     * @param body 
+     * @param params 
+     * @param queries 
+     * @returns 
+     */
     async fireRequest(
         service: string,
-        method: string,
+        method: HttpMethods,
         path: string,
         headers: any,
         body: any,
@@ -34,7 +50,7 @@ class CircuitBreakerClient<T extends HttpClient> {
 
     private async makeRequest(
         service: string,
-        method: string,
+        method: HttpMethods,
         path: string,
         headers: any,
         body: any,
@@ -43,16 +59,16 @@ class CircuitBreakerClient<T extends HttpClient> {
     ): Promise<HttpResponse> {
         const endpoint = service + path;
         switch (method) {
-            case GET: {
+            case HttpMethods.GET: {
                 return this.httpClient.getRequest(endpoint, headers, params, queries);
             }
-            case POST: {
+            case HttpMethods.POST: {
                 return this.httpClient.postRequest(endpoint, headers, body, params, queries);
             }
-            case PUT: {
+            case HttpMethods.PUT: {
                 return this.httpClient.putRequest(endpoint, headers, body, params, queries);
             }
-            case DELETE: {
+            case HttpMethods.DELETE: {
                 return this.httpClient.deleteRequest(endpoint, headers, params, queries);
             }
             default: {
