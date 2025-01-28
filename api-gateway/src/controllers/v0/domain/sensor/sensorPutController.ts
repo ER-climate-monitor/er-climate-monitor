@@ -11,6 +11,11 @@ import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils
 Logger.useDefaults();
 const SECRET = String(process.env.SECRET_API_KEY);
 
+/**
+ * @param {Request} request - The input user's request.
+ * @param {Response} response - The server's response.
+ * @returns {Promise<void>} Handle the input user's request regarding a PUT to the Sensor Registry.
+ */
 const sensorPutHandler = async (request: Request, response: Response) => {
     try {
         Logger.info('Requested to update the input sensor');

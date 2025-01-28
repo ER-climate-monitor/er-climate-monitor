@@ -11,6 +11,11 @@ import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils
 Logger.useDefaults();
 const SECRET = String(process.env.SECRET_API_KEY);
 
+/**
+ * @param {Request} request - The input user's request.
+ * @param {Response} response - The server's response.
+ * @returns {Promise<void>} Handle the input user's request regarding a GET to the Sensor Registry.
+ */
 const sensorGetHandler = async (request: Request, response: Response) => {
     let endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
     try {
