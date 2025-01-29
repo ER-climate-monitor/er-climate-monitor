@@ -1,6 +1,6 @@
 import Logger from 'js-logger';
 import { Connection, Channel, connect, ConsumeMessage } from 'amqplib';
-import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
+import { SubscriptionTopic, DetectionEvent, UserSubscriptions } from '../model/notificationModel';
 
 Logger.useDefaults();
 
@@ -145,6 +145,12 @@ class DetectionBroker<T> {
             return false;
         }
         return sub.userIds.delete(userId);
+    }
+
+    async restoreUserSubscriptions(userSubscriptions: UserSubscriptions[]): Promise<void> {
+        userSubscriptions.forEach((us) =>
+            us.subscriptions.forEach(async (sub) => await this.subscribeUser(us.userId, sub))
+        );
     }
 
     retrieveUserSubscriptions(userId: string): Set<string> {

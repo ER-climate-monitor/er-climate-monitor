@@ -10,6 +10,7 @@ import { setMessageBroker, setSocketManger } from './handlers/notificationHttpHa
 import { DetectionEvent } from './model/notificationModel';
 import mongoose from 'mongoose';
 import { createDbCallback } from './model/dbCallback';
+import { getAllSubscriptions } from './model/notificationOperations';
 
 config();
 Logger.useDefaults();
@@ -21,7 +22,12 @@ const host = process.env.HOST || 'localhost';
 
 const messageBroker = new DetectionBroker<DetectionEvent>();
 const socketManager = new SocketManager(server);
-messageBroker.connect();
+
+messageBroker.connect().then(async () => {
+    const subs = await getAllSubscriptions();
+    messageBroker.restoreUserSubscriptions(subs);
+});
+
 messageBroker.addNotificationCallback(createSocketNotificationCallback(socketManager));
 messageBroker.addNotificationCallback(createDbCallback());
 

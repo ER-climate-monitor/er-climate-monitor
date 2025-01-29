@@ -11,6 +11,15 @@ import Logger from 'js-logger';
 
 Logger.useDefaults();
 
+const getAllSubscriptions = async (): Promise<UserSubscriptions[]> => {
+    try {
+        return await userSubscriptionModel.find({});
+    } catch (error) {
+        Logger.error('Error retrieving subscriptions', error);
+        return [];
+    }
+};
+
 const getUserSubscriptions = async (userId: string): Promise<UserSubscriptions | null> => {
     try {
         const res: UserSubscriptionDocument | null | undefined = await userSubscriptionModel.findOne({ userId });
@@ -102,4 +111,5 @@ export {
     insertNewDetectionEvent,
     retrieveDetectionEventsOfType,
     retrieveEventsForUser,
+    getAllSubscriptions,
 };
