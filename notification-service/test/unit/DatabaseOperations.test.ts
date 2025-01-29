@@ -1,5 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose, { deleteModel } from 'mongoose';
+import mongoose from 'mongoose';
 import { test, expect, describe, beforeAll, afterAll, afterEach } from '@jest/globals';
 import {
     getUserSubscriptions,
