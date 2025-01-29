@@ -17,9 +17,10 @@ interface NotificationConnection {
 
 class SocketManager {
     private io: Server;
-    usersUIDs: Map<string, string>;
-    subscriptionsToUID: Map<string, Set<string>>;
-    usersConnections: Map<string, NotificationConnection>;
+    usersUIDs: Map<string, Set<string>>; // userId - UID
+    userSubscriptions: Map<string, string>; // UID - topicAddr
+    subscriptionsToUID: Map<string, Set<string>>; // topicAddr - UID
+    usersConnections: Map<string, NotificationConnection>; // UID - socket
     topicPrefix: string;
 
     constructor(httpServer: HttpServer, topicPrefix: string = 'notification') {
@@ -27,6 +28,7 @@ class SocketManager {
         this.usersUIDs = new Map();
         this.usersConnections = new Map();
         this.subscriptionsToUID = new Map();
+        this.userSubscriptions = new Map();
         this.io = new Server(httpServer, {
             cors: {
                 origin: '*',
@@ -116,30 +118,55 @@ class SocketManager {
      * of truth of topic names.
      */
     registerUser(userId: string, sub: SubscriptionTopic) {
-        let uid = this.usersUIDs.get(userId);
-        if (uid) return { uid: uid, topicAddr: `${this.topicPrefix}.${stringifySubscription(sub)}` };
-        uid = generateUID();
-        this.usersUIDs.set(userId, uid);
-        const topicSubs = this.subscriptionsToUID.get(stringifySubscription(sub)) ?? new Set();
+        let uids = this.usersUIDs.get(userId) || new Set();
+        let subTopicAddr = stringifySubscription(sub);
+
+        let existingUid = Array.from(uids).filter((uid) => this.userSubscriptions.get(uid) === subTopicAddr);
+
+        if (existingUid && existingUid.length == 1) {
+            return { uid: existingUid[0], topicAddr: `${this.topicPrefix}.${subTopicAddr}` };
+        }
+
+        // Insert a new UID to users UIDs
+        const uid = generateUID();
+        uids.add(uid);
+        this.usersUIDs.set(userId, uids);
+
+        // Add new id to topic subscribers
+        const topicSubs = this.subscriptionsToUID.get(subTopicAddr) ?? new Set();
         topicSubs.add(uid);
-        this.subscriptionsToUID.set(stringifySubscription(sub), topicSubs);
-        return { uid: uid, topicAddr: `${this.topicPrefix}.${stringifySubscription(sub)}` };
+        this.subscriptionsToUID.set(subTopicAddr, uids);
+
+        // add UID - Topicaddr map
+        this.userSubscriptions.set(uid, subTopicAddr);
+
+        return { uid: uid, topicAddr: `${this.topicPrefix}.${subTopicAddr}` };
     }
 
     unregisterUser(userId: string, sub: SubscriptionTopic) {
-        let uid = this.usersUIDs.get(userId);
-        if (!uid) {
+        let uids = this.usersUIDs.get(userId);
+        if (!uids) {
             return true;
         }
 
-        const conn = this.usersConnections.get(uid);
-        if (!conn) {
+        const subTopicAddr = stringifySubscription(sub);
+
+        const uid: string | undefined = Array.from(uids)
+            .filter((uid) => this.userSubscriptions.get(uid) === subTopicAddr)
+            .at(0);
+
+        if (!uid || !this.usersConnections.get(uid)) {
             return true;
         }
+        const conn = this.usersConnections.get(uid)!;
 
         conn.socket.disconnect();
-        this.usersUIDs.delete(userId);
-        return this.subscriptionsToUID.get(uid)?.delete(stringifySubscription(sub));
+        uids.delete(uid);
+        this.usersUIDs.set(userId, uids);
+        this.subscriptionsToUID.get(subTopicAddr)?.delete(uid);
+        this.userSubscriptions.delete(uid);
+
+        return this.subscriptionsToUID.get(uid)?.delete(subTopicAddr);
     }
 
     close() {
