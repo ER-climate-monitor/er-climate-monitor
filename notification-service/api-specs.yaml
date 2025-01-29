@@ -141,6 +141,8 @@ paths:
                   $ref: '#/components/schemas/SubscriptionResponse'
         '400':
           description: No user id was provided in query parameters
+        '404':
+          description: No subscriptions where found for provided user.
   /ws:
     get:
       summary: WebSocket connection endpoint

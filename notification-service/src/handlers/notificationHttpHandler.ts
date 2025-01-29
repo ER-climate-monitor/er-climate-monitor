@@ -1,9 +1,13 @@
 import { HttpStatusCode } from 'axios';
 import { Request, Response } from 'express';
 import { DetectionBroker, parseSubscription } from '../components/detectionBroker';
-import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
+import { SubscriptionTopic, DetectionEvent, detectionEventModel } from '../model/notificationModel';
 import { SocketManager } from '../components/socketManager';
-import { createUserSubscription, retrieveEventsForUser } from '../model/notificationOperations';
+import {
+    createUserSubscription,
+    retrieveEventsForUser,
+    getUserSubscriptions as getDbUserSubscriptions,
+} from '../model/notificationOperations';
 
 type Subscription = {
     userId: string;
@@ -114,10 +118,18 @@ const restoreUserConnections = async (request: Request, response: Response) => {
         return;
     }
 
-    const subs = Array.from(messageBroker!.retrieveUserSubscriptions(userId!)).map((sub) => parseSubscription(sub));
+    const subs: SubscriptionTopic[] | null | undefined = await getDbUserSubscriptions(userId).then(
+        (res) => res?.subscriptions
+    );
+
+    if (!subs) {
+        response.status(HttpStatusCode.NotFound).json({ error: `No subscriptions found for user: ${userId}` });
+        return;
+    }
     const subInfos: { uid: string; topicAddr: string }[] = subs.map((sub) => socketManager!.registerUser(userId, sub));
     response.status(HttpStatusCode.Ok).json(subInfos);
 };
+
 export {
     subscribeUser,
     deleteUserSubscription,
