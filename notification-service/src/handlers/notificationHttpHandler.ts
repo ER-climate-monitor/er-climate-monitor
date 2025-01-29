@@ -106,6 +106,18 @@ const getNotificationsForUser = async (request: Request, response: Response) => 
     }
 };
 
+const restoreUserConnections = async (request: Request, response: Response) => {
+    const userId: string | undefined = request.query['userId'] as string | undefined;
+
+    if (!userId) {
+        response.status(HttpStatusCode.BadRequest).json({ error: `Invalid provided userId (${userId})` });
+        return;
+    }
+
+    const subs = Array.from(messageBroker!.retrieveUserSubscriptions(userId!)).map((sub) => parseSubscription(sub));
+    const subInfos: { uid: string; topicAddr: string }[] = subs.map((sub) => socketManager!.registerUser(userId, sub));
+    response.status(HttpStatusCode.Ok).json(subInfos);
+};
 export {
     subscribeUser,
     deleteUserSubscription,
@@ -113,4 +125,5 @@ export {
     setSocketManger,
     setMessageBroker,
     getNotificationsForUser,
+    restoreUserConnections,
 };

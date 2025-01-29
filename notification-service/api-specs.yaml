@@ -120,6 +120,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+
+  /subscriptions/restore:
+    get:
+      summary: Create a new user subscription
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful subscription
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: No user id was provided in query parameters
   /ws:
     get:
       summary: WebSocket connection endpoint
