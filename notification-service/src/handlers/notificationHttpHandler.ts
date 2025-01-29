@@ -3,8 +3,7 @@ import { Request, Response } from 'express';
 import { DetectionBroker, parseSubscription } from '../components/detectionBroker';
 import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
 import { SocketManager } from '../components/socketManager';
-import { request } from 'node:http';
-import { retrieveEventsForUser } from '../model/notificationOperations';
+import { createUserSubscription, retrieveEventsForUser } from '../model/notificationOperations';
 
 type Subscription = {
     userId: string;
@@ -32,9 +31,12 @@ const subscribeUser = async (request: Request, response: Response) => {
 };
 
 async function subUser(sub: Subscription): Promise<{ uid: string; topicAddr: string } | null | undefined> {
-    return messageBroker?.subscribeUser(sub.userId, sub.topic)?.then((success) => {
-        if (success) return socketManager?.registerUser(sub.userId, sub.topic);
-        else return null;
+    return messageBroker?.subscribeUser(sub.userId, sub.topic)?.then(async (success) => {
+        if (!success) return null;
+
+        const res = await createUserSubscription(sub.userId, sub.topic);
+
+        return res ? socketManager?.registerUser(sub.userId, sub.topic) : null;
     });
 }
 
