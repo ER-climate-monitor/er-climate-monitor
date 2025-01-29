@@ -5,6 +5,7 @@ import {
     unsubscribeUser,
     getUserSubscriptions,
     getAlertsForUser,
+    restoreUserSubscriptions,
 } from '../../../controllers/v0/domain/notifications/notificationController';
 
 const notificationRouter = express.Router();
@@ -14,6 +15,11 @@ notificationRouter
     .post(subscribeUser)
     .delete(unsubscribeUser)
     .get(getUserSubscriptions);
+
+notificationRouter
+    .route(NOTIFICATIONS_API.SERVICE.PATH + NOTIFICATIONS_API.PATHS.RESTORE_SUBSCRIPTIONS)
+    .get(restoreUserSubscriptions);
+
 notificationRouter.route(NOTIFICATIONS_API.SERVICE.PATH).get(getAlertsForUser);
 
 export { notificationRouter };

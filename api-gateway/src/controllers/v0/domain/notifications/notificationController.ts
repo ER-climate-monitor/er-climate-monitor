@@ -152,4 +152,32 @@ const unsubscribeUser = async (request: Request, response: Response) => {
     }
 };
 
-export { subscribeUser, getUserSubscriptions, getAlertsForUser, unsubscribeUser, Subscription };
+const restoreUserSubscriptions = async (request: Request, response: Response) => {
+    try {
+        const userId = await extractUserIdFromRequest(request, response);
+
+        if (!userId) return;
+
+        const httpResponse = await notificationService.restoreUserSubscriptions(
+            NOTIFICATIONS_API.SERVICE.PATH + NOTIFICATIONS_API.PATHS.RESTORE_SUBSCRIPTIONS,
+            userId,
+        );
+
+        response = fromHttpResponseToExpressResponse(httpResponse, response);
+        response.send(httpResponse.data);
+    } catch (error) {
+        Logger.error(error);
+        response
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .json({ error: 'something went wrong: ' + (error as Error).message });
+    }
+};
+
+export {
+    subscribeUser,
+    getUserSubscriptions,
+    getAlertsForUser,
+    unsubscribeUser,
+    restoreUserSubscriptions,
+    Subscription,
+};

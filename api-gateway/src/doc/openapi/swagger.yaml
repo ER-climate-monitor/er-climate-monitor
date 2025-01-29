@@ -471,6 +471,25 @@ paths:
         '400':
           description: Subscription error
 
+  /v0/api/alert/subscriptions/restore:
+    get:
+      summary: Restore user subscriptions, returning credentials to establish persistent connection through web socket.
+      tags:
+        - Subscriptions
+      responses:
+        '200':
+          description: Successful subscription
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: No user id was provided in query parameters
+        '404':
+          description: No subscriptions where found for provided user.
+
   /v0/api/alert:ws:
     get:
       summary: WebSocket connection endpoint (the actual endpoint is `/v0/api/alert`)

@@ -19,6 +19,7 @@ const NOTIFICATIONS_API = {
     SERVICE: notificationServices,
     PATHS: {
         SUBSCRIPTION: '/subscriptions',
+        RESTORE_SUBSCRIPTIONS: '/subscriptions/restore',
     },
 };
 

@@ -24,6 +24,11 @@ export class NotificationService<T extends HttpClient> extends AbstractService<T
         return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, null, null);
     }
 
+    async restoreUserSubscriptions(endpointPath: string, userId: string) {
+        endpointPath = endpointPath + '?userId=' + userId;
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, null, null);
+    }
+
     async unsubscribeUser(endpointPath: string, userId: string, topicAddr: string) {
         endpointPath = `${endpointPath}?userId=${userId}&topicAddr=${topicAddr}`;
         return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.DELETE, endpointPath, null, null);
