@@ -149,8 +149,12 @@ describe('DetectionBroker - Integration Tests', () => {
 
         client.publishTestEvent();
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        expect(receivedMessages).toHaveLength(4);
-        expect(receivedMessages.flatMap((d) => d.userIds)).toEqual([testUserId, 'user-321', 'user-abc', 'user-bca']);
+        expect(receivedMessages).toHaveLength(4 + 1); // 1 is the root
+        const expectedUsers = [testUserId, 'user-321', 'user-abc', 'user-bca'];
+
+        expect(receivedMessages.flatMap((d) => d.userIds).filter((u) => expectedUsers.includes(u))).toHaveLength(
+            expectedUsers.length
+        );
 
         const firstMessage = receivedMessages.filter((m) => m.userIds[0] == testUserId)[0];
 
