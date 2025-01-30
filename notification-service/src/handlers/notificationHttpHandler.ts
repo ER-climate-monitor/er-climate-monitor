@@ -87,7 +87,7 @@ const getUserSubscriptions = async (request: Request, response: Response) => {
     }
 
     try {
-        const subs = messageBroker?.retrieveUserSubscriptions(userId!);
+        const subs = getDbUserSubscriptions(userId) || [];
         response.status(HttpStatusCode.Ok).json(subs);
     } catch (err) {
         response.status(HttpStatusCode.InternalServerError).json({ error: (err as Error).message });
