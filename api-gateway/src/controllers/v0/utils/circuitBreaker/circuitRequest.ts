@@ -4,27 +4,39 @@ import { AbstractHttpClient, HttpClient } from './http/httpClient';
 import { AxiosService, axiosCheckServerError } from './http/axios/axiosClient';
 import { HttpResponse } from './http/httpResponse';
 
-const defaultOptions = {
-    timeout: 6000, // If our function takes longer than 3 seconds, trigger a failure
-    errorThresholdPercentage: 50, // When 50% of requests fail, trip the circuit
-    resetTimeout: 30000, // After 30 seconds, try again.
-};
 
-const ERROR_FILTER = 'errorFilter';
 
-/**
- * This class is used for implementing the Circuit Breaker Pattern using the library Opossum.
- * This class will use a Http Client for making all the requests and then use the Circuit Breaker
- * for avoiding possible requests to an unavailable service.
- */
+
+interface CircuitBreakerLogic {
+    /**
+     * Fire the input request to the input service.
+     * @param {string} service - Service that will receive our request.
+     * @param {HttpMethods} method - Input Http method that will be used for doing the request.
+     * @param {string} path - Service url path where our request will be redirected.
+     * @param {Record<string, string>} headers - Input headers.
+     * @param {object} body - Input body.
+     * @param {Record<string, string>} params - Input path parameters.
+     * @param {Record<string, string} queries - Input query parameters.
+     * @returns {HttpResponse} The service's http response.
+     */
+    fireRequest(service: string, method: HttpMethods, path: string, headers: Record<string, string>, body: object, params: Record<string, string>, queries: Record<string, string>): Promise<HttpResponse>
+    /**
+     * Bind the input function to the specific circuit breaker technology used. This function could also be not used at all, but some of the breaker algorithms could call a specific
+     * function each time in order to fire their request. This method should only be used if the breaker needs a function to call each time a request is fired.
+     * @param requestFunction 
+     */
+    bindFunction(requestFunction: (service: string, method: HttpMethods, path: string, headers: Record<string, string>, body: object, params: Record<string, string>, queries: Record<string, string>) => Promise<HttpResponse>): void
+}
+
+
 class CircuitBreakerClient<T extends HttpClient> {
-    private breaker: CircuitBreaker;
-    private httpClient: AbstractHttpClient<T>;
-    constructor(options: { [key: string]: any }, httpClient: AbstractHttpClient<T>) {
-        this.breaker = new CircuitBreaker(this.makeRequest.bind(this), options);
+    private breaker: CircuitBreakerLogic
+    private httpClient: AbstractHttpClient<T>
+    constructor(breaker: CircuitBreakerLogic, httpClient: AbstractHttpClient<T>) {
+        this.breaker = breaker;
         this.httpClient = httpClient;
+        this.breaker.bindFunction(this.makeRequest.bind(this));
     }
-
     /**
      * Fire the input request to the input service.
      * @param {string} service - Service that will receive our request.
@@ -40,22 +52,22 @@ class CircuitBreakerClient<T extends HttpClient> {
         service: string,
         method: HttpMethods,
         path: string,
-        headers: any,
-        body: any,
-        params: any = {},
-        queries: any = {},
+        headers: Record<string, string>,
+        body: object,
+        params: Record<string, string> = {},
+        queries: Record<string, string> = {},
     ): Promise<HttpResponse> {
-        return this.breaker.fire(service, method, path, headers, body, params, queries) as Promise<HttpResponse>;
+        return this.breaker.fireRequest(service, method, path, headers, body, params, queries);
     }
-
+    
     private async makeRequest(
         service: string,
         method: HttpMethods,
         path: string,
-        headers: any,
-        body: any,
-        params: any = {},
-        queries: any = {},
+        headers: Record<string, string>,
+        body: object,
+        params: Record<string, string> = {},
+        queries: Record<string, string> = {},
     ): Promise<HttpResponse> {
         const endpoint = service + path;
         switch (method) {
@@ -78,6 +90,32 @@ class CircuitBreakerClient<T extends HttpClient> {
     }
 }
 
+
+
+class OpossumCircuiBreker implements CircuitBreakerLogic {
+    private breaker: CircuitBreaker | undefined;
+    options: { [key: string]: any };
+    constructor(options: { [key: string]: any }) {
+        this.options = options;
+    }
+
+    bindFunction(requestFunction: (service: string, method: HttpMethods, path: string, headers: any, body: any, params: any, queries: any) => Promise<HttpResponse>): void {
+        this.breaker = new CircuitBreaker(requestFunction, this.options);
+    }
+
+    async fireRequest(
+        service: string,
+        method: HttpMethods,
+        path: string,
+        headers: any,
+        body: any,
+        params: any = {},
+        queries: any = {},
+    ): Promise<HttpResponse> {
+        return this.breaker?.fire(service, method, path, headers, body, params, queries) as Promise<HttpResponse>;
+    }
+}
+
 /**
  * Factory class that will be used for creating new Circuit breaker clients.
  */
@@ -87,10 +125,16 @@ class BreakerFactory {
      * @returns A new Circuit Breaker client that will use a http client technology Axios and It will use the default options for the breaker.
      */
     static axiosBreakerWithDefaultOptions() {
+        const defaultOptions = {
+            timeout: 6000, // If our function takes longer than 3 seconds, trigger a failure
+            errorThresholdPercentage: 50, // When 50% of requests fail, trip the circuit
+            resetTimeout: 30000, // After 30 seconds, try again.
+        };
+        const ERROR_FILTER = 'errorFilter';
         let options: { [key: string]: any } = defaultOptions;
         options[ERROR_FILTER] = axiosCheckServerError;
-        return new CircuitBreakerClient(options, new AxiosService());
+        return new CircuitBreakerClient(new OpossumCircuiBreker(options), new AxiosService());
     }
 }
 
-export { BreakerFactory, defaultOptions, CircuitBreakerClient };
+export { BreakerFactory, CircuitBreakerClient };
