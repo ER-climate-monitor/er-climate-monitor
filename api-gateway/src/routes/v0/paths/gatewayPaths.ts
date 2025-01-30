@@ -10,7 +10,7 @@ const AUTHENTICATION_PATHS = AUTHENTICATION_SERVICE + ANY_PARAMETER;
 const AUTHENTICATION_COMPLETE_ROUTE = BASE_PATH_V0 + AUTHENTICATION_PATHS;
 
 const notificationServices = {
-    HOSTNAME: process.env.NOTIFICATION_SERVICE_HOSTNAME ?? 'notification-service',
+    HOSTNAME: process.env.NOTIFICATION_SERVICE_HOSTNAME ?? 'localhost',
     PORT: parseInt(process.env.NOTIFICATION_SERVICE_PORT ?? '4444'),
     PATH: '/alert',
 };
