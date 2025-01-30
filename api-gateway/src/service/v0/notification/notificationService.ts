@@ -11,26 +11,26 @@ export class NotificationService<T extends HttpClient> extends AbstractService<T
     }
 
     async suscribeUser(endpointPath: string, sub: Subscription) {
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, null, sub);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, {}, sub);
     }
 
     async getUserSubscriptions(endpointPath: string, userId: string) {
         endpointPath = endpointPath + '?userId=' + userId;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, null, null);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, {}, {});
     }
 
     async getNotificationsForUser(endpointPath: string, userId: string) {
         endpointPath = endpointPath + '?userId=' + userId;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, null, null);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, {}, {});
     }
 
     async restoreUserSubscriptions(endpointPath: string, userId: string) {
         endpointPath = endpointPath + '?userId=' + userId;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, null, null);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, {}, {});
     }
 
     async unsubscribeUser(endpointPath: string, userId: string, topicAddr: string) {
         endpointPath = `${endpointPath}?userId=${userId}&topicAddr=${topicAddr}`;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.DELETE, endpointPath, null, null);
+        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.DELETE, endpointPath, {}, {});
     }
 }
