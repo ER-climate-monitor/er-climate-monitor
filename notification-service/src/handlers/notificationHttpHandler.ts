@@ -7,6 +7,7 @@ import {
     createUserSubscription,
     retrieveEventsForUser,
     getUserSubscriptions as getDbUserSubscriptions,
+    deleteUserSubscription as deleteDbUserSubscription,
 } from '../model/notificationOperations';
 import Logger from 'js-logger';
 
@@ -60,7 +61,7 @@ const deleteUserSubscription = async (request: Request, response: Response) => {
 
     try {
         const sub = parseSubscription(topicAddr, socketManager!.topicPrefix);
-        let success = await messageBroker?.unsubscribeUser(userId, sub);
+        let success = await deleteDbUserSubscription(userId, topicAddr);
         if (!success) {
             response.status(HttpStatusCode.NotFound).json({
                 error: `something went wrong... are you really sure ${userId} was subscribed to ${topicAddr}?`,
@@ -68,13 +69,8 @@ const deleteUserSubscription = async (request: Request, response: Response) => {
             return;
         }
 
-        success = socketManager?.unregisterUser(userId, sub);
-        if (!success) {
-            response.status(HttpStatusCode.NotFound).json({
-                error: `something went wrong during socket closing... are you really sure ${userId} was subscribed to ${topicAddr}?`,
-            });
-            return;
-        }
+        socketManager?.unregisterUser(userId, sub);
+        await messageBroker?.unsubscribeUser(userId, sub);
 
         response.status(HttpStatusCode.Ok).send();
     } catch (err) {
