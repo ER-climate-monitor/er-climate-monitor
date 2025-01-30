@@ -1,13 +1,16 @@
 import { HttpStatusCode } from 'axios';
 import { Request, Response } from 'express';
 import { DetectionBroker, parseSubscription } from '../components/detectionBroker';
-import { SubscriptionTopic, DetectionEvent, detectionEventModel } from '../model/notificationModel';
+import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
 import { SocketManager } from '../components/socketManager';
 import {
     createUserSubscription,
     retrieveEventsForUser,
     getUserSubscriptions as getDbUserSubscriptions,
 } from '../model/notificationOperations';
+import Logger from 'js-logger';
+
+Logger.useDefaults();
 
 type Subscription = {
     userId: string;
@@ -88,6 +91,7 @@ const getUserSubscriptions = async (request: Request, response: Response) => {
 
     try {
         const subs = (await getDbUserSubscriptions(userId))?.subscriptions || [];
+        Logger.info('Retrieved from DB: ', JSON.stringify(subs));
         response.status(HttpStatusCode.Ok).json(subs);
     } catch (err) {
         response.status(HttpStatusCode.InternalServerError).json({ error: (err as Error).message });

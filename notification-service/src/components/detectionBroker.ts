@@ -22,7 +22,6 @@ class DetectionBroker<T> {
     private connected: boolean = false;
     private notificationCallbacks: NotificationCallback<T>[] = [];
 
-    private readonly routingUser = 'rtUser-' + crypto.randomUUID();
     private readonly EXCHANGE_NAME = process.env.EXCHANGE_NAME ?? 'sensor.notifications';
     private readonly QUEUE_NAME: string;
     private readonly connectionUrl: string;
@@ -68,7 +67,6 @@ class DetectionBroker<T> {
             });
 
             this.connected = true;
-            await this.subscribeUser(this.routingUser, { topic: '*' });
             Logger.info('✅ Succesfully connected to broker!');
         } catch (_) {
             this.reconnect();
