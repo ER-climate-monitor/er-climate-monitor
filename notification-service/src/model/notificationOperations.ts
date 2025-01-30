@@ -67,6 +67,9 @@ const deleteUserSubscription = async (userId: string, topic: SubscriptionTopic):
         Logger.info(`Retrieved from db this subscription: ${JSON.stringify(userSubs)}`);
 
         const updatedSubscriptions = userSubs?.subscriptions.filter((sub) => !areSubscriptionTopicsEqual(sub, topic));
+
+        Logger.info(`Updated subscriptions now are: ${JSON.stringify(updatedSubscriptions)}`);
+
         res.subscriptions = updatedSubscriptions;
         await res.save();
         return true;

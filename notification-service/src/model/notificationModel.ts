@@ -77,11 +77,22 @@ const detectionEventModel: Model<DetectionEventDocument> = mongoose.model<Detect
     detectionEventSchema
 );
 
+const normalizeTopic = (topic: SubscriptionTopic): SubscriptionTopic => {
+    return {
+        topic: topic.topic,
+        sensorName: topic.sensorName || undefined,
+        query: topic.query || undefined,
+    };
+};
+
 const areSubscriptionTopicsEqual = (a: SubscriptionTopic, b: SubscriptionTopic): boolean => {
+    const normalizedA = normalizeTopic(a);
+    const normalizedB = normalizeTopic(b);
+
     return (
-        a.topic === b.topic &&
-        (a.sensorName === b.sensorName || (a.sensorName === undefined && b.sensorName === undefined)) &&
-        (a.query === b.query || (a.query === undefined && b.query === undefined))
+        normalizedA.topic === normalizedB.topic &&
+        normalizedA.sensorName === normalizedB.sensorName &&
+        normalizedA.query === normalizedB.query
     );
 };
 
