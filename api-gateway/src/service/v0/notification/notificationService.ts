@@ -15,7 +15,7 @@ export class NotificationService<T extends HttpClient> extends AbstractService<T
     }
 
     async suscribeUser(endpointPath: string, sub: Subscription) {
-        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, {}, sub, {}, {});
+        const request = new BasicHttpRequest(HttpMethods.POST, endpointPath, {}, sub, {}, {});
         return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
