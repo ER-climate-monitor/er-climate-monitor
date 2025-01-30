@@ -7,7 +7,7 @@ import { HttpResponse } from '../../../controllers/v0/utils/circuitBreaker/http/
 import { BasicHttpRequest } from '../../../controllers/v0/utils/circuitBreaker/http/httpRequest';
 
 /**
- * TODO: 
+ * TODO:
  */
 interface SensorOperations {
     registerOperation(_endpointPath: string, _headers: any, _body: any): Promise<HttpResponse>;
@@ -17,11 +17,7 @@ interface SensorOperations {
 }
 
 class SensorService<T extends HttpClient> extends AbstractService<T> implements SensorOperations {
-    constructor(
-        circuitBreaker: CircuitBreakerClient<T>,
-        endpoint: string,
-        authenticationClient: AuthenticationClient,
-    ) {
+    constructor(circuitBreaker: CircuitBreakerClient<T>, endpoint: string, authenticationClient: AuthenticationClient) {
         super(circuitBreaker, endpoint, authenticationClient);
     }
 

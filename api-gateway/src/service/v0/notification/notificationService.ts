@@ -7,7 +7,7 @@ import { Subscription } from '../../../controllers/v0/domain/notifications/notif
 import { BasicHttpRequest } from '../../../controllers/v0/utils/circuitBreaker/http/httpRequest';
 
 /**
- * TODO: 
+ * TODO:
  */
 export class NotificationService<T extends HttpClient> extends AbstractService<T> {
     constructor(cb: CircuitBreakerClient<T>, endpoint: string, authenticationClient: AuthenticationClient) {

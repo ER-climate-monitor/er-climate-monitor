@@ -17,11 +17,7 @@ abstract class AbstractService<T extends HttpClient> {
      * @param {string} endpoint - the endpoint that will receive our request, It is the Service's address.
      * @param {AuthenticationClient} authenticationClient - Attribute that is used for interacting with the authentication store.
      */
-    constructor(
-        circuitBreaker: CircuitBreakerClient<T>,
-        endpoint: string,
-        authenticationClient: AuthenticationClient,
-    ) {
+    constructor(circuitBreaker: CircuitBreakerClient<T>, endpoint: string, authenticationClient: AuthenticationClient) {
         this.endpoint = endpoint;
         this.circuitBreaker = circuitBreaker;
         this.authenticationClient = authenticationClient;

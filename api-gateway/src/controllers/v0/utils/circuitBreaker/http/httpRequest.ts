@@ -1,7 +1,7 @@
-import { HttpMethods } from "../../api/httpMethods";
+import { HttpMethods } from '../../api/httpMethods';
 
 /**
- * TODO: 
+ * TODO:
  */
 interface HttpRequest {
     method: HttpMethods;
@@ -13,7 +13,7 @@ interface HttpRequest {
 }
 
 /**
- * TODO: 
+ * TODO:
  */
 class BasicHttpRequest implements HttpRequest {
     method: HttpMethods;
@@ -23,7 +23,14 @@ class BasicHttpRequest implements HttpRequest {
     params: Record<string, string>;
     queries: Record<string, string>;
 
-    constructor(method: HttpMethods, path: string, headers: Record<string, string>, body: object, params: Record<string, string>, queries: Record<string, string>) {
+    constructor(
+        method: HttpMethods,
+        path: string,
+        headers: Record<string, string>,
+        body: object,
+        params: Record<string, string>,
+        queries: Record<string, string>,
+    ) {
         this.method = method;
         this.path = path;
         this.headers = headers;
@@ -31,7 +38,6 @@ class BasicHttpRequest implements HttpRequest {
         this.params = params;
         this.queries = queries;
     }
-
 }
 
-export { HttpRequest, BasicHttpRequest }
+export { HttpRequest, BasicHttpRequest };

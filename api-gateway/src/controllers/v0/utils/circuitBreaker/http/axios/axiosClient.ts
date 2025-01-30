@@ -11,7 +11,7 @@ function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
  */
 class AxiosHttpClient implements HttpClient {
     constructor() {}
-    
+
     private fromAxiosHeadersToRecord(axiosHeaders: any): Record<string, string> {
         const headers: Record<string, string> = {};
         Object.keys(axiosHeaders).forEach((key) => (headers[key] = axiosHeaders[key]));
