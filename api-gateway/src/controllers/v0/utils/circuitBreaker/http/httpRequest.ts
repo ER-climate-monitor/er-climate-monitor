@@ -2,8 +2,17 @@ import { HttpMethods } from '../../api/httpMethods';
 
 /**
  * TODO:
+
  */
 interface HttpRequest {
+    /**
+    * @property {HttpMethods} method - Input Http method that will be used for doing the request.
+    * @property {string} path - Service url path where our request will be redirected.
+    * @property {Record<string, string>} headers - Input headers.
+    * @property {object} body - Input body.
+    * @property {Record<string, string>} params - Input path parameters.
+    * @property {Record<string, string>} queries - Input query parameters.
+    */
     method: HttpMethods;
     path: string;
     headers: Record<string, string>;
@@ -13,7 +22,7 @@ interface HttpRequest {
 }
 
 /**
- * TODO:
+ * Basic Http Request class that implement the Http Request.
  */
 class BasicHttpRequest implements HttpRequest {
     method: HttpMethods;
@@ -23,6 +32,15 @@ class BasicHttpRequest implements HttpRequest {
     params: Record<string, string>;
     queries: Record<string, string>;
 
+    /**
+     * Initialise the Http Request
+     * @param {HttpMethods} method - Input Http method that will be used for doing the request.
+     * @param {string} path - Service url path where our request will be redirected.
+     * @param {Record<string, string>} headers - Input headers.
+     * @param {object} body - Input body.
+     * @param {Record<string, string>} params - Input path parameters.
+     * @param {Record<string, string>} queries - Input query parameters.
+     */
     constructor(
         method: HttpMethods,
         path: string,
