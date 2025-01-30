@@ -1,4 +1,6 @@
+import { stringifySubscription } from '../components/detectionBroker';
 import {
+    areSubscriptionTopicsEqual,
     DetectionEvent,
     DetectionEventDocument,
     detectionEventModel,
@@ -54,21 +56,19 @@ const createUserSubscription = async (userId: string, sub: SubscriptionTopic): P
 
 const deleteUserSubscription = async (userId: string, topic: SubscriptionTopic): Promise<boolean> => {
     try {
-        const userSubs = await userSubscriptionModel.findOne({ userId });
+        Logger.info(`Requested to delete ${stringifySubscription(topic)} for user ${userId}`);
+        const res: UserSubscriptionDocument | null | undefined = await userSubscriptionModel.findOne({ userId });
 
-        if (!userSubs) {
-            throw new Error('User is subscribed to no topics!');
+        if (!res) {
+            throw new Error('Provided user has no associated subscriptions');
         }
+        const userSubs = res.toJSON() as UserSubscriptions;
 
-        const updatedSubscriptions = userSubs?.subscriptions.filter(
-            (sub) => sub.topic === topic.topic && sub.query === topic.query && sub.sensorName === topic.sensorName
-        );
-        if (updatedSubscriptions?.length === userSubs?.subscriptions.length) {
-            throw new Error('No subscriptins have been founded for the specified user and topic');
-        }
+        Logger.info(`Retrieved from db this subscription: ${JSON.stringify(userSubs)}`);
 
-        userSubs.subscriptions = updatedSubscriptions;
-        await userSubs.save();
+        const updatedSubscriptions = userSubs?.subscriptions.filter((sub) => !areSubscriptionTopicsEqual(sub, topic));
+        res.subscriptions = updatedSubscriptions;
+        await res.save();
         return true;
     } catch (error) {
         Logger.error(`Error deleting user subscription for topic ${topic}: `, error);

@@ -77,6 +77,14 @@ const detectionEventModel: Model<DetectionEventDocument> = mongoose.model<Detect
     detectionEventSchema
 );
 
+const areSubscriptionTopicsEqual = (a: SubscriptionTopic, b: SubscriptionTopic): boolean => {
+    return (
+        a.topic === b.topic &&
+        (a.sensorName === b.sensorName || (a.sensorName === undefined && b.sensorName === undefined)) &&
+        (a.query === b.query || (a.query === undefined && b.query === undefined))
+    );
+};
+
 export {
     SubscriptionTopic,
     UserSubscriptions,
@@ -85,4 +93,5 @@ export {
     UserSubscriptionDocument,
     DetectionEventDocument,
     detectionEventModel,
+    areSubscriptionTopicsEqual,
 };
