@@ -35,6 +35,7 @@ class WebSocketProxy {
 
         this.notificationSocket.on('disconnect', () => {
             Logger.info('Disconnected from Notification Service');
+            this.notificationSocket.connect();
         });
 
         this.notificationSocket.onAny((event, ...args) => {
