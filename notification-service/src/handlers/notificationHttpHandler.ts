@@ -87,7 +87,7 @@ const getUserSubscriptions = async (request: Request, response: Response) => {
     }
 
     try {
-        const subs = getDbUserSubscriptions(userId) || [];
+        const subs = (await getDbUserSubscriptions(userId))?.subscriptions || [];
         response.status(HttpStatusCode.Ok).json(subs);
     } catch (err) {
         response.status(HttpStatusCode.InternalServerError).json({ error: (err as Error).message });
