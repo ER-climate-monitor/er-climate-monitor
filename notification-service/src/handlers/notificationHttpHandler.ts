@@ -61,7 +61,7 @@ const deleteUserSubscription = async (request: Request, response: Response) => {
 
     try {
         const sub = parseSubscription(topicAddr, socketManager!.topicPrefix);
-        let success = await deleteDbUserSubscription(userId, topicAddr);
+        let success = await deleteDbUserSubscription(userId, sub);
         if (!success) {
             response.status(HttpStatusCode.NotFound).json({
                 error: `something went wrong... are you really sure ${userId} was subscribed to ${topicAddr}?`,

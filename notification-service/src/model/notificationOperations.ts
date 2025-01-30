@@ -52,7 +52,7 @@ const createUserSubscription = async (userId: string, sub: SubscriptionTopic): P
     }
 };
 
-const deleteUserSubscription = async (userId: string, topic: string): Promise<boolean> => {
+const deleteUserSubscription = async (userId: string, topic: SubscriptionTopic): Promise<boolean> => {
     try {
         const userSubs = await userSubscriptionModel.findOne({ userId });
 
@@ -60,7 +60,9 @@ const deleteUserSubscription = async (userId: string, topic: string): Promise<bo
             throw new Error('User is subscribed to no topics!');
         }
 
-        const updatedSubscriptions = userSubs?.subscriptions.filter((sub) => sub.topic !== topic);
+        const updatedSubscriptions = userSubs?.subscriptions.filter(
+            (sub) => sub.topic === topic.topic && sub.query === topic.query && sub.sensorName === topic.sensorName
+        );
         if (updatedSubscriptions?.length === userSubs?.subscriptions.length) {
             throw new Error('No subscriptins have been founded for the specified user and topic');
         }
