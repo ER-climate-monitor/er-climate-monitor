@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode, InternalAxiosRequestConfig } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 import { BasicHttpResponse, HttpResponse } from '../httpResponse';
+import { HttpRequest } from '../httpRequest';
 function axiosCheckServerError(error: AxiosError<unknown, any>): boolean {
     return error.status !== undefined && error.status < 500;
 }
@@ -40,23 +41,23 @@ class AxiosHttpClient implements HttpClient {
         }
     }
 
-    httpGet(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.get(endpoint, { headers: headers }));
+    httpGet(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        return this.sendRequest(() => axios.get(endpoint, { headers: httpRequest.headers }));
     }
-    httpPost(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
+    httpPost(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
         return this.sendRequest(() =>
-            axios.post(endpoint, data, {
-                headers: headers,
+            axios.post(endpoint, httpRequest.body, {
+                headers: httpRequest.headers,
             }),
         );
     }
 
-    httpPut(endpoint: string, headers: Record<string, string>, data: object): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.put(endpoint, data, { headers: headers }));
+    httpPut(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        return this.sendRequest(() => axios.put(endpoint, httpRequest.body, { headers: httpRequest.headers }));
     }
 
-    httpDelete(endpoint: string, headers: Record<string, string>): Promise<HttpResponse> {
-        return this.sendRequest(() => axios.delete(endpoint, { headers: headers }));
+    httpDelete(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        return this.sendRequest(() => axios.delete(endpoint, { headers: httpRequest.headers }));
     }
 }
 

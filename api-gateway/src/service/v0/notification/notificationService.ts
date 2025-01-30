@@ -4,33 +4,42 @@ import { HttpClient } from '../../../controllers/v0/utils/circuitBreaker/http/ht
 import { AbstractService } from '../abstractService';
 import { AuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
 import { Subscription } from '../../../controllers/v0/domain/notifications/notificationController';
+import { BasicHttpRequest } from '../../../controllers/v0/utils/circuitBreaker/http/httpRequest';
 
+/**
+ * TODO: 
+ */
 export class NotificationService<T extends HttpClient> extends AbstractService<T> {
     constructor(cb: CircuitBreakerClient<T>, endpoint: string, authenticationClient: AuthenticationClient) {
         super(cb, endpoint, authenticationClient);
     }
 
     async suscribeUser(endpointPath: string, sub: Subscription) {
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, {}, sub);
+        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, {}, sub, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     async getUserSubscriptions(endpointPath: string, userId: string) {
         endpointPath = endpointPath + '?userId=' + userId;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, {}, {});
+        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, {}, {}, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     async getNotificationsForUser(endpointPath: string, userId: string) {
         endpointPath = endpointPath + '?userId=' + userId;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, {}, {});
+        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, {}, {}, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     async restoreUserSubscriptions(endpointPath: string, userId: string) {
         endpointPath = endpointPath + '?userId=' + userId;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, {}, {});
+        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, {}, {}, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     async unsubscribeUser(endpointPath: string, userId: string, topicAddr: string) {
         endpointPath = `${endpointPath}?userId=${userId}&topicAddr=${topicAddr}`;
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.DELETE, endpointPath, {}, {});
+        const request = new BasicHttpRequest(HttpMethods.DELETE, endpointPath, {}, {}, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 }

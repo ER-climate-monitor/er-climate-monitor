@@ -4,7 +4,11 @@ import { CircuitBreakerClient } from '../../../controllers/v0/utils/circuitBreak
 import { HttpMethods } from '../../../controllers/v0/utils/api/httpMethods';
 import { AuthenticationClient } from '../../../controllers/v0/utils/redis/redisClient';
 import { HttpResponse } from '../../../controllers/v0/utils/circuitBreaker/http/httpResponse';
+import { BasicHttpRequest } from '../../../controllers/v0/utils/circuitBreaker/http/httpRequest';
 
+/**
+ * TODO: 
+ */
 interface SensorOperations {
     registerOperation(_endpointPath: string, _headers: any, _body: any): Promise<HttpResponse>;
     getAllSensorsOperation(_endpointPath: string, _headers: any, _body: any): Promise<HttpResponse>;
@@ -22,19 +26,23 @@ class SensorService<T extends HttpClient> extends AbstractService<T> implements 
     }
 
     registerOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.POST, endpointPath, headers, body);
+        const request = new BasicHttpRequest(HttpMethods.POST, endpointPath, headers, body, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     getAllSensorsOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.GET, endpointPath, headers, body);
+        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, headers, body, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     deleteOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.DELETE, endpointPath, headers, body);
+        const request = new BasicHttpRequest(HttpMethods.DELETE, endpointPath, headers, body, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
     updateRemoteSensor(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        return this.circuitBreaker.fireRequest(this.endpoint, HttpMethods.PUT, endpointPath, headers, body);
+        const request = new BasicHttpRequest(HttpMethods.PUT, endpointPath, headers, body, {}, {});
+        return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 }
 
