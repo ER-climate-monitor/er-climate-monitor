@@ -31,7 +31,7 @@ const sensorDeleteHandler = async (request: Request, response: Response) => {
         }
         Logger.info('The user is an admin, we can procede');
         request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
-        const httpResponse = await sensorService.deleteOperation(endpointPath, request.headers, request.body);
+        const httpResponse = await sensorService.deleteOperation(endpointPath, request.headers);
         response = fromHttpResponseToExpressResponse(httpResponse, response);
         response.send(httpResponse.data);
     } catch (error) {

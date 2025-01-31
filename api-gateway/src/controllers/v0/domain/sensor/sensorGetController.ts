@@ -35,7 +35,6 @@ const sensorGetHandler = async (request: Request, response: Response) => {
             const httpResponse = await sensorService.getAllSensorsOperation(
                 endpointPath,
                 request.headers,
-                request.body,
             );
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);
@@ -44,7 +43,6 @@ const sensorGetHandler = async (request: Request, response: Response) => {
             const httpResponse = await sensorService.getAllSensorsOperation(
                 endpointPath,
                 request.headers,
-                request.body,
             );
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);
