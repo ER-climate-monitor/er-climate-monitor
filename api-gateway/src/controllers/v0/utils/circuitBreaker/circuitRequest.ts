@@ -12,6 +12,7 @@ interface CircuitBreakerLogic {
     /**
      * Fire the input request to the input service.
      * @param {string} service - Service that will receive our request.
+     * @param {HttpRequest} request - The input http request.
      * @returns {HttpResponse} The service's http response.
      */
     fireRequest(service: string, request: HttpRequest): Promise<HttpResponse>;
@@ -23,6 +24,10 @@ interface CircuitBreakerLogic {
     bindFunction(requestFunction: (service: string, request: HttpRequest) => Promise<HttpResponse>): void;
 }
 
+/**
+ * Class that will be used for making all the http requests. This class in order to work will use a specific Circuit Breaker logic
+ * and an Abstract Http Client in order to interact with all the other services.
+ */
 class CircuitBreakerClient<T extends HttpClient> {
     private breaker: CircuitBreakerLogic;
     private httpClient: AbstractHttpClient<T>;
@@ -34,12 +39,7 @@ class CircuitBreakerClient<T extends HttpClient> {
     /**
      * Fire the input request to the input service.
      * @param {string} service - Service that will receive our request.
-     * @param {HttpMethods} method - Input Http method that will be used for doing the request.
-     * @param {string} path - Service url path where our request will be redirected.
-     * @param headers - Input headers.
-     * @param body - Input body.
-     * @param params - Input path parameters.
-     * @param queries - Input query parameters.
+     * @param {HttpRequest} request - The input http request.
      * @returns {HttpResponse} The service's http response.
      */
     async fireRequest(service: string, request: HttpRequest): Promise<HttpResponse> {
@@ -68,6 +68,9 @@ class CircuitBreakerClient<T extends HttpClient> {
     }
 }
 
+/**
+ * Circuit Breaker Pattern implemented using the library Opossum.
+ */
 class OpossumCircuiBreker implements CircuitBreakerLogic {
     private breaker: CircuitBreaker | undefined;
     options: { [key: string]: any };
