@@ -35,11 +35,11 @@ interface SensorOperations {
     /**
      * Update the input sensor.
      * @param {string} _endpointPath - Endpoint path where the request will be redirected.
-     * @param {Record<string, string>} _headers - Input headers;
+     * @param {Record<string, string | undefined | string[]>} _headers - Input headers;
      * @param {object} _body - New sensor information
      * @returns {Promise<HttpResponse>} Sensor registry response.
      */
-    updateRemoteSensor(_endpointPath: string, _headers: any, _body: any): Promise<HttpResponse>;
+    updateRemoteSensor(_endpointPath: string, _headers: Record<string, string | undefined | string[]>, _body: any): Promise<HttpResponse>;
 }
 
 class SensorService<T extends HttpClient> extends AbstractService<T> implements SensorOperations {
