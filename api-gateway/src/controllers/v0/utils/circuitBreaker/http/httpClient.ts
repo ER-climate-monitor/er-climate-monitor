@@ -9,24 +9,28 @@ interface HttpClient {
     /**
      * Make a generic Http Get.
      * @param {string} _endpoint - Service endpoint that will receive the API Gateway GET.
+     * @param {HttpRequest} request - The input http request.
      * @returns {HttpResponse} The endpoint's http response.
      */
     httpGet(endpoint: string, request: HttpRequest): Promise<HttpResponse>;
     /**
      * Make a generic Http Post.
      * @param {string} _endpoint - Service endpoint that will receive the API Gateway POST.
+     * @param {HttpRequest} request - The input http request.
      * @returns {HttpResponse} The endpoint's http response.
      */
     httpPost(_endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse>;
     /**
      * Make a generic Http Put.
      * @param {string} _endpoint - Service endpoint that will receive the API Gateway PUT.
+     * @param {HttpRequest} request - The input http request.
      * @returns {HttpResponse} The endpoint's http response.
      */
     httpPut(_endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse>;
     /**
      * Make a generic Http Put.
      * @param {string} _endpoint - Service endpoint that will receive the API Gateway PUT.
+     * @param {HttpRequest} request - The input http request.
      * @returns {HttpResponse} The endpoint's http response.
      */
     httpDelete(_endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse>;
@@ -61,6 +65,7 @@ abstract class AbstractHttpClient<T extends HttpClient> {
     /**
      * Make an async Get request to the input endpoint using the internal client technology.
      * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {HttpRequest} request - The input http request.
      * @returns {Promise<HttpResponse>} Return the service's http response.
      */
     async getRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -70,6 +75,7 @@ abstract class AbstractHttpClient<T extends HttpClient> {
     /**
      * Make an async Post request to the input endpoint using the internal client technology.
      * @param {string} endpoint - Endpoint service that will receive the client request
+     * @param {HttpRequest} request - The input http request.
      * @returns {Promise<HttpResponse>} Return the service's http response.
      */
     async postRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -79,6 +85,7 @@ abstract class AbstractHttpClient<T extends HttpClient> {
     /**
      * Make an async Put request to the input endpoint using the internal client technology.
      * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {HttpRequest} request - The input http request.
      * @returns {Promise<HttpResponse>} Return the service's http response.
      */
     async putRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -88,6 +95,7 @@ abstract class AbstractHttpClient<T extends HttpClient> {
     /**
      * Make an async Delete request to the input endpoint using the internal client technology.
      * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {HttpRequest} request - The input http request.
      * @returns {Promise<HttpResponse>} Return the service's http response.
      */
     async deleteRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {

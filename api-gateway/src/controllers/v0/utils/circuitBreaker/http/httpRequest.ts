@@ -1,8 +1,7 @@
 import { HttpMethods } from '../../api/httpMethods';
 
 /**
- * TODO:
-
+ * Generic Http Request that will be used during the API Gateway requesto to the other Service.
  */
 interface HttpRequest {
     /**
