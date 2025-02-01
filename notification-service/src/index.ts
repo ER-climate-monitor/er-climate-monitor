@@ -11,6 +11,7 @@ import { DetectionEvent } from './model/notificationModel';
 import mongoose from 'mongoose';
 import { createDbCallback } from './model/dbCallback';
 import { getAllSubscriptions } from './model/notificationOperations';
+import { createEmailNotificationCallback, MailSender } from './components/pluggable/mailSender';
 
 config();
 Logger.useDefaults();
@@ -30,6 +31,10 @@ messageBroker.connect().then(async () => {
 
 messageBroker.addNotificationCallback(createSocketNotificationCallback(socketManager));
 messageBroker.addNotificationCallback(createDbCallback());
+
+if (!process.env.SEND_MAIL) {
+    messageBroker.addNotificationCallback(createEmailNotificationCallback(new MailSender()));
+}
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost';
 const dbName = process.env.DB_NAME || 'notifications-database';
