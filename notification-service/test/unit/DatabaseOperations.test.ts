@@ -60,7 +60,7 @@ describe('NotificationService - unit test', () => {
 
         test('should get a saved notification', async () => {
             await createUserSubscription(testUser, mockSub);
-            await deleteUserSubscription(testUser, mockSub.topic);
+            await deleteUserSubscription(testUser, mockSub);
             const res = await getUserSubscriptions(testUser);
             expect(res!.subscriptions).toHaveLength(0);
         });

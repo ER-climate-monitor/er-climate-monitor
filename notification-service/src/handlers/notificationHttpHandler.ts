@@ -2,7 +2,7 @@ import { HttpStatusCode } from 'axios';
 import { Request, Response } from 'express';
 import { DetectionBroker, parseSubscription } from '../components/detectionBroker';
 import { SubscriptionTopic, DetectionEvent } from '../model/notificationModel';
-import { SocketManager } from '../components/socketManager';
+import { SocketManager } from '../components/pluggable/socketManager';
 import {
     createUserSubscription,
     retrieveEventsForUser,

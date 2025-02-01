@@ -2,7 +2,7 @@ import { describe, beforeEach, afterEach, test, expect } from '@jest/globals';
 import { Server as HttpServer } from 'http';
 import { createServer } from 'http';
 import { io as ClientIO } from 'socket.io-client';
-import { SocketManager } from '../../src/components/socketManager';
+import { SocketManager } from '../../src/components/pluggable/socketManager';
 import { AddressInfo } from 'net';
 import Logger from 'js-logger';
 import { SubscriptionTopic } from '../../src/model/notificationModel';

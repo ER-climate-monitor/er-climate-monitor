@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import cors from 'cors';
 import { router } from './notificationRoutes';
 import Logger from 'js-logger';
-import { SocketManager, createSocketNotificationCallback } from './components/socketManager';
+import { SocketManager, createSocketNotificationCallback } from './components/pluggable/socketManager';
 import { config } from 'dotenv';
 import { DetectionBroker } from './components/detectionBroker';
 import { setMessageBroker, setSocketManger } from './handlers/notificationHttpHandler';
