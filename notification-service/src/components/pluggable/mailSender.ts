@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import nodemailer, { Transporter } from 'nodemailer';
 import dotenv from 'dotenv';
 import Logger from 'js-logger';
 import { DetectionEvent, SubscriptionTopic } from '../../model/notificationModel';
@@ -9,14 +9,27 @@ dotenv.config();
 class MailSender {
     private RESEND_API_KEY = process.env.RESEND_API_KEY;
     private emailRegex = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g);
-    private resend: Resend;
-    private senderMail: string = process.env.SENDER_MAIL || 'erclimatemonitor@gmail.com';
+    private transport: Transporter;
+    private senderMail = process.env.SENDER_MAIL;
+    private senderPswd = process.env.SENDER_PSWD;
 
     constructor() {
         if (!this.RESEND_API_KEY) {
             throw new Error('Cannot create mail sender because no api keys where provided.');
         }
-        this.resend = new Resend(this.RESEND_API_KEY);
+
+        if (!this.sendMail || !this.senderPswd) {
+            throw new Error('Cannot create mail sender because sender email or passord are undefined.');
+        }
+
+        this.transport = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: this.senderMail,
+                pass: this.senderPswd,
+            },
+        });
+        Logger.info('✅ Email service up and running!');
     }
 
     async sendMail(recipient: string, topic: SubscriptionTopic, event: DetectionEvent): Promise<boolean> {
@@ -24,17 +37,14 @@ class MailSender {
             if (!this.emailRegex.test(recipient)) {
                 throw new Error('Invalid recipient email address: ' + recipient);
             }
-            const { data, error } = await this.resend.emails.send({
+            const info = await this.transport.sendMail({
                 from: this.senderMail,
                 to: [recipient],
                 subject: `🚨 E-R Climate Monitor - Alert Notification System - ${topic.topic}`,
                 html: this.emailHtml(topic, event),
             });
 
-            if (error) {
-                throw new Error(error.message);
-            }
-            Logger.info(`Email sent succesfully to ${recipient}: `, data);
+            Logger.info(`Email sent succesfully to ${recipient}: `, info);
             return true;
         } catch (error) {
             Logger.error('An error occurred: ', error);
