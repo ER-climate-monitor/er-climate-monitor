@@ -32,7 +32,7 @@ messageBroker.connect().then(async () => {
 messageBroker.addNotificationCallback(createSocketNotificationCallback(socketManager));
 messageBroker.addNotificationCallback(createDbCallback());
 
-if (!process.env.SEND_MAIL) {
+if (process.env.SEND_MAIL) {
     messageBroker.addNotificationCallback(createEmailNotificationCallback(new MailSender()));
 }
 
