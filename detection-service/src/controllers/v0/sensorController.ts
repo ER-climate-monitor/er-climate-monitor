@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import HttpStatus, { BAD_REQUEST } from 'http-status-codes';
-import { getModelForSensorType } from '../../models/v0/detectionModel';
+import { Detection, DetectionDocument, getModelForSensorType } from '../../models/v0/detectionModel';
 import {
     handleGetDetectionsFromSensor,
     handleSaveDetection,
@@ -13,6 +13,7 @@ import validateDetectionData from './utils/validation';
 import { ERROR_TAG, SUCCESS_TAG, SENSOR_ID_HEADER } from '../../config/Costants';
 import { Alert } from 'src/models/v0/alertModel';
 import Logger from 'js-logger';
+import { sendMessageToSubscribers } from '../../sockets/socket';
 
 async function saveDetection(req: Request, res: Response) {
     const modelData = req.body;
@@ -36,11 +37,12 @@ async function saveDetection(req: Request, res: Response) {
     }
 
     handleSaveDetection(getModelForSensorType(sensorType), modelData)
-        .then(() =>
+        .then((detection) =>{
             res.status(HttpStatus.CREATED).send({
                 [SUCCESS_TAG]: 'Detection saved successfully.',
-            }),
-        )
+            });
+            sendMessageToSubscribers(detection.sensorId, detection);
+        })
         .catch((e) =>
             res.status(HttpStatus.BAD_REQUEST).send({
                 [ERROR_TAG]: e.message || 'Failed to save detection.',

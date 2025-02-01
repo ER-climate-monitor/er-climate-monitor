@@ -3,6 +3,8 @@ import createServer from './server';
 import dotenv from 'dotenv';
 import { detectionPublisher } from './controllers/v0/utils/brokerClient';
 import Logger from 'js-logger';
+import http from 'http';
+import { setupSocketServer } from './sockets/socket';
 
 const PORT = process.env.PORT || 3000;
 const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017';
@@ -21,6 +23,10 @@ async function startServer() {
         app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
         });
+
+        const server = http.createServer(app);
+        setupSocketServer(server);
+        server.listen(3001);
     } catch (error) {
         console.error('Failed to connect to the database:', error);
     }
