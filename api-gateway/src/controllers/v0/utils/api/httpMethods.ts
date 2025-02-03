@@ -1,6 +1,8 @@
-const GET = 'GET';
-const POST = 'POST';
-const PUT = 'PUT';
-const DELETE = 'DELETE';
+enum HttpMethods {
+    GET = 'GET',
+    POST = 'POST',
+    PUT = 'PUT',
+    DELETE = 'DELETE',
+}
 
-export { GET, POST, PUT, DELETE };
+export { HttpMethods };

@@ -11,6 +11,11 @@ import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils
 Logger.useDefaults();
 const SECRET = String(process.env.SECRET_API_KEY);
 
+/**
+ * @param {Request} request - The input user's request.
+ * @param {Response} response - The server's response.
+ * @returns {Promise<void>} Handle the input user's request regarding a GET to the Sensor Registry.
+ */
 const sensorGetHandler = async (request: Request, response: Response) => {
     let endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
     try {
@@ -25,11 +30,11 @@ const sensorGetHandler = async (request: Request, response: Response) => {
             return;
         }
         if (await sensorService.authenticationClient.isAdmin(jwtToken)) {
+            Logger.info('The input user is admin');
             request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
             const httpResponse = await sensorService.getAllSensorsOperation(
                 endpointPath,
                 request.headers,
-                request.body,
             );
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);
@@ -38,7 +43,6 @@ const sensorGetHandler = async (request: Request, response: Response) => {
             const httpResponse = await sensorService.getAllSensorsOperation(
                 endpointPath,
                 request.headers,
-                request.body,
             );
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);

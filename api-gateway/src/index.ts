@@ -6,6 +6,9 @@ import cors from 'cors';
 import { createServer } from 'http';
 import { WebSocketProxy } from './service/v0/notification/WebSocketProxy';
 import Logger from 'js-logger';
+import SwaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import YAML from 'yaml';
 dotenv.config();
 
 const app = express();
@@ -14,6 +17,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
+
+if (!process.env.CI || process.env.CI == 'False') {
+    const file: string = fs.readFileSync('src/doc/openapi/swagger.yaml', 'utf8');
+    const swaggerDocument = YAML.parse(file);
+    app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
+}
 
 app.get(BASE_PATH_V0, (_, res) => {
     res.send(`Running in ${process.env.NODE_ENV} mode`);

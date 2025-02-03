@@ -1,37 +1,46 @@
+import { HttpRequest } from './httpRequest';
 import { HttpResponse } from './httpResponse';
 import { problematicHeaders } from './problematicHeaders';
 
+/**
+ * Interface used for representing a generic Http Client for interacting with all the different services.
+ */
 interface HttpClient {
-    httpGet(
-        _endpoint: string,
-        _headers: Record<string, string>,
-        _data: object,
-        _params: Record<string, string>,
-        _queries: Record<string, string>,
-    ): Promise<HttpResponse>;
-    httpPost(
-        _endpoint: string,
-        _headers: Record<string, string>,
-        _data: object,
-        _params: Record<string, string>,
-        _queries: Record<string, string>,
-    ): Promise<HttpResponse>;
-    httpPut(
-        _endpoint: string,
-        _headers: Record<string, string>,
-        _data: object,
-        _params: Record<string, string>,
-        _queries: Record<string, string>,
-    ): Promise<HttpResponse>;
-    httpDelete(
-        _endpoint: string,
-        _headers: Record<string, string>,
-        _data: object,
-        _params: Record<string, string>,
-        _queries: Record<string, string>,
-    ): Promise<HttpResponse>;
+    /**
+     * Make a generic Http Get.
+     * @param {string} _endpoint - Service endpoint that will receive the API Gateway GET.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {HttpResponse} The endpoint's http response.
+     */
+    httpGet(endpoint: string, request: HttpRequest): Promise<HttpResponse>;
+    /**
+     * Make a generic Http Post.
+     * @param {string} _endpoint - Service endpoint that will receive the API Gateway POST.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {HttpResponse} The endpoint's http response.
+     */
+    httpPost(_endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse>;
+    /**
+     * Make a generic Http Put.
+     * @param {string} _endpoint - Service endpoint that will receive the API Gateway PUT.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {HttpResponse} The endpoint's http response.
+     */
+    httpPut(_endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse>;
+    /**
+     * Make a generic Http Put.
+     * @param {string} _endpoint - Service endpoint that will receive the API Gateway PUT.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {HttpResponse} The endpoint's http response.
+     */
+    httpDelete(_endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse>;
 }
 
+/**
+ * Abstract Http Client, this class will be extended by all the different technologies used for making different http requests to all the other
+ * services.
+ * @template {T extends HttpClient} - The type of the client that will be used for making all the http requests.
+ */
 abstract class AbstractHttpClient<T extends HttpClient> {
     clientTechnology: T;
     protected constructor(clientTechnology: T) {
@@ -42,7 +51,10 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         return request();
     }
 
-    protected cleanHeaders(headers: Record<string, string>): Record<string, string> {
+    protected cleanHeaders(headers: Record<string, string | undefined | string[]>): Record<string, string | undefined | string[]> {
+        if (!headers) {
+            return {};
+        }
         problematicHeaders
             .filter((h) => h in headers)
             .forEach((h) => {
@@ -50,50 +62,45 @@ abstract class AbstractHttpClient<T extends HttpClient> {
             });
         return headers;
     }
-
-    async getRequest(
-        endpoint: string,
-        headers: Record<string, string>,
-        data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
-    ): Promise<HttpResponse> {
-        return this.makeRequest(() =>
-            this.clientTechnology.httpGet(endpoint, this.cleanHeaders(headers), data, params, queries),
-        );
+    /**
+     * Make an async Get request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
+    async getRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        httpRequest.headers = this.cleanHeaders(httpRequest.headers);
+        return this.makeRequest(() => this.clientTechnology.httpGet(endpoint, httpRequest));
     }
-    async postRequest(
-        endpoint: string,
-        headers: Record<string, string>,
-        data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
-    ): Promise<HttpResponse> {
-        return this.makeRequest(() =>
-            this.clientTechnology.httpPost(endpoint, this.cleanHeaders(headers), data, params, queries),
-        );
+    /**
+     * Make an async Post request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request
+     * @param {HttpRequest} request - The input http request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
+    async postRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        httpRequest.headers = this.cleanHeaders(httpRequest.headers);
+        return this.makeRequest(() => this.clientTechnology.httpPost(endpoint, httpRequest));
     }
-    async putRequest(
-        endpoint: string,
-        headers: Record<string, string>,
-        data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
-    ): Promise<HttpResponse> {
-        return this.makeRequest(() =>
-            this.clientTechnology.httpPut(endpoint, this.cleanHeaders(headers), data, params, queries),
-        );
+    /**
+     * Make an async Put request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
+    async putRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        httpRequest.headers = this.cleanHeaders(httpRequest.headers);
+        return this.makeRequest(() => this.clientTechnology.httpPut(endpoint, httpRequest));
     }
-    async deleteRequest(
-        endpoint: string,
-        headers: Record<string, string>,
-        data: object,
-        params: Record<string, string>,
-        queries: Record<string, string>,
-    ): Promise<HttpResponse> {
-        return this.makeRequest(() =>
-            this.clientTechnology.httpDelete(endpoint, this.cleanHeaders(headers), data, params, queries),
-        );
+    /**
+     * Make an async Delete request to the input endpoint using the internal client technology.
+     * @param {string} endpoint - Endpoint service that will receive the client request.
+     * @param {HttpRequest} request - The input http request.
+     * @returns {Promise<HttpResponse>} Return the service's http response.
+     */
+    async deleteRequest(endpoint: string, httpRequest: HttpRequest): Promise<HttpResponse> {
+        httpRequest.headers = this.cleanHeaders(httpRequest.headers);
+        return this.makeRequest(() => this.clientTechnology.httpDelete(endpoint, httpRequest));
     }
 }
 

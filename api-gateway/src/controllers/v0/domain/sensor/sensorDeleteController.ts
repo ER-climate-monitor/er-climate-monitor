@@ -14,6 +14,11 @@ Logger.useDefaults();
 
 const SECRET = String(process.env.SECRET_API_KEY);
 
+/**
+ * @param {Request} request - The input user's request.
+ * @param {Response} response - The server's response.
+ * @returns {Promise<void>} Handle the input user's request regarding a DELETE to the Sensor Registry.
+ */
 const sensorDeleteHandler = async (request: Request, response: Response) => {
     try {
         Logger.info('Received a request for deleting a sensor');
@@ -26,7 +31,7 @@ const sensorDeleteHandler = async (request: Request, response: Response) => {
         }
         Logger.info('The user is an admin, we can procede');
         request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
-        const httpResponse = await sensorService.deleteOperation(endpointPath, request.headers, request.body);
+        const httpResponse = await sensorService.deleteOperation(endpointPath, request.headers);
         response = fromHttpResponseToExpressResponse(httpResponse, response);
         response.send(httpResponse.data);
     } catch (error) {
