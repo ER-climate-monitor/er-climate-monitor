@@ -1,0 +1,252 @@
+openapi: 3.0.0
+info:
+  title: Notification Subscriptions API
+  version: 0.1.0
+servers:
+  - url: http://notification-service:4444/v0/alert
+  - url: http://localhost:4444/v0/alert
+paths:
+  /:
+    get:
+      summary: Get alert list for input user
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all users alerts to which he subscribed to.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationAlert'
+
+  /subscriptions:
+    post:
+      summary: Create a new user subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        '200':
+          description: Successful subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: Subscription error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    
+    delete:
+      summary: Delete a user's subscription
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: topicAddr
+          description: "topic string representation of the form `notification.<topic>.<sensorName | * | #>.<query | #>`"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscription successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Subscription deleted"
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Subscription not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Retrieve user's subscriptions
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicAddr'
+        '400':
+          description: Invalid user ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /subscriptions/restore:
+    get:
+      summary: Create a new user subscription
+      parameters:
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful subscription
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: No user id was provided in query parameters
+        '404':
+          description: No subscriptions where found for provided user.
+  /ws:
+    get:
+      summary: WebSocket connection endpoint
+      parameters:
+        - in: query
+          name: uid
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: topicAddr
+          required: true
+          schema:
+            type: string
+      responses:
+        '101':
+          description: WebSocket Upgrade Successful
+      x-websocket:
+        connectionParameters:
+          $ref: '#/components/schemas/WebSocketConnectionParams'
+
+components:
+  schemas:
+    SubscriptionRequest:
+      type: object
+      required:
+        - userId
+        - topic
+      properties:
+        userId:
+          type: string
+          example: "user123"
+        topic:
+          $ref: '#/components/schemas/SubscriptionTopic'
+    
+    NotificationAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '65a1b2c3d4e5f6g7h8i9j0k'
+        sensorName:
+          type: string
+          example: 'gambettola-river'
+        type:
+          type: string
+          example: 'water'
+        value:
+          type: number
+          example: 10.2
+        unit:
+          type: string
+          example: 'm'
+        timestamp:
+          type: number
+          example: 1223123
+        query:
+          type: object
+          example: { value: 10.0, name: 'theshold-25%' }
+
+    SubscriptionTopic:
+      type: object
+      required:
+        - topic
+      properties:
+        topic:
+          type: string
+          example: "temperature"
+        sensorName:
+          type: string
+          example: "gambettola-temp"
+        query:
+          type: string
+          example: "threshold-25%"
+    TopicAddr:
+      type: string
+      example: "notification.<topic>.<sensorName | * | #>.<query | #>"
+      
+    SubscriptionResponse:
+      type: object
+      properties:
+        uid:
+          type: string
+          example: "c2a044be-f73b-4788-8532-3130aee9bcb7"
+        topicAddr:
+          type: string
+          example: "temperature.gambettola-temp.threshold-25%"
+    
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid parameters or operation failed"
+    
+    WebSocketConnectionParams:
+      type: object
+      required:
+        - uid
+        - topicAddr
+      properties:
+        uid:
+          type: string
+          description: User's unique identifier
+        topicAddr:
+          type: string
+          description: Topic to subscribe to

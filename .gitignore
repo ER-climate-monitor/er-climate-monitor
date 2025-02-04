@@ -1,6 +1,7 @@
 **/datasets/
 **/weekly_data/
 **/uv.lock
+**/package-lock.json
 
 .package-lock.json
 

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+    }
+
+    .response-box {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      min-height: 100px;
+    }
+
+    .form-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-popup input, .form-popup textarea, .form-popup select {
+      width: 100%;
+      padding: 8px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .form-popup button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .form-popup button:hover {
+      background-color: #45a049;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <button class="btn" id="getTopicsBtn">Get Topics</button>
+  <button class="btn" id="createTopicBtn">Create Topic</button>
+  <button class="btn" id="subscribeTopicBtn">Subscribe to Topic</button>
+
+  <div class="response-box" id="responseBox">Response will be shown here...</div>
+  <div class="response-box" id="subscriptionResponseBox">Subscription result will be shown here...</div>
+
+  <!-- Create Topic Popup Form -->
+  <div class="form-popup" id="topicFormPopup">
+    <button class="close-btn" id="closeFormBtn">&times;</button>
+    <h3>Create a Topic</h3>
+    <input type="text" id="topicName" placeholder="Topic Name" required>
+    <textarea id="topicDesc" placeholder="Topic Description" required></textarea>
+    <button class="btn" id="submitTopicBtn">OK</button>
+  </div>
+
+  <!-- Subscribe to Topic Popup Form -->
+  <div class="form-popup" id="subscriptionFormPopup">
+    <button class="close-btn" id="closeSubscriptionFormBtn">&times;</button>
+    <h3>Subscribe to Topic</h3>
+    <select id="topicDropdown">
+      <option value="">Select a Topic</option>
+    </select>
+    <input type="number" id="userId" placeholder="User ID" required>
+    <button class="btn" id="submitSubscriptionBtn">Subscribe</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const getTopicsBtn = document.getElementById('getTopicsBtn');
+  const createTopicBtn = document.getElementById('createTopicBtn');
+  const subscribeTopicBtn = document.getElementById('subscribeTopicBtn');
+  const responseBox = document.getElementById('responseBox');
+  const subscriptionResponseBox = document.getElementById('subscriptionResponseBox');
+  const topicFormPopup = document.getElementById('topicFormPopup');
+  const subscriptionFormPopup = document.getElementById('subscriptionFormPopup');
+  const closeFormBtn = document.getElementById('closeFormBtn');
+  const closeSubscriptionFormBtn = document.getElementById('closeSubscriptionFormBtn');
+  const submitTopicBtn = document.getElementById('submitTopicBtn');
+  const submitSubscriptionBtn = document.getElementById('submitSubscriptionBtn');
+  const topicNameInput = document.getElementById('topicName');
+  const topicDescInput = document.getElementById('topicDesc');
+  const topicDropdown = document.getElementById('topicDropdown');
+  const userIdInput = document.getElementById('userId');
+
+  // Handle GET request to /topics
+  getTopicsBtn.addEventListener('click', () => {
+    axios.get('/topics')
+      .then(response => {
+        responseBox.textContent = JSON.stringify(response.data, null, 2);
+      })
+      .catch(error => {
+        responseBox.textContent = 'Error fetching topics.';
+        console.error(error);
+      });
+  });
+
+  // Handle the display of the create topic form
+  createTopicBtn.addEventListener('click', () => {
+    topicFormPopup.style.display = 'block';
+  });
+
+  // Close the create topic form
+  closeFormBtn.addEventListener('click', () => {
+    topicFormPopup.style.display = 'none';
+  });
+
+  // Handle PUT request to /topics
+  submitTopicBtn.addEventListener('click', () => {
+    const topicName = topicNameInput.value;
+    const topicDesc = topicDescInput.value;
+
+    if (topicName && topicDesc) {
+      axios.put('/topics', {
+        name: topicName,
+        desc: topicDesc
+      })
+        .then(response => {
+          responseBox.textContent = 'Topic updated successfully: ' + JSON.stringify(response.data, null, 2);
+          topicFormPopup.style.display = 'none';
+          topicNameInput.value = '';
+          topicDescInput.value = '';
+        })
+        .catch(error => {
+          responseBox.textContent = 'Error updating topic.';
+          console.error(error);
+        });
+    } else {
+      alert('Please fill out both fields.');
+    }
+  });
+
+  // Handle the display of the subscription form
+  subscribeTopicBtn.addEventListener('click', () => {
+    // Populate the dropdown with topics
+    axios.get('/topics')
+      .then(response => {
+        topicDropdown.innerHTML = '<option value="">Select a Topic</option>'; // Reset options
+        response.data.forEach(topic => {
+          const option = document.createElement('option');
+          option.value = topic;
+          option.textContent = topic;
+          topicDropdown.appendChild(option);
+        });
+        subscriptionFormPopup.style.display = 'block';
+      })
+      .catch(error => {
+        subscriptionResponseBox.textContent = 'Error fetching topics for dropdown.';
+        console.error(error);
+      });
+  });
+
+  // Close the subscription form
+  closeSubscriptionFormBtn.addEventListener('click', () => {
+    subscriptionFormPopup.style.display = 'none';
+  });
+
+  // Handle POST request to /topics/sub
+  submitSubscriptionBtn.addEventListener('click', () => {
+    const userId = userIdInput.value;
+    const topic = topicDropdown.value;
+
+    if (userId && topic) {
+      axios.post('/topics/sub', {
+        userId: parseInt(userId),
+        topic: topic
+      })
+        .then(response => {
+          subscriptionResponseBox.textContent = 'Subscription successful: ' + JSON.stringify(response.data, null, 2);
+          subscriptionFormPopup.style.display = 'none';
+          userIdInput.value = '';
+          topicDropdown.value = '';
+          const uid = response.data.uid;
+          const topicAddr = response.data.topicAddr;
+          registerWebSocketConnection(uid, topicAddr);
+        })
+        .catch(error => {
+          subscriptionResponseBox.textContent = 'Error subscribing to topic.';
+          console.error(error);
+        });
+    } else {
+      alert('Please select a topic and enter a user ID.');
+    }
+  });
+
+  // New WebSocket Connection Function
+  function registerWebSocketConnection(uid, topicAddr) {
+    const socket = io('http://localhost:4444', { transports: ['websocket'] });
+
+    socket.on('connect', () => {
+      console.log('WebSocket connected');
+      socket.emit('register', uid, topicAddr);
+    });
+
+    socket.on('registered', (result) => {
+      if (result.success) {
+        console.log(`WebSocket registered for topic: ${topicAddr}`);
+      } else {
+        console.error('WebSocket registration failed');
+      }
+    });
+
+    socket.on(topicAddr, (message) => {
+      console.log(`Received message on topic ${topicAddr}:`, message);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('WebSocket disconnected');
+    });
+  }
+</script>
+
+</body>
+</html>
+

@@ -21,11 +21,13 @@ export default [
         rules: {
             ...tsEslintPlugin.configs.recommended.rules, // Import TypeScript rules
             'prettier/prettier': 'error', // Enable Prettier formatting rules
-<<<<<<<< HEAD:api-gateway/eslint.config.mjs
             // note you must disable the base rule
             // as it can report incorrect errors
-            "@typescript-eslint/no-explicit-any": ["off"],
-            'no-unused-vars': [
+            '@typescript-eslint/no-explicit-any': ['off'],
+            // note you must disable the base rule
+            // as it can report incorrect errors
+            'no-unused-vars': 'off',
+            '@typescript-eslint/no-unused-vars': [
                 'warn', // or "error"
                 {
                     argsIgnorePattern: '^_',
@@ -33,9 +35,6 @@ export default [
                     caughtErrorsIgnorePattern: '^_',
                 },
             ],
-========
-            "@typescript-eslint/no-explicit-any": ["off"],
->>>>>>>> feat/sensor-registry:sensor-registry/eslint.config.mjs
         },
     },
     {
