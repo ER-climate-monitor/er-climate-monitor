@@ -1,0 +1,328 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: API documentation for user registration, login, token verification, and deletion.
+servers:
+  - url: http://localhost:7777
+    description: Local development server
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: User's actions (Register)
+                  example: 'register'
+                userEmail:
+                  type: string
+                  description: User's email address
+                  example: test.email01@gmail.com
+                userPassword:
+                  type: string
+                  description: User's password
+                  example: AVeryStrongPassword1010!
+      responses:
+        201:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: Admin's email address
+                    example: test.email01@gmail.com
+                  userToken:
+                    type: string
+                    description: User's JWT token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk0YzA4N2MyOTRiOWQ2OTNlNjdhMzQiLCJ1c2VyRW1haWwiOiJ0ZXM1MzRwb3Jjb2Rpb3RlbWFpbDA4OEBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6Im5vcm1hbCIsImlhdCI6MTczNzgwMTg2MywiZXhwIjoxNzM3ODA1NDYzfQ.XFhpp_rKc8gfKdmLVWAWL2nCJJpJfVtbg41jQxyexaQ'
+                  userTokenExpiration:
+                    type: number
+                    description: User's JWT token expiration date
+                    example: 1737805463000
+                  userRole:
+                    type: string
+                    description: User's role inside the system
+                    example: 'normal'
+        400:
+          description: Bad request, the body is missing.
+        409: 
+          description: The input email is already in use.
+        406:
+          description: The input email or the password is not well formatted.
+
+  /admin/register:
+    post:
+      summary: Register a new admin
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: User's actions (Register)
+                  example: 'register'
+                userEmail:
+                  type: string
+                  description: User's email address
+                  example: test.email.admin01@gmail.com
+                userPassword:
+                  type: string
+                  description: User's password
+                  example: AVeryStrongPassword1010!
+      responses:
+        201:
+          description: Admin registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: Admin's email address
+                    example: test.email.admin01@gmail.com
+                  userToken:
+                    type: string
+                    description: User's JWT token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk0YzA4N2MyOTRiOWQ2OTNlNjdhMzQiLCJ1c2VyRW1haWwiOiJ0ZXM1MzRwb3Jjb2Rpb3RlbWFpbDA4OEBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6Im5vcm1hbCIsImlhdCI6MTczNzgwMTg2MywiZXhwIjoxNzM3ODA1NDYzfQ.XFhpp_rKc8gfKdmLVWAWL2nCJJpJfVtbg41jQxyexaQ'
+                  userTokenExpiration:
+                    type: number
+                    description: User's JWT token expiration date
+                    example: 1737805463000
+                  userRole:
+                    type: string
+                    description: User's role inside the system
+                    example: 'admin'
+        401:
+          description: Unauthorized
+        400:
+          description: Bad request, the body is missing.
+        409:
+          description: The current email is already in use.
+
+
+  /login:
+    post:
+      summary: Login as a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: User's actions (Login)
+                  example: 'login'
+                userEmail:
+                  type: string
+                  description: User's email address
+                  example: mario.rossi444222@gmail.com
+                userPassword:
+                  type: string
+                  description: User's password
+                  example: AVeryStrongPassword1121!
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: Admin's email address
+                    example: mario.rossi444222@gmail.com
+                  userToken:
+                    type: string
+                    description: User's JWT token
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk0YzgwYjA3ODk4ZTVmMzUyNjgwOGEiLCJ1c2VyRW1haWwiOiJ0ZXM1MzRwb3Jjb2Rpb3N0ZW1haWwwODhAZ21haWwuY29tIiwidXNlclJvbGUiOiJub3JtYWwiLCJpYXQiOjE3Mzc4MDM3OTQsImV4cCI6MTczNzgwNzM5NH0.vebMqwl4i2MtP9qjaECLj2WKKcLNAnKMRkPD7S02ttA'
+                  userTokenExpiration:
+                    type: number
+                    description: User's JWT token expiration date
+                    example: 1737807394000
+                  userRole:
+                    type: string
+                    description: User's role inside the system
+                    example: 'normal'
+        400:
+          description: The request body is missing
+        406:
+          description: The input password or email is not well formatted
+  /admin/login:
+    post:
+      summary: Login as an admin
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: User's actions (Login)
+                  example: 'login'
+                userEmail:
+                  type: string
+                  description: Admin's email address
+                  example: mario.rossi.admin444222@gmail.com
+                userPassword:
+                  type: string
+                  description: Admin's password
+                  example: FabioMatteoStefano30L!@
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userEmail:
+                    type: string
+                    description: Admin's email address
+                    example: mario.rossi.admin444222@gmail.com
+                  userToken:
+                    type: string
+                    description: User's JWT token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Nzk0szgwYjA3ODk4ZTVmMzUyNjgwOGEiLCJ1c2VyRW1haWwiOiJ0ZXM1MzRwb3Jjb2Rpb3N0ZW1haWwwODhAZ21haWwuY29tIiwidXNlclJvbGUiOiJub3JtYWwiLCJpYXQiOjE3Mzc4MDM3OTQsImV4cCI6MTczNzgwNzM5NH0.vebMqwl4i2MtP9qjaECLj2WKKcLNAnKMRkPD7S02ttA
+                  userTokenExpiration:
+                    type: number
+                    description: User's JWT token expiration date
+                    example: 1737807823000
+                  userRole:
+                    type: string
+                    description: User's role inside the system
+                    example: admin
+        401:
+          description: Unauthorized.
+        406:
+          description: The input email or password is not well formatted.
+
+  /authorized:
+    post:
+      summary: Verify JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: User's actions (Authenticate)
+                  example: 'authenticate'
+                userToken:
+                  type: string
+                  description: JWT token
+                  example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzkzNzA0OGU3YmZlZWY3MDUyMGIyMWUiLCJ1c2VyRW1haWwiOiJ0ZXN0LmVtYWlsLmFkbWluMDFsZ21haWwuY29tIiwidXNlclJvbGUiOiJhZG1pbiIsImlhdCI6MTczNzgwMDcwNiwiZXhwIjoxNzM3ODA0MzA2fQ.X3boYKYuPM4MgoaArOYyex3N0gsxwFgFiXYSwf62K6M'
+      responses:
+        202:
+          description: Token verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userTokenExpiration:
+                    type: number
+                    description: User's JWT token expiration date
+                    example: 1737804306000
+                  userEmail:
+                    type: string
+                    description: The user's email linked to the input token
+                    example: test.email.admin01@gmail.com
+                  userRole:
+                    type: string
+                    description: The user's role linked to the input token
+                    example: 'normal'
+        401:
+          description: Unauthorized
+        400:
+          description: Bad request
+
+  /delete:
+    delete:
+      summary: Delete a user
+      parameters:
+        - in: query
+          name: userEmail
+          description: User's input email
+          required: true
+          schema:
+            type: string
+            example: 'gatteoMare98909@gmail.com'
+        - in: header
+          name: x-user-token
+          required: true
+          description: User's token used during the login
+          schema:
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+
+      responses:
+        200:
+          description: User deleted successfully
+        401:
+          description: The input user does not exist or the token is not valid.
+
+  /admin/delete:
+    delete:
+      summary: Delete an admin
+      parameters:
+        - in: query
+          name: userEmail
+          required: true
+          schema:
+            type: string
+            description: User's email
+            example: 'gatteoMare98909@gmail.com'
+        - in: header
+          name: x-user-token
+          required: true
+          description: User's token from the login
+          schema:
+            type: string
+            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhhNTdhN2VkOWFhZDc3ZjQ4ZGU1YjkiLCJ1c2VyRW1haWwiOiJ0ZXN0ZW1haWw5ODkwOUBnbWFpbC5jb20iLCJ1c2VyUm9sZSI6ImFkbWluIiwiaWF0IjoxNzM3NjI3MzQ1LCJleHAiOjE3Mzc2MzA5NDV9.twmZ7NKAWHNIKOqLHQZ3Rtjiu6ATQKweCI2fL16AIHE'
+        - in: header
+          name: x-api-key
+          required: true
+          description: Admin api key
+          schema:
+            type: string
+      responses:
+        200:
+          description: Admin deleted successfully
+        401:
+          description: Unauthorized
+        400:
+          description: Bad request
