@@ -9,7 +9,7 @@ import http from 'http';
 import { DetectionDocument } from '../../src/models/v0/detectionModel';
 
 describe('Get Sensor Locations By Type Endpoint', () => {
-    const mongoUri = 'mongodb+srv://fabiovincenzi2001:Gszz1ORmQ7QwOigJ@cluster0.qd8ak.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    const mongoUri = 'mongodb://localhost:27017';
     let server: http.Server;
 
     beforeAll(async () => {

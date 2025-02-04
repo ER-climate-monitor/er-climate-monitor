@@ -1,6 +1,21 @@
 services:
   detections-db:
-    image: arm64v8/mongo:6.0-rc
+    image: mongo:latest
     ports:
-      - target: 27017
-        published: 27017
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  detection-service:
+    image: fabiovincenzi/detection-service:1.0.0
+    container_name: detection-service
+    depends_on:
+      detections-db:
+        condition: service_healthy
+    environment:
+      DB_URL: "mongodb://detections-db:27017"
+    ports:
+      - "8887:3000"

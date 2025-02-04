@@ -89,22 +89,28 @@ async function handleGetDetectionsFromSensor(
 }
 
 async function handleGetSensorLocationsByType(model: Model<DetectionDocument>) {
-    try {
-        const locations = await model.aggregate([
-            {
-                $group: {
-                    _id: '$sensorId',
-                    longitude: { $first: '$longitude' },
-                    latitude: { $first: '$latitude' },
+        try {
+            const locations = await model.aggregate([
+                {
+                    $group: {
+                        _id: { sensorId: "$sensorId", longitude: "$longitude", latitude: "$latitude" }
+                    }
                 },
-            },
-        ]);
-        return locations;
-    } catch (error) {
-        throw new Error(`Failed to retrieve sensor locations: ${error}`);
+                {
+                    $project: {
+                        sensorId: "$_id.sensorId",
+                        longitude: "$_id.longitude",
+                        latitude: "$_id.latitude",
+                        _id: 0
+                    }
+                }
+            ]);
+            return locations;
+        } catch (error) {
+            throw new Error(`Failed to retrieve sensor locations: ${error}`);
+        }
     }
-}
-
+    
 function handleAlertPropagation(alert: Alert): boolean {
     return detectionPublisher.publishEvent(buildEvent(alert));
 }
