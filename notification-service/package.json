@@ -10,7 +10,7 @@
     "test:integration": "jest test/integration",
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
-    "format": "prettier --write 'src/**/*.{ts,js}'",
+    "format": "prettier --write 'src/**/*.{ts,js}'"
   },
   "keywords": [],
   "author": "",
