@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  title: User Management API
+  version: 1.0.0
+  description: API documentation for Sensor Registry service.
+paths:
+  /v0/sensor/register:
+    post:
+      summary: Register a new Sensor.
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sensorIp:
+                  type: string
+                  example: '10.9.0.4'
+                  description: Input Sensor's ip
+                sensorPort:
+                  type: number
+                  example: 65535
+                  description: Input Sensor's port
+      responses:
+        '201':
+          description: The input Sensor has been saved.
+        '401':
+          description: The user is not authorized in performing this operation.
+        '409':
+          description: Another sensor with the same IP and the same PORT has already been saved inside the registry.
+  /v0/sensor/all:
+    get:
+      summary: Get all the stored sensors.
+      parameters:
+        - in: header
+          required: true
+          name: x-api-key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sensors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ip:
+                          type: string
+                          format: ip
+                          description: The IP address of the sensor.
+                          example: "30.0.0.0"
+                        port:
+                          type: integer
+                          description: The port number used by the sensor.
+                          example: 1926
+                        name:
+                          type: string
+                          description: The name of the sensor.
+                          example: "diomerda"
+                        type:
+                          type: string
+                          description: The type of the sensor.
+                          example: "rain"
+                        queries:
+                          type: array
+                          items:
+                            type: string
+                            description: A query related to the sensor.
+                            example: "25%-threshold"
+                example:
+                  sensors:
+                    - ip: "30.0.0.0"
+                      port: 1926
+                      name: "gatteo-mare-sensor"
+                      type: "rain"
+                      queries:
+                        - "25%-threshold"
+                        - "50%-threshold"
+                        - "75%-threshold"
+                        - "100%-threshold"
+                    - ip: "2001:db8:3333:4444:5555:6666:7777:8888"
+                      port: 1926
+                      name: "napoli-sensor"
+                      type: "unknown"
+                      queries:
+                        - "25%-threshold"
+                        - "50%-threshold"
+                        - "75%-threshold"
+                        - "100%-threshold"
+  /v0/sensor/shutdown:
+    delete:
+      summary: Shut down the input sensor.
+      parameters:
+        - in: query
+          required: true
+          name: sensorIp
+          description: Sensor's Ip
+          schema:
+            type: string
+            example: '19.26.0.0'
+        - in: query
+          required: true
+          name: sensorPort
+          description: Sensor's Port
+          schema:
+            type: number
+            example: 100
+        - in: header
+          required: true
+          name: x-api-key
+          description: Api Key
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The input Sensor has been turned off.
+        '404':
+          description: The input sensor does not exists.
+        '401':
+          description: The Inut user is not authorized.
+  /v0/sensor/update:
+    put:
+      summary: Update one of the registered sensors.
+      parameters:
+        - in: header
+          name: x-api-key
+          description: Secret api key
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/UpdateNameAction'
+                - $ref: '#/components/schemas/UpdateCronjobDays'
+                - $ref: '#/components/schemas/UpdateCronjobTime'
+              discriminator:
+                propertyName: action
+                mapping:
+                  update-name: '#/components/schemas/UpdateNameAction'
+                  update-cronjob-days: '#/components/schemas/UpdateCronjobDays'
+                  update-cronjob-time: '#/components/schemas/UpdateCronjobTime'
+      responses:
+        '200':
+          description: Successfully performed the action.
+components:
+  schemas:
+    BaseRequest:
+      type: object
+      required:
+        - sensorIp
+        - sensorPort
+        - action
+      properties:
+        sensorIp:
+          type: string
+          description: Sensor's Ip
+          example: "10.9.93.9"
+        sensorPort:
+          type: number
+          description: Sensor's Port
+          example: 1926
+        action:
+          type: string
+          description: Specifies the action type.
+          example: "update-name"
+
+    UpdateNameAction:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorName:
+              type: string
+              description: The name of the sensor for action update-name.
+              example: "TemperatureSensor"
+
+    UpdateCronjobDays:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorCronJobDays:
+              type: string
+              description: New Cronjob days in the format dd-dd where dd is in [0, 6]
+              example: "0-5"
+
+    UpdateCronjobTime:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequest'
+        - type: object
+          properties:
+            sensorCronJobTimeHour:
+              type: string
+              description: New cronjob hour in the interval [0, 23]
+              example: "23"
+            sensorCronJobTimeMinute:
+              type: string
+              description: New cronjob minute in the interval [0, 59]
