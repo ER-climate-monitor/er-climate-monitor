@@ -20,10 +20,19 @@ const sensorPostHandler = async (request: Request, response: Response) => {
     const endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
     try {
         Logger.info('Received a request for registering a new sensor');
-        const token = String(request.headers[USER_TOKEN_HEADER.toLowerCase()]) || '';
-        if (!(await sensorService.authenticationClient.isAdminAndNotExpired(token))) {
+        if (!(USER_TOKEN_HEADER.toLocaleLowerCase() in request.headers) && !(API_KEY_HEADER.toLocaleLowerCase() in request.headers)) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
+        }
+        const token = USER_TOKEN_HEADER.toLocaleLowerCase() in request.headers ? String(request.headers[USER_TOKEN_HEADER.toLowerCase()]) : undefined;
+        const apiKey = API_KEY_HEADER.toLowerCase() in request.headers ? String(request.headers[API_KEY_HEADER.toLowerCase()]): undefined;
+        if (token !== undefined && !(await sensorService.authenticationClient.isAdminAndNotExpired(token))) {
+            response.status(HttpStatus.UNAUTHORIZED);
+            return;
+        }
+        if (apiKey === undefined || apiKey !== SECRET) {
+            response.status(HttpStatus.UNAUTHORIZED);
+            return; 
         }
         request.headers[API_KEY_HEADER] = SECRET;
         const httpResponse = await sensorService.registerOperation(endpointPath, request.headers, request.body);
