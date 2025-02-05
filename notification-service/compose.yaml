@@ -11,6 +11,7 @@ services:
     env_file: .env
     networks:
       - notification-service-network
+      - event-bus-net
     depends_on:
       - rabbitmq
       - notifications-db
@@ -26,6 +27,7 @@ services:
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - notification-service-network
+      - event-bus-net
     restart: unless-stopped
 
   notifications-db:
@@ -48,3 +50,6 @@ services:
 networks:
   notification-service-network:
     driver: bridge
+  event-bus-net:
+    driver: bridge
+    name: event-bus-net
