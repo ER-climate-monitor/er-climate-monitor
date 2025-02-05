@@ -32,7 +32,7 @@ class DetectionService<T extends HttpClient> extends AbstractService<T> implemen
     }
 
     public saveDetectionOperation(endpointPath: string, headers: any, body: any): Promise<HttpResponse> {
-        const request = new BasicHttpRequest(HttpMethods.GET, endpointPath, headers, {}, {}, {});
+        const request = new BasicHttpRequest(HttpMethods.POST, endpointPath, headers, body, {}, {});
         return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 }
