@@ -19,3 +19,4 @@ services:
       DB_URL: "mongodb://detections-db:27017"
     ports:
       - "8887:3000"
+      - "8886:3000"

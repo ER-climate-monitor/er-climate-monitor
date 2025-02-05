@@ -30,6 +30,7 @@ RUN npm uninstall tsc && npm install -D typescript
 
 # Expose the port that the application listens on.
 EXPOSE 3000
+EXPOSE 3001
 
 # Run the application.
 CMD npm run build ; npm run start
