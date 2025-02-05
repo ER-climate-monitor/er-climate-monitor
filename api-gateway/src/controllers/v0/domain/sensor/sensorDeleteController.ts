@@ -22,10 +22,18 @@ const SECRET = String(process.env.SECRET_API_KEY);
 const sensorDeleteHandler = async (request: Request, response: Response) => {
     try {
         Logger.info('Received a request for deleting a sensor');
+        if (!(USER_TOKEN_HEADER.toLocaleLowerCase() in request.headers) && !(API_KEY_HEADER.toLocaleLowerCase() in request.headers)) {
+            response.status(HttpStatus.UNAUTHORIZED);
+            return;
+        }
+        const token = USER_TOKEN_HEADER.toLocaleLowerCase() in request.headers ? String(request.headers[USER_TOKEN_HEADER.toLowerCase()]) : undefined;
+        const apiKey = API_KEY_HEADER.toLowerCase() in request.headers ? String(request.headers[API_KEY_HEADER.toLowerCase()]): undefined;
         const endpointPath = removeServiceFromUrl(SENSOR_REGISTRY_ENDPOINT, request.url);
-        const jwtToken = String(request.headers[USER_TOKEN_HEADER.toLowerCase()]);
-        const authorized = await sensorService.authenticationClient.isAdminAndNotExpired(jwtToken);
-        if (jwtToken === null || !authorized) {
+        if (token !== undefined && !(await sensorService.authenticationClient.isAdminAndNotExpired(token))) {
+            response.status(HttpStatus.UNAUTHORIZED);
+            return;
+        }
+        if (apiKey === undefined || apiKey !== SECRET) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
