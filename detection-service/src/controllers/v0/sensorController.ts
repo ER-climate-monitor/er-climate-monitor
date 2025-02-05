@@ -10,10 +10,12 @@ import {
 import { sensorIdParameter } from '../../routes/v0/paths/detection.paths';
 import { checkSensorID } from './utils/detectionUtils';
 import validateDetectionData from './utils/validation';
-import { ERROR_TAG, SUCCESS_TAG, SENSOR_ID_HEADER } from '../../config/Costants';
+import { ERROR_TAG, SUCCESS_TAG, SENSOR_ID_HEADER, SENSOR_DETECTION_TIMESTAMP_HEADER } from '../../config/Costants';
 import { Alert } from 'src/models/v0/alertModel';
 import Logger from 'js-logger';
 import { sendMessageToSubscribers } from '../../sockets/socket';
+
+Logger.useDefaults();
 
 async function saveDetection(req: Request, res: Response) {
     const modelData = req.body;
@@ -28,8 +30,10 @@ async function saveDetection(req: Request, res: Response) {
 
     modelData[SENSOR_ID_HEADER] = sensorId;
 
+    modelData[SENSOR_DETECTION_TIMESTAMP_HEADER] = Number(modelData[SENSOR_DETECTION_TIMESTAMP_HEADER]) as number;
     const validationError = validateDetectionData(modelData);
     if (validationError) {
+        Logger.error(validationError);
         res.status(HttpStatus.BAD_REQUEST).send({
             [ERROR_TAG]: validationError,
         });
@@ -37,7 +41,7 @@ async function saveDetection(req: Request, res: Response) {
     }
 
     handleSaveDetection(getModelForSensorType(sensorType), modelData)
-        .then((detection) =>{
+        .then((detection) => {
             res.status(HttpStatus.CREATED).send({
                 [SUCCESS_TAG]: 'Detection saved successfully.',
             });
