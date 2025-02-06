@@ -33,7 +33,7 @@ const sensorDeleteHandler = async (request: Request, response: Response) => {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
-        if (apiKey === undefined || apiKey !== SECRET) {
+        if ((token === undefined) && (apiKey === undefined || apiKey !== SECRET)) {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
