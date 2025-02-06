@@ -1,11 +1,14 @@
 import axios from 'axios';
+
 import {
     SENSOR_CRONJOB_DAYS,
     SENSOR_CRONJOB_TIME_HOUR,
     SENSOR_CRONJOB_TIME_MINUTE,
     SENSOR_NAME,
 } from '../../../../model/v0/headers/sensorHeaders';
+import Logger from 'js-logger';
 
+Logger.useDefaults();
 interface HttpClient {
     deleteSensor(endpoint: string, ip: string, port: number): Promise<boolean>;
     updateSensorName(endpoint: string, ip: string, port: number, newName: string): Promise<boolean>;
@@ -17,6 +20,10 @@ class BasicHttpClient implements HttpClient {
     constructor() {}
 
     private makeURL(ip: string, port: number, endpoint: string) {
+        if(ip.startsWith("0.") || ip.startsWith("127.")) {
+            ip = "host.docker.internal";
+        }
+        Logger.info(ip);
         return `http://${ip}:${port}${endpoint}`;
     }
 
@@ -32,6 +39,7 @@ class BasicHttpClient implements HttpClient {
 
     async updateCronJobDays(endpoint: string, ip: string, port: number, newDays: string): Promise<boolean> {
         const url = this.makeURL(ip, port, endpoint);
+        Logger.info(url);
         return axios.put(url, { [SENSOR_CRONJOB_DAYS]: newDays });
     }
 
