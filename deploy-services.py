@@ -11,6 +11,8 @@ files = [
     "./sensor-registry/compose.yaml",
     "./authentication-service/compose.yaml",
     "./notification-service/compose.yaml",
+    "./api-gateway/compose.yaml",
+    "./detection-service/compose.yaml",
 ]
 
 
