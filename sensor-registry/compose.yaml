@@ -10,6 +10,8 @@ services:
       - app-network
   sensor-database:
     image: mongo
+    volumes:
+      - mongodb:/data/db
     ports:
       - target: 27017
         published: 27019
@@ -21,6 +23,10 @@ services:
       start_period: 40s
     networks:
       - app-network
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mongodb:
