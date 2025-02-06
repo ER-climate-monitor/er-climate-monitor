@@ -15,12 +15,6 @@ services:
     ports:
       - target: 27017
         published: 27019
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
     networks:
       - app-network
 
