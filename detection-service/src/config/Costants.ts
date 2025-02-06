@@ -1,0 +1,9 @@
+export const ERROR_TAG = 'error';
+export const SUCCESS_TAG = 'success';
+export const SENSOR_ID_HEADER = 'sensorId';
+export const SENSOR_NAME_HEADER = 'sensorName';
+export const SENSOR_DETECTION_UNIT_HEADER = 'unit';
+export const SENSOR_DETECTION_TIMESTAMP_HEADER = 'timestamp';
+export const SENSOR_DETECTION_LONGITUDE_HEADER = 'longitude';
+export const SENSOR_DETECTION_LATITUDE_HEADER = 'latitude';
+export const SENSOR_DETECTION_VALUE_HEADER = 'value';

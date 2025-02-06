@@ -1,0 +1,32 @@
+services:
+  detections-db:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - default
+
+  detection-service:
+    image: fabiovincenzi/detection-service:1.0.0
+    container_name: detection-service
+    depends_on:
+      detections-db:
+        condition: service_healthy
+    environment:
+      - DB_URL=mongodb://detections-db:27017
+      - AMQP_URL=amqp://rabbitmq:5672
+    ports:
+      - "8887:3000"
+      - "8886:3001"
+    networks:
+      - default
+      - event-bus-net
+
+networks:
+  event-bus-net:
+    external: true
