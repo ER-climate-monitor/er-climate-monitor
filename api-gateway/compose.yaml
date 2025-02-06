@@ -1,6 +1,19 @@
 services:
-  redis:
+  # gateway:
+  #   build:
+  #     context: .
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - auth-redis
+  #   env_file: .env
+    
+  auth-redis:
     image: redis:8.0-M02-alpine
     ports:
       - "6379:6379"
-    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
