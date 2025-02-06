@@ -1,0 +1,6 @@
+[submodule "er-climate-monitor-sensors"]
+	path = er-climate-monitor-sensors
+	url = git@github.com:S-furi/er-climate-monitor-sensors.git
+[submodule "er-climate-monitor-frontend"]
+	path = er-climate-monitor-frontend
+	url = git@github.com:fabiovincenzi/er-climate-monitor-frontend.git
