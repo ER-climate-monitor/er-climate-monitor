@@ -1,0 +1,4 @@
+const TEMPERATURE = 'TEMPERATURE';
+const HYDRO = 'HYDRO';
+
+export { TEMPERATURE, HYDRO };
