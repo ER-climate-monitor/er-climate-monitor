@@ -2,7 +2,7 @@ services:
   detections-db:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - 27017
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -12,7 +12,8 @@ services:
       - default
 
   detection-service:
-    image: fabiovincenzi/detection-service:1.0.0
+    # image: fabiovincenzi/detection-service:1.0.0
+    build: .
     container_name: detection-service
     depends_on:
       detections-db:

@@ -14,7 +14,7 @@ interface IDetection {
     value: number;
 }
 
-interface DetectionDocument extends IDetection, Document {}
+interface DetectionDocument extends IDetection, Document { }
 
 const detectionSchema = new mongoose.Schema(
     {
@@ -64,13 +64,18 @@ class Detection implements IDetection {
 }
 
 function getModelForSensorType(sensorType: string): Model<DetectionDocument> {
-    switch (sensorType.toLowerCase()) {
-        case 'temperature':
-            return mongoose.model<DetectionDocument>('Temperatures', detectionSchema);
-        case 'hydro':
-            return mongoose.model<DetectionDocument>('HydroLevels', detectionSchema);
-        default:
-            throw new Error(`Unsupported sensor type: ${sensorType}`);
+    const sensorTypes: { [key: string]: string } = {
+        rain: 'Rain',
+        idro_level: 'IdroLevel',
+        temp: 'Temp',
+        wind: 'Wind',
+        humidity: 'Humidity',
+    };
+
+    if (sensorType.toLowerCase() in sensorTypes) {
+        return mongoose.model<DetectionDocument>(sensorTypes[sensorType.toLowerCase()], detectionSchema);
+    } else {
+        throw new Error(`Unsupported sensor type: ${sensorType}`);
     }
 }
 
