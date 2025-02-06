@@ -12,8 +12,7 @@ services:
       - default
 
   detection-service:
-    # image: fabiovincenzi/detection-service:1.0.0
-    build: .
+    image: fabiovincenzi/detection-service:1.0.0
     container_name: detection-service
     depends_on:
       detections-db:
