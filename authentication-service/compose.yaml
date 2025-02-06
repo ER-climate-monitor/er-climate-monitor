@@ -16,6 +16,8 @@ services:
       - 8888:8888
     depends_on:
       - auth-database
+    networks:
+      - app_network
   auth-database:
     image: mongo
     ports:
@@ -26,7 +28,16 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
-      
+    networks:
+      - app_network
+    volumes:
+      - authorization-volume:/data/db
+
+networks:
+  app_network:
+    driver: bridge
+volumes:
+  authorization-volume:
     
 
 
