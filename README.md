@@ -75,6 +75,16 @@ npm run dev
 Now, visit the prompted host and port in your browser (typically:
 `[localhost:5173](http://localhost:5173/)`).
 
+## Tear Up
+
+1. All sensors can be teared up with `<ctrl>-C`, make sure to press it only
+   once in order to let the sensor tog gracefully stop.
+2. `<ctrl>-C` on the API-Gateway
+3. You can either run:
+   - `./deploy-services.py down` to stop services
+   - `./deploy-services.py downrmi` to stop services and release resource
+   (remove docker images and networks)
+
 ## Building you own sensor
 
 Refer to the [sensors instructions](https://github.com/S-furi/er-climate-monitor-sensors/blob/52041e406134269e0d36c579f1c20ec24299a139/README.md)
