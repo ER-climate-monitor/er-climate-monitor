@@ -89,9 +89,13 @@ const insertNewDetectionEvent = async (de: DetectionEvent): Promise<boolean> => 
     }
 };
 
-const retrieveDetectionEventsOfType = async (type: string): Promise<DetectionEventDocument[]> => {
+const retrieveDetectionEventsOfType = async (
+    type: string,
+    query?: string,
+    sensorName?: string
+): Promise<DetectionEventDocument[]> => {
     try {
-        return await detectionEventModel.find({ type: type });
+        return await detectionEventModel.find({ type: type, sensorName: sensorName, query: query });
     } catch (err) {
         Logger.error(`Error retrieving detection events for topic ${type}: `, err);
         return [];
@@ -104,7 +108,7 @@ const retrieveEventsForUser = async (userId: string): Promise<Set<DetectionEvent
 
     const res: Set<DetectionEventDocument> = new Set();
     for (const sub of subs) {
-        (await retrieveDetectionEventsOfType(sub.topic)).forEach((e) => res.add(e));
+        (await retrieveDetectionEventsOfType(sub.topic, sub.query, sub.sensorName)).forEach((e) => res.add(e));
     }
     return res;
 };
