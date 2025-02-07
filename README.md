@@ -74,4 +74,4 @@ Now, visit the prompted host and port in your browser (typically:
 
 ## Building you own sensor
 
-Refer to the [sensors instructions](./er-climate-monitor-sensors/README.md)
+Refer to the [sensors instructions](https://github.com/S-furi/er-climate-monitor-sensors/blob/52041e406134269e0d36c579f1c20ec24299a139/README.md)
