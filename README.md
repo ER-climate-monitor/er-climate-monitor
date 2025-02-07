@@ -12,7 +12,8 @@
 git clone --recurse-submodules https://github.com/MatteoIorio11/er-climate-monitor.git
 ```
 
-2. Start docker services (sometimes a timout can occurr, please, retry running
+2a. Install python requirements through `pip install -r requirements.txt`
+2b. Start docker services (sometimes a timout can occurr, please, retry running
    the command):
 ```bash
 ./deploy-services.py up
@@ -35,6 +36,8 @@ randomly from the sensors available in Emilia Romagna territory). If you would
 like to build your own sensor, [jump to section](#building-you-own-sensor).
 
 #### Running predefined sensors
+Prerequisites: install python dependencies found in `./sensor/requirements.txt` and
+having a working version of the package `requests` (tested with version 2.32.3).
 
 First, go to sensors submodule inside `sensor` directory and run the script for
 building mockup sensors:
