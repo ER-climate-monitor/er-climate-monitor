@@ -95,7 +95,15 @@ const retrieveDetectionEventsOfType = async (
     sensorName?: string
 ): Promise<DetectionEventDocument[]> => {
     try {
-        return await detectionEventModel.find({ type: type, sensorName: sensorName, query: query });
+        if (!query && !sensorName) {
+            return await detectionEventModel.find({ type: type });
+        } else if (!query && sensorName) {
+            return await detectionEventModel.find({ type: type, sensorName: sensorName });
+        } else if (query && !sensorName) {
+            return await detectionEventModel.find({ type: type, query: query });
+        } else {
+            return await detectionEventModel.find({ type: type, sensorName: sensorName, query: query });
+        }
     } catch (err) {
         Logger.error(`Error retrieving detection events for topic ${type}: `, err);
         return [];
