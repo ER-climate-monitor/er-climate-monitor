@@ -8,7 +8,6 @@ Logger.useDefaults();
 
 class WebSocketProxy {
     private serverSocket: SocketIOServer;
-    private notificationSocket: ReturnType<typeof ClientSocket>;
     private detectionSocket: ReturnType<typeof ClientSocket>;
 
     constructor(server: HttpServer) {
@@ -21,9 +20,6 @@ class WebSocketProxy {
 
         const serviceEndpoint = NOTIFICATION_ENDPOINT.replace('/v0', '');
 
-        this.notificationSocket = ClientSocket(serviceEndpoint, {
-            transports: ['websocket'],
-        });
         this.detectionSocket = ClientSocket(DETECTION_SOCKET_ENDPOINT, {
             transports: ['websocket'],
         });
@@ -33,19 +29,6 @@ class WebSocketProxy {
     }
 
     private setupServiceListeners() {
-        this.notificationSocket.on('connect', () => {
-            Logger.info('Successfully connected to Notification Service!');
-        });
-
-        this.notificationSocket.on('disconnect', () => {
-            Logger.info('Disconnected from Notification Service');
-            this.notificationSocket.connect();
-        });
-
-        this.notificationSocket.onAny((event, ...args) => {
-            Logger.info(`Forwarding message from Notification Service: ${event}`, args);
-            this.serverSocket.emit(event, ...args);
-        });
 
         this.detectionSocket.on('connect', () => {
             Logger.info('Successfully connected to Detection Service!');
@@ -67,12 +50,6 @@ class WebSocketProxy {
             socket.on('subscribe', (uid: string, topicAddr: string) => {
                 this.detectionSocket.emit('subscribe', uid, topicAddr);
             });
-            socket.on('register', (uid: string, topicAddr: string) => {
-                this.notificationSocket.emit('register', uid, topicAddr);
-                this.notificationSocket.once('registered', (result) => {
-                    socket.emit('registered', result);
-                });
-            });
 
             socket.on('disconnect', () => {
                 Logger.info(`Client disconnected ${socket.id}`);
@@ -82,7 +59,6 @@ class WebSocketProxy {
 
     close() {
         this.serverSocket.close();
-        this.notificationSocket.close();
     }
 }
 
