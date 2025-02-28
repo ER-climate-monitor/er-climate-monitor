@@ -5,6 +5,9 @@ import { sensorGetHandler } from '../../../controllers/v0/domain/sensor/sensorGe
 import { sensorDeleteHandler } from '../../../controllers/v0/domain/sensor/sensorDeleteController';
 import { sensorPutHandler } from '../../../controllers/v0/domain/sensor/sensorPutController';
 
+/**
+ * Sensor registry router that handles all the incoming requests toward the Sensor Registry.
+ */
 const sensorRouter = express.Router();
 
 sensorRouter
