@@ -39,7 +39,20 @@ const createUserSubscription = async (userId: string, sub: SubscriptionTopic): P
     try {
         const userSubs = await userSubscriptionModel.findOne({ userId });
         if (userSubs) {
-            if (userSubs.subscriptions.some((s) => s.topic == sub.topic)) {
+            if (
+                (!sub.query && !sub.sensorName && userSubs.subscriptions.some((s) => s.topic == sub.topic)) ||
+                (!sub.query &&
+                    sub.sensorName &&
+                    userSubs.subscriptions.some((s) => s.topic == sub.topic && s.sensorName == sub.sensorName)) ||
+                (sub.query &&
+                    !sub.sensorName &&
+                    userSubs.subscriptions.some((s) => s.topic == sub.topic && s.query == sub.query)) ||
+                (sub.query &&
+                    sub.sensorName &&
+                    userSubs.subscriptions.some(
+                        (s) => s.topic == sub.topic && s.sensorName == sub.sensorName && s.query == sub.query
+                    ))
+            ) {
                 throw new Error('User already subscribed for topic: ' + sub.topic);
             }
             userSubs.subscriptions.push(sub);
