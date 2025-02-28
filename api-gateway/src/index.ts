@@ -11,6 +11,9 @@ import fs from 'fs';
 import YAML from 'yaml';
 dotenv.config();
 
+/**
+ * Init the express application.
+ */
 const app = express();
 const httpServer = createServer(app);
 const PORT = process.env.PORT || 3000;
