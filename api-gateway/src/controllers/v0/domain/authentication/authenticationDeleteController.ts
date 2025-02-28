@@ -8,6 +8,12 @@ import { authenticationService } from './authenticationConfig';
 
 Logger.useDefaults();
 
+/**
+ * Authentication DELETE handler.
+ * @param {Request} request - The input user's request
+ * @param {Response} response - The server's response
+ * @returns {Promise<void>} Handle the input user's request regarding a DELETE to the Authentication Service.
+ */
 const authenticationDeleteHandler = async (request: Request, response: Response) => {
     const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
     try {

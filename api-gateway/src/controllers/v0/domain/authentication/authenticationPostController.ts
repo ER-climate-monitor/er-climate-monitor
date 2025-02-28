@@ -50,7 +50,13 @@ function isExpired(expiration: number, token: string, tokenValue: TokenValue, re
     return response;
 }
 
-const authentiationPostHandler = async (request: Request, response: Response) => {
+/**
+ * Authentication POST handler.
+ * @param {Request} request - The input user's request
+ * @param {Response} response - The server's response
+ * @returns {Promise<void>} Handle the input user's request regarding a POST to the Authentication Service.
+ */
+const authenticationPostHandler = async (request: Request, response: Response) => {
     const endpointPath = removeServiceFromUrl(AUTHENTICATION_SERVICE, request.url);
     const action = request.body[USER_ACTION_BODY];
     switch (action) {
@@ -144,4 +150,4 @@ const authentiationPostHandler = async (request: Request, response: Response) =>
     }
 };
 
-export { authentiationPostHandler };
+export { authenticationPostHandler };
