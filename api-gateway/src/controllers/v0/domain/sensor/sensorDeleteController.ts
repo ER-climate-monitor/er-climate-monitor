@@ -15,6 +15,7 @@ Logger.useDefaults();
 const SECRET = String(process.env.SECRET_API_KEY);
 
 /**
+ * Sensor DELETE controller
  * @param {Request} request - The input user's request.
  * @param {Response} response - The server's response.
  * @returns {Promise<void>} Handle the input user's request regarding a DELETE to the Sensor Registry.
