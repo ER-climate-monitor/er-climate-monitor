@@ -5,6 +5,9 @@ import { detectionPublisher } from './controllers/v0/utils/brokerClient';
 import Logger from 'js-logger';
 import http from 'http';
 import { setupSocketServer } from './sockets/socket';
+import SwaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import YAML from 'yaml';
 
 const PORT = process.env.PORT || 3000;
 const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017';
@@ -23,6 +26,10 @@ async function startServer() {
         app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
         });
+
+        const file: string = fs.readFileSync('src/doc/openapi/swagger.yaml', 'utf8');
+        const swaggerDocument = YAML.parse(file);
+        app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
 
         const server = http.createServer(app);
         setupSocketServer(server);

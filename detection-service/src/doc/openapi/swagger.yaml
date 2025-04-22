@@ -1,0 +1,167 @@
+openapi: 3.0.0
+info:
+  title: Sensor API
+  version: 1.0.0
+  description: API for managing environmental sensor detections, sensor locations, and forwarding alerts.
+
+servers:
+  - url: http://localhost:3000/v0
+    description: Local development server
+
+paths:
+  /sensor/{sensorType}/{sensorId}/detections:
+    get:
+      summary: Retrieve detections from a sensor
+      parameters:
+        - in: path
+          name: sensorType
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: sensorId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+          description: Start timestamp (inclusive)
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+          description: End timestamp (inclusive)
+        - in: query
+          name: last
+          schema:
+            type: integer
+          description: Return the last N detections
+      responses:
+        '200':
+          description: List of sensor detections
+          content:
+            application/json:
+              example:
+                - sensorId: "sensor-2"
+                  sensorName: "Temp Sensor 2"
+                  value: 22.5
+                  unit: "°C"
+                  timestamp: "2025-04-22T08:00:00Z"
+                  latitude: 43.06
+                  longitude: 141.35
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              example:
+                error: "Invalid query parameters."
+        '404':
+          description: Sensor not found or unsupported sensor type
+          content:
+            application/json:
+              examples:
+                sensorIdNotFound:
+                  summary: Sensor ID doesn't exist
+                  value:
+                    error: "The input sensor ID does not exist."
+                unsupportedType:
+                  summary: Invalid sensor type
+                  value:
+                    error: "Unsupported sensor type: invalidType"
+
+    post:
+      summary: Save a detection
+      parameters:
+        - in: path
+          name: sensorType
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: sensorId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              sensorName: "Temp Sensor 1"
+              value: 23.4
+              unit: "°C"
+              timestamp: "2025-04-22T08:30:00Z"
+              latitude: 43.066
+              longitude: 141.345
+      responses:
+        '201':
+          description: Detection successfully saved
+          content:
+            application/json:
+              example:
+                success: "Detection saved successfully."
+        '400':
+          description: Validation or data error
+          content:
+            application/json:
+              examples:
+                missingBody:
+                  summary: No request body
+                  value:
+                    error: "Missing detection data in the request body"
+                missingValue:
+                  summary: Missing value field
+                  value:
+                    error: "Missing required field: value"
+
+  /sensor/{sensorType}/locations:
+    get:
+      summary: Get all sensor locations of a given type
+      parameters:
+        - in: path
+          name: sensorType
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of sensor locations
+          content:
+            application/json:
+              example:
+                - sensorId: "sensor-1"
+                  latitude: 43.0621
+                  longitude: 141.3544
+                - sensorId: "sensor-2"
+                  latitude: 43.0667
+                  longitude: 141.35
+        '404':
+          description: No locations found
+          content:
+            application/json:
+              example:
+                error: 'No locations found for sensor type "temperature".'
+
+  /alerts:
+    post:
+      summary: Forward an alert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              sensorId: "sensor-3"
+              alertType: "threshold_exceeded"
+              message: "Temperature exceeded safety threshold."
+              timestamp: "2025-04-22T08:35:00Z"
+      responses:
+        '200':
+          description: Alert forwarded successfully
+          content:
+            application/json:
+              example:
+                success: "Alert forwarded successfully."

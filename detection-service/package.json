@@ -36,6 +36,7 @@
     "@types/node": "^22.10.2",
     "@types/socket.io": "^3.0.1",
     "@types/supertest": "^6.0.2",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
     "eslint": "^9.17.0",
