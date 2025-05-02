@@ -33,32 +33,28 @@ describe('Save Detection Endpoint', () => {
         await closeDatabaseConnection();
     });
 
-    
-
     test('should return 400 if modelData is missing', async () => {
         const res = await request(server)
-            .post('/v0/sensor/temperature/sensor-1/detections')
-            .send(); // no data in the request body
+            .post('/v0/sensor/temp/sensor-1/detections')
+            .send();
 
         expect(res.status).toBe(HttpStatus.BAD_REQUEST);
         expect(res.body[ERROR_TAG]).toContain('Missing detection data in the request body');
     });
 
     test('should return 201 if detection is successfully saved and check in DB', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const sensorId = 'sensor-1';
+
         const modelData = generateMockDetection(sensorType);
 
-        // Effettua la richiesta POST per salvare la detection
         const res = await request(server)
             .post(`/v0/sensor/${sensorType}/${sensorId}/detections`)
             .send(modelData);
 
-        // Controlla che la risposta sia corretta
         expect(res.status).toBe(HttpStatus.CREATED);
         expect(res.body[SUCCESS_TAG]).toBe('Detection saved successfully.');
 
-        // Verifica che i dati siano nel DB
         const DetectionModel = getModelForSensorType(sensorType);
         const savedDetection = await DetectionModel.findOne({ sensorId });
 
@@ -72,7 +68,7 @@ describe('Save Detection Endpoint', () => {
     });
 
     test('should return 400 if saving detection fails', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const sensorId = 'sensor-1';
         const modelData = { ...generateMockDetection(sensorType), value: undefined };
 

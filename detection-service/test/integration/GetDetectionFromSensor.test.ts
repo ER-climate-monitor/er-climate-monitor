@@ -40,7 +40,7 @@ describe('Get Detections From Sensor Endpoint', () => {
 
     test('should return 404 if sensorId does not exist', async () => {
         const res = await request(server)
-            .get(`/v0/sensor/temperature/nonexistentSensor/detections`);
+            .get(`/v0/sensor/temp/nonexistentSensor/detections`);
 
         expect(res.status).toBe(HttpStatus.NOT_FOUND);
         expect(res.body[ERROR_TAG]).toContain('The input sensor ID does not exist.');
@@ -57,7 +57,7 @@ describe('Get Detections From Sensor Endpoint', () => {
  
     
     test('should return all detections for a valid sensor', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const sensorId = 'sensor-1';
     
         const expectedDetections = await createMultipleDetections(sensorType, sensorId, 5);
@@ -86,7 +86,7 @@ describe('Get Detections From Sensor Endpoint', () => {
     
 
     test('should return the last X detections', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const sensorId = 'sensor-2';
     
         const now = Date.now();
@@ -117,7 +117,7 @@ describe('Get Detections From Sensor Endpoint', () => {
     
 
     test('should return detections within a timestamp range', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const sensorId = 'sensor-3';
 
         // Create detections with specific timestamps
@@ -144,7 +144,7 @@ describe('Get Detections From Sensor Endpoint', () => {
     });
 
     test('should return 400 for invalid query parameters', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const sensorId = 'sensor-4';
         await createDetection(sensorType, sensorId);
 

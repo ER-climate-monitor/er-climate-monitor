@@ -33,7 +33,7 @@ describe('Get Sensor Locations By Type Endpoint', () => {
     });
 
     test('should return 404 if no locations are found for the sensorType', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
         const res = await request(server).get(`/v0/sensor/${sensorType}/locations`);
 
         expect(res.status).toBe(HttpStatus.NOT_FOUND);
@@ -41,13 +41,10 @@ describe('Get Sensor Locations By Type Endpoint', () => {
     });
 
     test('should return 200 and locations for a valid sensorType', async () => {
-        const sensorType = 'temperature';
+        const sensorType = 'temp';
 
         const detection1 = await createDetection(sensorType, 'sensor-1');
         const detection2 = await createDetection(sensorType, 'sensor-2');
-        const detection3 = await createDetection('hydro', 'sensor-3');
-
-        const expectedDetections = [detection1, detection2];
         const res = await request(server).get(`/v0/sensor/${sensorType}/locations`);
 
         expect(res.status).toBe(HttpStatus.OK);

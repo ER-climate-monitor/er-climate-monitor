@@ -4,7 +4,7 @@ import { DetectionDocument, getModelForSensorType } from '../../../src/models/v0
 function generateMockDetection(sensorType: string, timestamp = Date.now()): Partial<DetectionDocument> {
     return {
         sensorName: `${sensorType}-Sensor`,
-        unit: sensorType === 'temperature' ? 'C' : sensorType === 'hydro' ? 'm' : '',
+        unit: sensorType === 'temp' ? 'C' : sensorType === 'idro_level' ? 'm' : '',
         timestamp,
         longitude: parseFloat((Math.random() * 180 - 90).toFixed(6)),
         latitude: parseFloat((Math.random() * 360 - 180).toFixed(6)),
