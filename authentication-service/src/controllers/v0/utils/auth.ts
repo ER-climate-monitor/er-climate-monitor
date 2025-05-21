@@ -97,11 +97,13 @@ async function deleteInputUser(email: string, response: Response): Promise<void>
                 response.status(HttpStatus.BAD_REQUEST).send({ ERROR_FIELD: 'The input user does not exist' });
             }
         } else {
-            response.status(HttpStatus.NOT_ACCEPTABLE).send({ ERROR_FIELD: 'Error, the current email is already in use.' });
+            response
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .send({ ERROR_FIELD: 'Error, the current email is already in use.' });
         }
     } catch (error) {
         response.status(HttpStatus.BAD_REQUEST).send({ ERROR_FIELD: error });
-    } finally { 
+    } finally {
         response.end();
     }
 }

@@ -34,7 +34,7 @@ async function createToken(inputEmail: string, role: string): Promise<Token> {
     return new Token(token, inputEmail, role, new Date(tokenExpiration(token)));
 }
 
-async function verifyToken(token: string): Promise<Boolean> {
+async function verifyToken(token: string): Promise<boolean> {
     try {
         const verified = jwt.verify(token, jwtSecretKey);
         const id = decodeToken(token).userId;

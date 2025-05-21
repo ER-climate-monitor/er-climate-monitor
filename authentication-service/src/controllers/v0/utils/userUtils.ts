@@ -6,20 +6,20 @@ import { ADMIN_USER } from '../../../models/v0/headers/userHeaders';
 
 const saltRounds = Number(process.env.saltRounds) || 10;
 
-async function checkUser(inputEmail: String): Promise<Boolean> {
+async function checkUser(inputEmail: string): Promise<boolean> {
     const existingUser = await userModel.exists({ email: inputEmail });
     return existingUser !== null;
 }
 
-async function isUserRoleAdmin(inputEmail:string): Promise<boolean> {
-    const user = await userModel.findOne({email: inputEmail});
+async function isUserRoleAdmin(inputEmail: string): Promise<boolean> {
+    const user = await userModel.findOne({ email: inputEmail });
     if (user === null) {
-        return false
+        return false;
     }
     return user.role === ADMIN_USER;
 }
 
-async function checkUserById(id: ObjectId): Promise<Boolean> {
+async function checkUserById(id: ObjectId): Promise<boolean> {
     return (await userModel.findById(id)) !== null;
 }
 
