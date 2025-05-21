@@ -1,8 +1,8 @@
 import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/globals';
 import { DetectionBroker, NotificationCallback } from '../../src/components/detectionBroker';
 import { DetectionEvent, SubscriptionTopic } from '../../src/model/notificationModel';
-import { GenericContainer, StartedTestContainer } from 'testcontainers';
-import { Channel, connect, Connection } from 'amqplib';
+import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers';
+import { Channel, connect as AMQPConnect, Connection } from 'amqplib';
 import Logger from 'js-logger';
 
 interface Sensor {
@@ -29,12 +29,13 @@ class SensorClient {
 
     async connect(): Promise<void> {
         try {
-            this.connection = await connect(this.brokerUrl);
+            this.connection = await AMQPConnect(this.brokerUrl);
             this.channel = await this.connection.createChannel();
 
             await this.channel.assertExchange(this.EXCHANGE_NAME, 'topic', { durable: true });
         } catch (error) {
             Logger.error('CLIENT ERROR: ', error);
+            throw error;
         }
     }
 
@@ -91,6 +92,7 @@ describe('DetectionBroker - Integration Tests', () => {
     let amqpUrl: string;
     const containerImage = 'rabbitmq:management-alpine';
     const containerPort = 5672;
+    const managementPort = 15672;
 
     const instanceId = 'test-instance';
     const exchangeName = 'sensor.notifications';
@@ -104,14 +106,42 @@ describe('DetectionBroker - Integration Tests', () => {
     const testUserId = 'user-123';
 
     beforeAll(async () => {
-        container = await new GenericContainer(containerImage).withExposedPorts(containerPort, 15672).start();
-        amqpUrl = `amqp://${container.getHost()}:${container.getMappedPort(containerPort)}`;
-        client = new SensorClient(amqpUrl, exchangeName, {
-            type: testSub.topic,
-            sensorName: testSub.sensorName!,
-            queries: [{ value: 25, name: testSub.query! }],
-        });
-        client.connect();
+        container = await new GenericContainer(containerImage)
+            .withExposedPorts(containerPort, managementPort)
+            .withEnvironment({
+                RABBITMQ_DEFAULT_USER: 'guest',
+                RABBITMQ_DEFAULT_PASS: 'guest',
+            })
+            .withStartupTimeout(5000)
+            .withWaitStrategy(Wait.forLogMessage('Server startup complete'))
+            .start();
+
+        amqpUrl = `amqp://guest:guest@${container.getHost()}:${container.getMappedPort(containerPort)}?frameMax=0x2000`;
+        console.log(`RabbitMQ container started: ${amqpUrl}`);
+
+        let connected = false;
+        let retries = 0;
+        let maxRetries = 5;
+
+        while (!connected && retries < maxRetries) {
+            try {
+                client = new SensorClient(amqpUrl, exchangeName, {
+                    type: testSub.topic,
+                    sensorName: testSub.sensorName!,
+                    queries: [{ value: 25, name: testSub.query! }],
+                });
+                await client.connect();
+
+                connected = true;
+            } catch (_err) {
+                retries++;
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
+        }
+
+        if (!connected) {
+            throw new Error('Failed to connect to RabbitMQ after multiple attempts...');
+        }
     });
 
     beforeEach(() => {
@@ -133,22 +163,28 @@ describe('DetectionBroker - Integration Tests', () => {
         await broker.connect();
         broker.addNotificationCallback(mockCallback);
         await broker.subscribeUser(testUserId, testSub);
-        await broker.subscribeUser('user-321', {
+        let res = await broker.subscribeUser('user-321', {
             topic: testSub.topic,
         });
 
-        await broker.subscribeUser('user-abc', {
+        expect(res).toBeTruthy();
+
+        res = await broker.subscribeUser('user-abc', {
             topic: testSub.topic,
             query: testSub.query,
         });
 
-        await broker.subscribeUser('user-bca', {
+        expect(res).toBeTruthy();
+
+        res = await broker.subscribeUser('user-bca', {
             topic: testSub.topic,
             sensorName: testSub.sensorName,
         });
 
+        expect(res).toBeTruthy();
+
         client.publishTestEvent();
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 5000));
         expect(receivedMessages).toHaveLength(4);
         const expectedUsers = [testUserId, 'user-321', 'user-abc', 'user-bca'];
 
@@ -160,5 +196,5 @@ describe('DetectionBroker - Integration Tests', () => {
 
         expect(firstMessage.userIds).toEqual([testUserId]);
         expect(firstMessage.topic).toEqual(testSub);
-    }, 2000);
+    }, 20000);
 });
