@@ -23,19 +23,25 @@ export default [
             'prettier/prettier': 'error', // Enable Prettier formatting rules
             // note you must disable the base rule
             // as it can report incorrect errors
-            "@typescript-eslint/no-explicit-any": ["off"],
+            '@typescript-eslint/no-explicit-any': ['off'],
             // note you must disable the base rule
             // as it can report incorrect errors
-            'no-unused-vars': 'off',
             '@typescript-eslint/no-unused-vars': [
-                'warn', // or "error"
+                'error', // or "error"
                 {
                     argsIgnorePattern: '^_',
-                    varsIgnorePattern: '^_',
-                    caughtErrorsIgnorePattern: '^_',
+                    caughtErrors: 'none',
+                    args: 'none',
                 },
             ],
-            "@typescript-eslint/no-explicit-any": ["off"],
+            'no-unused-vars': [
+                'error', // or "error"
+                {
+                    argsIgnorePattern: '^_',
+                    caughtErrors: 'none',
+                    args: 'none',
+                },
+            ],
         },
     },
     {
