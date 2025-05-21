@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createTestServer, dropTestDatabase } from '../../../appUtils';
-import { describe, it, afterEach } from 'mocha';
+import { describe, it, afterEach, before} from 'mocha';
 import { fail, ok } from 'node:assert';
 import HttpStatus from 'http-status-codes';
 import { USER_EMAIL_FIELD, USER_PASSWORD_FIELD, API_KEY_HEADER } from '../../../models/v0/headers/userHeaders';
@@ -16,6 +16,7 @@ import {
 } from './routes/globalRoutes.v0';
 import dotenv from 'dotenv';
 import { REGISTER, LOGIN, DELETE } from '../../../controllers/v0/utils/userActions';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 dotenv.config();
 
@@ -33,16 +34,21 @@ const adminInformation = {
     [USER_PASSWORD_FIELD]: password,
 };
 
-const maliciousEmails: Array<String> = [
+const maliciousEmails: Array<string> = [
     '{"$ne": null}',
     'notanemail`DROP DATABASE *`@gmail.com',
     '{"$gt": ""}',
     '{"$regex": ".*", "$options": "i"}',
 ];
 
-const app: Application = createTestServer();
+let app: Application;
+let mongodbServer: MongoMemoryServer;
 
 describe('User Authentication', () => {
+    before(async () => {
+        mongodbServer = await MongoMemoryServer.create();
+        app = createTestServer(mongodbServer.getUri());
+    });
     beforeEach(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
@@ -75,6 +81,7 @@ describe('User Authentication', () => {
                 [USER_EMAIL_FIELD]: maliciousEmail,
                 [USER_PASSWORD_FIELD]: password,
             };
+            console.error(maliciousEmail);
             await request(app)
                 .post(REGISTER_USER_ROUTE)
                 .send(createBodyUser(REGISTER, badInformation))
@@ -90,9 +97,9 @@ describe('User Authentication', () => {
         }
     });
     it('Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered', async () => {
-        for (const maliciousEmail in maliciousEmails) {
+        maliciousEmails.forEach(email => async function () {
             const badInformation = {
-                [USER_EMAIL_FIELD]: maliciousEmail,
+                [USER_EMAIL_FIELD]: email,
                 [USER_PASSWORD_FIELD]: password,
             };
             await request(app)
@@ -109,7 +116,8 @@ describe('User Authentication', () => {
                 .delete(DELETE_ADMIN_ROUTE)
                 .send(createBodyUser(DELETE, badInformation))
                 .expect(HttpStatus.UNAUTHORIZED);
-        }
+ 
+        })
     });
     it('should return OK if I register an Admin using the correct API key and using an email that does not exist', async () => {
         await request(app)
@@ -171,6 +179,7 @@ describe('User Authentication', () => {
             .expect(HttpStatus.OK);
     });
     after(async () => {
-        await dropTestDatabase();
+        await dropTestDatabase(mongodbServer.getUri());
+        await mongodbServer.stop();
     });
 });

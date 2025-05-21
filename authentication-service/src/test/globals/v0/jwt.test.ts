@@ -14,6 +14,10 @@ import { createBodyUser, deleteAdmin, deleteUser } from './utils/userUtils';
 import { fail } from 'assert';
 import { REGISTER_ADMIN_ROUTE, REGISTER_USER_ROUTE, JWT_AUTHORIZED_ROUTE } from './routes/globalRoutes.v0';
 import { AUTHENTICATE, REGISTER } from '../../../controllers/v0/utils/userActions';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const email = 'testemail1@gmail.com';
 const password = 'Forzanapoli10!';
@@ -29,21 +33,29 @@ const adminInformation = {
     [USER_PASSWORD_FIELD]: password,
 };
 
-const app: Application = createTestServer();
+let app: Application;
+let mongodbServer: MongoMemoryServer;
 
 describe('JWT token for registered users', () => {
+    before(async () => {
+        mongodbServer = await MongoMemoryServer.create();
+        app = createTestServer(mongodbServer.getUri());
+        console.error(mongodbServer.getUri());
+    })
     beforeEach(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
     });
     it('After creating a JWT token It should be possible to also check the validity of the created token', async () => {
-        const response = await request(app)
+        await request(app)
             .post(REGISTER_USER_ROUTE)
             .send(createBodyUser(REGISTER, userInformation))
-            .expect(HttpStatus.CREATED);
-        if (!(USER_JWT_TOKEN_EXPIRATION_FIELD in response.body)) {
-            fail();
-        }
+            .expect(HttpStatus.CREATED)
+            .expect(response => {
+                if (!(USER_JWT_TOKEN_EXPIRATION_FIELD in response.body)) {
+                    fail();
+                }
+            });
     });
     it('It should be possible to check the validity of a JWT token of a registered user', async () => {
         const response = await request(app)
@@ -109,8 +121,8 @@ describe('JWT token for registered users', () => {
             .send(createBodyUser(AUTHENTICATE, { [USER_JWT_TOKEN_FIELD]: jwtToken }))
             .expect(HttpStatus.UNAUTHORIZED);
     });
-
     after(async () => {
-        await dropTestDatabase();
+        await dropTestDatabase(mongodbServer.getUri());
+        await mongodbServer.stop();
     });
 });
