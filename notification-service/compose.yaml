@@ -1,11 +1,11 @@
 services:
   backend:
-    image: sfuri/notification-service:0.1.10
+    image: sfuri/notification-service:0.1.11
     container_name: "notification-service"
     ports:
       - 4444:4444
     environment:
-      - AMQP_URL=amqp://rabbitmq:5672
+      - AMQP_URL=amqp://rabbitmq:5672?frameMax=0x2000
       - DB_URL=mongodb://notifications-db
       - DB_NAME=notifications-database
     env_file: .env
@@ -17,7 +17,7 @@ services:
       - notifications-db
 
   rabbitmq:
-    image: rabbitmq:management-alpine
+    image: rabbitmq:3.13.7-management-alpine
     container_name: "rabbitmq"
     ports:
       - 5672:5672

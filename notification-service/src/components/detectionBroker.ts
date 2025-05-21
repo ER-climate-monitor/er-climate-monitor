@@ -37,6 +37,7 @@ class DetectionBroker<T> {
             instanceId = 'default';
         }
         this.connectionUrl = connectionUrl;
+        console.log(this.connectionUrl);
         this.QUEUE_NAME = `notifications.${instanceId}`;
         this.subscriptions = new Map();
         this.userSubscriptions = new Map();
