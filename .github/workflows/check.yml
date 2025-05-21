@@ -27,7 +27,7 @@ jobs:
           node-version: '23.10.0'
 
       - name: Install deps
-        run: npm ci
+        run: npm install
         working-directory: ${{ matrix.project }}
 
       - name: Run linter
