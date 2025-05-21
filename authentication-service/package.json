@@ -10,7 +10,8 @@
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "mocha --exit dist/test/**/*.test.js"
+    "test": "mocha --exit --sort dist/test/**/*.test.js",
+    "single": "mocha --exit dist/test/globals/v0/jwt.test.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "mongo-sanitize": "^1.1.0",
+    "mongodb-memory-server": "^10.1.4",
     "mongoose": "^8.9.2",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.6.1"
