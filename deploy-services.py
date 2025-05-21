@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from loguru import logger
+import logging
 from python_on_whales import DockerClient
 from python_on_whales.components.compose.cli_wrapper import ComposeCLI
 
@@ -15,6 +15,8 @@ files = [
     "./detection-service/compose.yaml",
 ]
 
+logger = logging.getLogger("deploy-services")
+logging.basicConfig(level=logging.INFO)
 
 def build_compose(file_path: str) -> ComposeCLI:
     return DockerClient(compose_files=[file_path]).compose
@@ -43,8 +45,6 @@ def handle_compose(action: str):
 
 
 if __name__ == "__main__":
-    logger.remove()
-    logger.add(sys.stderr, level="INFO")
 
     parser = argparse.ArgumentParser(
         description="Deploy all services for ER-Climate-Monitor app"
