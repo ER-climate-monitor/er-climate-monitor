@@ -5,9 +5,6 @@ import { detectionPostHandler } from '../../../controllers/v0/domain/detection/d
 
 const detectionRouter = express.Router();
 
-detectionRouter
-    .route(DETECTION_PATHS)
-    .get(detectionGetHandler)
-    .post(detectionPostHandler)
+detectionRouter.route(DETECTION_PATHS).get(detectionGetHandler).post(detectionPostHandler);
 
 export { detectionRouter };

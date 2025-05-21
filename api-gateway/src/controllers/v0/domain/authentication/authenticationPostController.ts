@@ -16,7 +16,7 @@ import Logger from 'js-logger';
 import { authenticationService } from './authenticationConfig';
 import { TokenValue } from '../../../../models/v0/tokenModel';
 import { HttpResponse } from '../../utils/circuitBreaker/http/httpResponse';
-import { fromHttpResponseToExpressResponse, handleError } from '../../utils/api/responseUtils';
+import { fromHttpResponseToExpressResponse } from '../../utils/api/responseUtils';
 
 Logger.useDefaults();
 
@@ -27,15 +27,15 @@ async function saveToken(response: HttpResponse) {
         Number(response.data[USER_JWT_TOKEN_EXPIRATION_BODY]),
     );
     await authenticationService.authenticationClient.setToken(String(response.data[USER_JWT_TOKEN_BODY]), tokenValue);
-    return tokenValue
+    return tokenValue;
 }
 
 function fromTokenValueToBody(tokenValue: TokenValue) {
     return {
         [USER_EMAIL_BODY]: tokenValue.email,
         [USER_JWT_TOKEN_EXPIRATION_BODY]: tokenValue.expiration,
-        [USER_ROLE_BODY]: tokenValue.role
-    }
+        [USER_ROLE_BODY]: tokenValue.role,
+    };
 }
 
 function isExpired(expiration: number, token: string, tokenValue: TokenValue, response: Response) {
@@ -45,7 +45,7 @@ function isExpired(expiration: number, token: string, tokenValue: TokenValue, re
         authenticationService.authenticationClient.deleteToken(token);
     } else {
         response.status(HttpStatus.ACCEPTED);
-        response.send(fromTokenValueToBody(tokenValue))
+        response.send(fromTokenValueToBody(tokenValue));
     }
     return response;
 }

@@ -51,7 +51,9 @@ abstract class AbstractHttpClient<T extends HttpClient> {
         return request();
     }
 
-    protected cleanHeaders(headers: Record<string, string | undefined | string[]>): Record<string, string | undefined | string[]> {
+    protected cleanHeaders(
+        headers: Record<string, string | undefined | string[]>,
+    ): Record<string, string | undefined | string[]> {
         if (!headers) {
             return {};
         }

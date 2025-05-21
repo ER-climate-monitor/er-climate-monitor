@@ -17,7 +17,11 @@ interface AuthenticationOperations {
      * @param {object} _body - User's information.
      * @returns {Promise<HttpResponse>} Authentication service response.
      */
-    registerOperation(_endpointPath: string, _headers: Record<string, string | undefined | string[]>, _body: object): Promise<HttpResponse>;
+    registerOperation(
+        _endpointPath: string,
+        _headers: Record<string, string | undefined | string[]>,
+        _body: object,
+    ): Promise<HttpResponse>;
     /**
      * Login the input user.
      * @param {string} _endpointPath - Endpoint where the input request will be redirected.
@@ -25,7 +29,11 @@ interface AuthenticationOperations {
      * @param {object} _body - User's login information
      * @returns {Promise<HttpResponse>} Authentication service response.
      */
-    loginOperation(_endpointPath: string, _headers: Record<string, string | undefined | string[]>, _body: object): Promise<HttpResponse>;
+    loginOperation(
+        _endpointPath: string,
+        _headers: Record<string, string | undefined | string[]>,
+        _body: object,
+    ): Promise<HttpResponse>;
     /**
      * Check if the input token is valid.
      * @param {string} _endpointPath - Endpoint where the request will be redirected.
@@ -33,13 +41,21 @@ interface AuthenticationOperations {
      * @param {object} _body - Token info
      * @returns {Promise<HttpResponse>} Authentication service response.
      */
-    authenticateTokenOperation(_endpointPath: string, _headers: Record<string, string | undefined | string[]>, _body: object): Promise<HttpResponse>;
+    authenticateTokenOperation(
+        _endpointPath: string,
+        _headers: Record<string, string | undefined | string[]>,
+        _body: object,
+    ): Promise<HttpResponse>;
     /**
      * Delete the input user.
      * @param {string} _endpointPath - Endpoint where the request will be redirected.
      * @param {Record<string, string | undefined | string[]>} _headers - Input headers.
      */
-    deleteOperation(_endpointPath: string, _headers: Record<string, string | undefined | string[]>, queries: Record<string, string>): Promise<HttpResponse>;
+    deleteOperation(
+        _endpointPath: string,
+        _headers: Record<string, string | undefined | string[]>,
+        queries: Record<string, string>,
+    ): Promise<HttpResponse>;
 }
 
 class AuthenticationService<T extends HttpClient> extends AbstractService<T> implements AuthenticationOperations {
@@ -47,22 +63,38 @@ class AuthenticationService<T extends HttpClient> extends AbstractService<T> imp
         super(circuitBreaker, endpoint, authenticationClient);
     }
 
-    public async registerOperation(endpointPath: string, headers: Record<string, string | undefined | string[]>, body: object): Promise<HttpResponse> {
+    public async registerOperation(
+        endpointPath: string,
+        headers: Record<string, string | undefined | string[]>,
+        body: object,
+    ): Promise<HttpResponse> {
         const request = new BasicHttpRequest(HttpMethods.POST, endpointPath, headers, body, {}, {});
         return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
-    public loginOperation(endpointPath: string, headers: Record<string, string | undefined | string[]>, body: object): Promise<HttpResponse> {
+    public loginOperation(
+        endpointPath: string,
+        headers: Record<string, string | undefined | string[]>,
+        body: object,
+    ): Promise<HttpResponse> {
         const request = new BasicHttpRequest(HttpMethods.POST, endpointPath, headers, body, {}, {});
         return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
-    public authenticateTokenOperation(endpointPath: string, headers: Record<string, string | undefined | string[]>, body: object): Promise<HttpResponse> {
+    public authenticateTokenOperation(
+        endpointPath: string,
+        headers: Record<string, string | undefined | string[]>,
+        body: object,
+    ): Promise<HttpResponse> {
         const request = new BasicHttpRequest(HttpMethods.POST, endpointPath, headers, body, {}, {});
         return this.circuitBreaker.fireRequest(this.endpoint, request);
     }
 
-    public deleteOperation(endpointPath: string, headers: Record<string, string | undefined | string[]>, queries: any): Promise<HttpResponse> {
+    public deleteOperation(
+        endpointPath: string,
+        headers: Record<string, string | undefined | string[]>,
+        queries: any,
+    ): Promise<HttpResponse> {
         const request = new BasicHttpRequest(HttpMethods.DELETE, endpointPath, headers, {}, {}, queries);
         return this.circuitBreaker.fireRequest(this.endpoint, request);
     }

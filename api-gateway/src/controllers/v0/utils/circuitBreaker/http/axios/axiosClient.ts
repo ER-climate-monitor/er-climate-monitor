@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosHeaders, AxiosResponse, HttpStatusCode, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
 import { AbstractHttpClient, HttpClient } from '../httpClient';
 import { BasicHttpResponse, HttpResponse } from '../httpResponse';
 import { HttpRequest } from '../httpRequest';
@@ -37,7 +37,6 @@ class AxiosHttpClient implements HttpClient {
                 return new BasicHttpResponse(HttpStatusCode.BadRequest, {}, Object(error.message));
             }
             return new BasicHttpResponse(HttpStatusCode.BadRequest);
-        } finally {
         }
     }
 

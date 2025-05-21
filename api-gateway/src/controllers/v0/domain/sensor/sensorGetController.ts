@@ -33,18 +33,12 @@ const sensorGetHandler = async (request: Request, response: Response) => {
         if (await sensorService.authenticationClient.isAdmin(jwtToken)) {
             Logger.info('The input user is admin');
             request.headers[API_KEY_HEADER.toLowerCase()] = SECRET;
-            const httpResponse = await sensorService.getAllSensorsOperation(
-                endpointPath,
-                request.headers,
-            );
+            const httpResponse = await sensorService.getAllSensorsOperation(endpointPath, request.headers);
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);
         } else {
             endpointPath = endpointPath.replace('all', 'infos');
-            const httpResponse = await sensorService.getAllSensorsOperation(
-                endpointPath,
-                request.headers,
-            );
+            const httpResponse = await sensorService.getAllSensorsOperation(endpointPath, request.headers);
             response = fromHttpResponseToExpressResponse(httpResponse, response);
             response.send(httpResponse.data);
         }

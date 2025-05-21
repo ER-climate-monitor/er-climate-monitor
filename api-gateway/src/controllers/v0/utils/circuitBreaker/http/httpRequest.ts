@@ -5,16 +5,16 @@ import { HttpMethods } from '../../api/httpMethods';
  */
 interface HttpRequest {
     /**
-    * @property {HttpMethods} method - Input Http method that will be used for doing the request.
-    * @property {string} path - Service url path where our request will be redirected.
-    * @property {Record<string, string | undefined | string[]>} headers - Input headers.
-    * @property {object} body - Input body.
-    * @property {Record<string, string>} params - Input path parameters.
-    * @property {Record<string, string>} queries - Input query parameters.
-    */
+     * @property {HttpMethods} method - Input Http method that will be used for doing the request.
+     * @property {string} path - Service url path where our request will be redirected.
+     * @property {Record<string, string | undefined | string[]>} headers - Input headers.
+     * @property {object} body - Input body.
+     * @property {Record<string, string>} params - Input path parameters.
+     * @property {Record<string, string>} queries - Input query parameters.
+     */
     method: HttpMethods;
     path: string;
-    headers: Record<string, string | undefined | string[]>,
+    headers: Record<string, string | undefined | string[]>;
     body: object;
     params: Record<string, string>;
     queries: Record<string, string>;

@@ -2,7 +2,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { io as ClientSocket } from 'socket.io-client';
 import { Server as HttpServer } from 'http';
 import Logger from 'js-logger';
-import { DETECTION_SOCKET_ENDPOINT, NOTIFICATION_ENDPOINT } from '../../../models/v0/serviceModels';
+import { DETECTION_SOCKET_ENDPOINT } from '../../../models/v0/serviceModels';
 
 Logger.useDefaults();
 
@@ -18,8 +18,6 @@ class WebSocketProxy {
             },
         });
 
-        const serviceEndpoint = NOTIFICATION_ENDPOINT.replace('/v0', '');
-
         this.detectionSocket = ClientSocket(DETECTION_SOCKET_ENDPOINT, {
             transports: ['websocket'],
         });
@@ -29,7 +27,6 @@ class WebSocketProxy {
     }
 
     private setupServiceListeners() {
-
         this.detectionSocket.on('connect', () => {
             Logger.info('Successfully connected to Detection Service!');
         });

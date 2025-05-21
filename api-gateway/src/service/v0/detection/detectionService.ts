@@ -13,11 +13,7 @@ interface DetectionOperations {
 }
 
 class DetectionService<T extends HttpClient> extends AbstractService<T> implements DetectionOperations {
-    constructor(
-        circuitBreaker: CircuitBreakerClient<T>,
-        endpoint: string,
-        authenticationClient: AuthenticationClient,
-    ) {
+    constructor(circuitBreaker: CircuitBreakerClient<T>, endpoint: string, authenticationClient: AuthenticationClient) {
         super(circuitBreaker, endpoint, authenticationClient);
     }
 
