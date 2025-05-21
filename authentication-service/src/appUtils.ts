@@ -32,15 +32,13 @@ function createProdServer(url: string) {
     return configureServer();
 }
 
-function createTestServer(): Application {
-    const url: string = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
-    mongoose.connect(url, { dbName: 'authorization-database' });
+function createTestServer(inputMongoURL: string): Application {
+    mongoose.connect(inputMongoURL, { dbName: 'authorization-database' });
     return configureServer();
 }
 
-async function dropTestDatabase() {
-    const url: string = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
-    mongoose.connect(url, { dbName: 'sensor-database' }).then((mongodb) => {
+async function dropTestDatabase(inputMongoURL: string) {
+    mongoose.connect(inputMongoURL, { dbName: 'authorization-database' }).then((mongodb) => {
         mongodb.connection.dropDatabase();
     });
 }
