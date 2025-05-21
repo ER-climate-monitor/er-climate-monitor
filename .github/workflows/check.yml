@@ -1,0 +1,41 @@
+name: Check repo integrity
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project: ['notification-service', 'sensor-registry', 'authentication-service', 'detection-service' ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.10.0'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.roject }}/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+        working-directory: ${{ matrix.project }}
+
+      - name: Run linter
+        run: npm run lint
+        working-directory: ${{ matrix.project }}
+
+      - name: Run tests # CHANGE ME! By now only not. service tests passes in a CI env.
+        run: npm run test
+        working-directory: notification-service
