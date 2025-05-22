@@ -2,8 +2,7 @@ name: Relase on github
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches: ['main']
 
 jobs:
   release:
