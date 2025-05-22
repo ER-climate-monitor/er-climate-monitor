@@ -26,14 +26,17 @@ jobs:
           owner: 'MatteoIorio11'
           repository: 'service-builder'
           branch: 'main'
-
-      - name: Set up UV
-        uses: astral-sh/setup-uv@v5
-    
+   
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version-file: "./service-builder/.python-version"
 
+      - name: Set up UV
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install the Python project using UV
+        run: uv sync --locked --all-extras --dev
+ 
 
   
