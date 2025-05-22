@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createTestServer, dropTestDatabase } from '../../../appUtils';
-import { describe, it } from 'mocha';
+import { describe, it, before, after } from 'mocha';
 import HttpStatus from 'http-status-codes';
 import { Application } from 'express';
 import { HEALTH_API_ROUTE } from './routes/globalRoutes.v0';
@@ -20,5 +20,5 @@ describe('Health status of the server', () => {
     after(async () => {
         await dropTestDatabase(mongodbServer.getUri());
         await mongodbServer.stop();
-    })
+    });
 });
