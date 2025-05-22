@@ -15,6 +15,8 @@ import {
 } from '../../../model/v0/headers/sensorHeaders';
 import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
 import { afterEach, it, describe, after } from 'mocha';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { Application } from 'express';
 
 dotenv.config();
 
@@ -38,10 +40,14 @@ const sensorInfomration = {
     [SENSOR_QUERIES]: sensorQueries,
 };
 
-const testURL = String(process.env.TEST_DB_URL) || 'mongodb://localhost:27017/';
-const app = createServer(testURL);
+let app: Application;
+let mongoServer: MongoMemoryServer;
 
 describe('Registering a new Sensor using IPv6', () => {
+    before(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        app = createServer(mongoServer.getUri());
+    })
     beforeEach(async () => {
         await shutDownSensor(app, sensorInfomration);
         for (const sensor of createdSensors) {
@@ -163,6 +169,7 @@ describe('Registering a new Sensor using IPv6', () => {
             .expect(HttpStatus.CONFLICT);
     });
     after(async () => {
-        await dropTestDatabase();
+        await dropTestDatabase(mongoServer.getUri());
+        await mongoServer.stop();
     });
 });
