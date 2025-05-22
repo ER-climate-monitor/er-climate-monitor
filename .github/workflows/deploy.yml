@@ -61,6 +61,7 @@ jobs:
 
       - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
         run: |
+          ls -l
           services=("notification-service" "sensor-registry" "authentication-service" "detection-service")
           echo "[LOGGER] Activating virtual environment"
           source ./service-builder/.venv/bin/activate
