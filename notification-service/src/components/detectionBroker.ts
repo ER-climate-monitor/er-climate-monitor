@@ -1,6 +1,7 @@
 import Logger from 'js-logger';
-import { Connection, Channel, connect, ConsumeMessage } from 'amqplib';
+import { Channel, ChannelModel, connect, ConsumeMessage } from 'amqplib';
 import { SubscriptionTopic, DetectionEvent, UserSubscriptions } from '../model/notificationModel';
+import assert from 'assert';
 
 Logger.useDefaults();
 
@@ -17,8 +18,8 @@ interface UserSubscription {
 type NotificationCallback<T> = (_userIds: Set<string>, _topic: SubscriptionTopic, _mesasge: T) => Promise<void>;
 
 class DetectionBroker<T> {
-    private connection: Connection | undefined;
     private channel: Channel | undefined;
+    private chm: ChannelModel | undefined;
     private connected: boolean = false;
     private notificationCallbacks: NotificationCallback<T>[] = [];
 
@@ -47,8 +48,11 @@ class DetectionBroker<T> {
         if (this.connected) return;
         try {
             Logger.info('⏳ Connecting to Rabbit-MQ Server ...');
-            this.connection = await connect(this.connectionUrl);
-            this.channel = await this.connection.createChannel();
+
+            this.chm = await connect(this.connectionUrl);
+            this.channel = await this.chm.createChannel();
+
+            assert(this.channel !== undefined);
 
             await this.channel.assertExchange(this.EXCHANGE_NAME, 'topic', { durable: true });
 
@@ -60,12 +64,6 @@ class DetectionBroker<T> {
             });
 
             await this.channel.consume(queue, (msg) => this.handleMessage(msg));
-
-            this.connection.on('error', (err) => {
-                Logger.error('Connection error: ', err);
-                this.connected = false;
-                this.reconnect();
-            });
 
             this.connected = true;
             Logger.info('✅ Succesfully connected to broker!');
@@ -171,7 +169,7 @@ class DetectionBroker<T> {
     }
 
     private ensureConnection(): boolean {
-        if (!this.connected || !this.connection) {
+        if (!this.connected || !this.channel) {
             Logger.error(`Connection to broker has not been established yet. Have you used 'connect' before?`);
             return false;
         }
@@ -200,8 +198,8 @@ class DetectionBroker<T> {
 
     async close(): Promise<void> {
         try {
+            await this.chm?.close();
             await this.channel?.close();
-            await this.connection?.close();
             this.connected = false;
         } catch (_) {
             this.connected = false;

@@ -2,8 +2,9 @@ import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/g
 import { DetectionBroker, NotificationCallback } from '../../src/components/detectionBroker';
 import { DetectionEvent, SubscriptionTopic } from '../../src/model/notificationModel';
 import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers';
-import { Channel, connect as AMQPConnect, Connection } from 'amqplib';
+import { Channel, connect as AMQPConnect, Connection, ChannelModel } from 'amqplib';
 import Logger from 'js-logger';
+import assert from 'assert';
 
 interface Sensor {
     sensorName: string;
@@ -16,6 +17,7 @@ interface Sensor {
 
 class SensorClient {
     private brokerUrl: string;
+    private chm: ChannelModel | undefined;
     private connection: Connection | undefined;
     private channel: Channel | undefined;
     private sensor: Sensor;
@@ -29,10 +31,14 @@ class SensorClient {
 
     async connect(): Promise<void> {
         try {
-            this.connection = await AMQPConnect(this.brokerUrl);
-            this.channel = await this.connection.createChannel();
+            this.chm = await AMQPConnect(this.brokerUrl);
+            this.connection = this.chm.connection;
+            this.channel = await this.chm.createChannel();
 
+            assert(this.channel !== undefined);
             await this.channel.assertExchange(this.EXCHANGE_NAME, 'topic', { durable: true });
+
+            this.connection?.on('error', (err) => Logger.error('CLIENT ERROR: ', err));
         } catch (error) {
             Logger.error('CLIENT ERROR: ', error);
             throw error;
@@ -70,10 +76,11 @@ class SensorClient {
     async close() {
         try {
             await this.channel?.close();
-            await this.connection?.close();
-        } catch (_) {}
+            await this.chm?.close();
+        } catch (error) {
+            Logger.error('Error closing client connections:', error);
+        }
     }
-
     getTestReading() {
         return {
             value: 30.5,
@@ -144,14 +151,17 @@ describe('DetectionBroker - Integration Tests', () => {
         }
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
         broker = new DetectionBroker(amqpUrl, instanceId);
+        await broker.connect();
     });
 
     afterAll(async () => {
-        await broker.close();
-        await client.close();
-        await container.stop();
+        try {
+            await client.close();
+            await broker.close();
+            await container.stop();
+        } catch (_) {}
     });
 
     test('should handle subscriptions for users with different topic specs', async () => {
@@ -160,7 +170,6 @@ describe('DetectionBroker - Integration Tests', () => {
             receivedMessages.push({ detection, userIds: Array.from(userIds), topic });
         };
 
-        await broker.connect();
         broker.addNotificationCallback(mockCallback);
         await broker.subscribeUser(testUserId, testSub);
         let res = await broker.subscribeUser('user-321', {

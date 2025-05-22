@@ -1,6 +1,6 @@
 import { jest, test, expect, describe, beforeEach, afterEach } from '@jest/globals';
 import { DetectionBroker, NotificationCallback } from '../../src/components/detectionBroker';
-import { Channel, Connection, connect } from 'amqplib';
+import { Channel, ChannelModel, Connection, connect } from 'amqplib';
 
 jest.mock('amqplib', () => ({
     connect: jest.fn(),
@@ -10,6 +10,7 @@ describe('DetectionBroker - Unit Tests', () => {
     let broker: DetectionBroker<any>;
     let mockConnection: jest.Mocked<Connection>;
     let mockChannel: jest.Mocked<Channel>;
+    let mockChannelModel: jest.Mocked<ChannelModel>;
 
     const instanceId = 'test-instance';
     const queueName = `notifications.${instanceId}`;
@@ -38,7 +39,7 @@ describe('DetectionBroker - Unit Tests', () => {
             assertExchange: jest.fn().mockImplementation(() => Promise.resolve({})),
             assertQueue: jest.fn().mockImplementation(() => Promise.resolve({ queue: queueName })),
             bindQueue: jest.fn().mockImplementation(() => Promise.resolve({})),
-            consume: jest.fn().mockImplementation((queue, callback) => {
+            consume: jest.fn().mockImplementation((_queue, callback) => {
                 (mockChannel as any).lastCallback = callback;
                 return Promise.resolve({ consumerTag: 'test-tag' });
             }),
@@ -54,8 +55,16 @@ describe('DetectionBroker - Unit Tests', () => {
             on: jest.fn(),
         } as unknown as jest.Mocked<Connection>;
 
+        mockChannelModel = {
+            close: jest.fn().mockImplementation(() => Promise.resolve()),
+            createChannel: jest.fn().mockImplementation(() => Promise.resolve(mockChannel)),
+            createConfirmChannel: jest.fn().mockImplementation(() => Promise.resolve(mockChannel)),
+            connection: mockConnection,
+            updateSecret: jest.fn().mockImplementation(() => Promise.resolve()),
+        } as unknown as jest.Mocked<ChannelModel>;
+
         const mockConnect = connect as jest.MockedFunction<typeof connect>;
-        mockConnect.mockImplementation(() => Promise.resolve(mockConnection));
+        mockConnect.mockImplementation(() => Promise.resolve(mockChannelModel));
 
         broker = new DetectionBroker('amqp://localhost', instanceId);
     });
@@ -69,7 +78,6 @@ describe('DetectionBroker - Unit Tests', () => {
         await broker.connect();
 
         expect(connect).toHaveBeenCalledWith('amqp://localhost');
-        expect(mockConnection.on).toHaveBeenCalledWith('error', expect.any(Function));
         expect(mockChannel.assertExchange).toHaveBeenCalledWith(exchangeName, 'topic', { durable: true });
         expect(mockChannel.assertQueue).toHaveBeenCalledWith(queueName, {
             durable: true,
