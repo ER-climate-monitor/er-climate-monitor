@@ -16,6 +16,9 @@ jobs:
 
     
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Clone Cloud utility
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
         with:
@@ -36,6 +39,7 @@ jobs:
           cd service-builder
           uv venv
           uv sync
+          cd ..
   
       - name: Authenticate Google Cloud user
         uses: 'google-github-actions/auth@v2'
@@ -55,8 +59,7 @@ jobs:
           username: _json_key
           password: '${{ secrets.GCP_TOKEN }}'
 
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+
 
       - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
         run: |
