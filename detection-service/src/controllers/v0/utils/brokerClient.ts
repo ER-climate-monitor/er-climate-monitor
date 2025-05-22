@@ -24,7 +24,7 @@ class DetectionPublisher {
 
         try {
             Logger.info('⏳ Connecting publisher to RabbitMQ...');
-            Logger.info(this.brokerUrl)
+            Logger.info(this.brokerUrl);
             this.chm = await connect(this.brokerUrl);
             this.channel = await this.chm.createChannel();
 
