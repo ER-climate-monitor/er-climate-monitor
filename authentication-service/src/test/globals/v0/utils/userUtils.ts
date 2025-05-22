@@ -20,7 +20,7 @@ import { LOGIN, REGISTER } from '../../../../controllers/v0/utils/userActions';
 
 const api_key = process.env.SECRET_API_KEY || '';
 
-async function deleteUser(app: Application, userInformation: any) {
+async function deleteUser(app: Application, userInformation: { [key: string]: string }) {
     const token = await isUserRegistered(app, userInformation);
     if (token) {
         await request(app)
@@ -31,7 +31,7 @@ async function deleteUser(app: Application, userInformation: any) {
     }
 }
 
-async function deleteAdmin(app: Application, adminInformation: any) {
+async function deleteAdmin(app: Application, adminInformation: { [key: string]: string }) {
     const token = await isAdminRegistered(app, adminInformation);
     if (token) {
         await request(app)
@@ -43,7 +43,7 @@ async function deleteAdmin(app: Application, adminInformation: any) {
     }
 }
 
-async function isUserRegistered(app: Application, userInformation: {}) {
+async function isUserRegistered(app: Application, userInformation: { [key: string]: string }) {
     const response = await request(app).post(REGISTER_USER_ROUTE).send(createBodyUser(REGISTER, userInformation));
     if (response.status === HttpStatus.CREATED) {
         return response.body[USER_JWT_TOKEN_FIELD];
@@ -52,7 +52,7 @@ async function isUserRegistered(app: Application, userInformation: {}) {
     return login.body[USER_JWT_TOKEN_FIELD];
 }
 
-async function isAdminRegistered(app: Application, adminInformation: {}) {
+async function isAdminRegistered(app: Application, adminInformation: { [key: string]: string }) {
     const response = await request(app).post(REGISTER_ADMIN_ROUTE).send(createBodyUser(REGISTER, adminInformation));
     if (response.status === HttpStatus.CREATED) {
         return response.body[USER_JWT_TOKEN_FIELD];

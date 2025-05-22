@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { createTestServer, dropTestDatabase } from '../../../appUtils';
-import { describe, it, afterEach, before} from 'mocha';
-import { fail, ok } from 'node:assert';
+import { describe, it, before, beforeEach, after } from 'mocha';
+import { fail } from 'node:assert';
 import HttpStatus from 'http-status-codes';
 import { USER_EMAIL_FIELD, USER_PASSWORD_FIELD, API_KEY_HEADER } from '../../../models/v0/headers/userHeaders';
 import { Application } from 'express';
@@ -97,27 +97,29 @@ describe('User Authentication', () => {
         }
     });
     it('Should return an error if the input email is not well formatted during the registration, login and delete of an Admin, even if the user is not registered', async () => {
-        maliciousEmails.forEach(email => async function () {
-            const badInformation = {
-                [USER_EMAIL_FIELD]: email,
-                [USER_PASSWORD_FIELD]: password,
-            };
-            await request(app)
-                .post(REGISTER_ADMIN_ROUTE)
-                .set(API_KEY_HEADER, api_key)
-                .send(createBodyUser(REGISTER, badInformation))
-                .expect(HttpStatus.NOT_ACCEPTABLE);
-            await request(app)
-                .post(LOGIN_ADMIN_ROUTE)
-                .set(API_KEY_HEADER, api_key)
-                .send(createBodyUser(LOGIN, badInformation))
-                .expect(HttpStatus.NOT_ACCEPTABLE);
-            await request(app)
-                .delete(DELETE_ADMIN_ROUTE)
-                .send(createBodyUser(DELETE, badInformation))
-                .expect(HttpStatus.UNAUTHORIZED);
- 
-        })
+        maliciousEmails.forEach(
+            (email) =>
+                async function () {
+                    const badInformation = {
+                        [USER_EMAIL_FIELD]: email,
+                        [USER_PASSWORD_FIELD]: password,
+                    };
+                    await request(app)
+                        .post(REGISTER_ADMIN_ROUTE)
+                        .set(API_KEY_HEADER, api_key)
+                        .send(createBodyUser(REGISTER, badInformation))
+                        .expect(HttpStatus.NOT_ACCEPTABLE);
+                    await request(app)
+                        .post(LOGIN_ADMIN_ROUTE)
+                        .set(API_KEY_HEADER, api_key)
+                        .send(createBodyUser(LOGIN, badInformation))
+                        .expect(HttpStatus.NOT_ACCEPTABLE);
+                    await request(app)
+                        .delete(DELETE_ADMIN_ROUTE)
+                        .send(createBodyUser(DELETE, badInformation))
+                        .expect(HttpStatus.UNAUTHORIZED);
+                },
+        );
     });
     it('should return OK if I register an Admin using the correct API key and using an email that does not exist', async () => {
         await request(app)

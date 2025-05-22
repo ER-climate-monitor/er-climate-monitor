@@ -5,7 +5,6 @@ import {
     deleteSensor,
     exists,
     findAllSensors,
-    getSensorFromName,
     getSensorOfType,
     saveSensor,
     updateSensorName,
@@ -98,7 +97,7 @@ const shutDown = async (request: Request, response: Response) => {
         const port = Number(request.query[SENSOR_PORT_FIELD]) || -1;
         try {
             if ((await exists(ip, port)) && (await deleteSensor(ip, port))) {
-                basicHttpClient.deleteSensor(SHUTDOWN_SENSOR_PATH, ip, port).catch((error) => {
+                basicHttpClient.deleteSensor(SHUTDOWN_SENSOR_PATH, ip, port).catch(() => {
                     Logger.error('Error while trying to turning off the sensor.');
                 });
                 response.status(HttpStatus.OK);
@@ -106,6 +105,7 @@ const shutDown = async (request: Request, response: Response) => {
                 response.status(HttpStatus.NOT_FOUND);
             }
         } catch (error) {
+            Logger.error(error);
             response.status(HttpStatus.BAD_GATEWAY);
         }
     } else {
@@ -123,10 +123,10 @@ const updateSensorInfo = async (request: Request, response: Response) => {
             response.status(HttpStatus.UNAUTHORIZED);
             return;
         }
-        const action: String = fromBody(modelData, ACTION, '');
+        const action: string = fromBody(modelData, ACTION, '');
         const ip = fromBody(modelData, SENSOR_IP_FIELD, '');
         const port = fromBody(modelData, SENSOR_PORT_FIELD, -1);
-        if (! await exists(ip, port)) {
+        if (!(await exists(ip, port))) {
             Logger.info('The input sensor was not found.');
             response.status(HttpStatus.NOT_FOUND);
             return;
@@ -136,10 +136,9 @@ const updateSensorInfo = async (request: Request, response: Response) => {
             case UPDATE_NAME_ACTION: {
                 const name = fromBody(modelData, SENSOR_NAME, 'unknown-sensor');
                 Logger.info(`Changing the name for the input sensor: ${ip} port: ${port}`);
-                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name)
-                    .catch((error) => {
-                        Logger.error('This was a mock sensor.');
-                    });
+                basicHttpClient.updateSensorName(UPDATE_SENSOR_NAME_PATH, ip, port, name).catch(() => {
+                    Logger.error('This was a mock sensor.');
+                });
                 await updateSensorName(ip, port, name);
                 Logger.info('Name changed correctly');
                 return;
@@ -147,20 +146,20 @@ const updateSensorInfo = async (request: Request, response: Response) => {
             case UPDATE_CRONJOB_DAYS_ACTION: {
                 const days = fromBody(modelData, SENSOR_CRONJOB_DAYS, '');
                 Logger.info("Received a request for updating the sensor's cronjob days");
-                basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days)
-                    .catch((error) => {
-                        Logger.error('This was a mock sensor.');
-                    });
+                basicHttpClient.updateCronJobDays(UPDATE_SENSOR_CRONJOB_DAYS_PATH, ip, port, days).catch(() => {
+                    Logger.error('This was a mock sensor.');
+                });
                 return;
             }
             case UPDATE_CRONJOB_TIME_ACTION: {
                 const hour = fromBody(modelData, SENSOR_CRONJOB_TIME_HOUR, '');
                 const minute = fromBody(modelData, SENSOR_CRONJOB_TIME_MINUTE, '');
                 Logger.info('Received a new request for updating the sensor cronjob time of work');
-                basicHttpClient.updateCronJobTime(UPDATE_SENSOR_CRONJOB_TIME_PATH, ip, port, hour, minute)
-                    .catch((error) =>{
-                        Logger.info('This was a mock sensor.');
-                    })
+                basicHttpClient
+                    .updateCronJobTime(UPDATE_SENSOR_CRONJOB_TIME_PATH, ip, port, hour, minute)
+                    .catch((error) => {
+                        Logger.info('This was a mock sensor: ' + error);
+                    });
                 return;
             }
             default: {

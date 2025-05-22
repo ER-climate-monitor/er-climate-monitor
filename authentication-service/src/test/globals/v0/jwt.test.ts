@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createTestServer, dropTestDatabase } from '../../../appUtils';
-import { describe, it } from 'mocha';
+import { describe, it, before, after, beforeEach } from 'mocha';
 import HttpStatus from 'http-status-codes';
 import {
     API_KEY_HEADER,
@@ -41,7 +41,7 @@ describe('JWT token for registered users', () => {
         mongodbServer = await MongoMemoryServer.create();
         app = createTestServer(mongodbServer.getUri());
         console.error(mongodbServer.getUri());
-    })
+    });
     beforeEach(async () => {
         await deleteUser(app, userInformation);
         await deleteAdmin(app, adminInformation);
@@ -51,7 +51,7 @@ describe('JWT token for registered users', () => {
             .post(REGISTER_USER_ROUTE)
             .send(createBodyUser(REGISTER, userInformation))
             .expect(HttpStatus.CREATED)
-            .expect(response => {
+            .expect((response) => {
                 if (!(USER_JWT_TOKEN_EXPIRATION_FIELD in response.body)) {
                     fail();
                 }

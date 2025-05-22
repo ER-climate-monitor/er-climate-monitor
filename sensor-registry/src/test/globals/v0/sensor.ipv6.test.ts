@@ -14,7 +14,7 @@ import {
     API_KEY_HEADER,
 } from '../../../model/v0/headers/sensorHeaders';
 import { ALL_ROUTE, REGISTER_ROUTE } from '../../../routes/v0/paths/sensorPaths';
-import { afterEach, it, describe, after } from 'mocha';
+import { before, it, describe, after, beforeEach } from 'mocha';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Application } from 'express';
 
@@ -47,7 +47,7 @@ describe('Registering a new Sensor using IPv6', () => {
     before(async () => {
         mongoServer = await MongoMemoryServer.create();
         app = createServer(mongoServer.getUri());
-    })
+    });
     beforeEach(async () => {
         await shutDownSensor(app, sensorInfomration);
         for (const sensor of createdSensors) {

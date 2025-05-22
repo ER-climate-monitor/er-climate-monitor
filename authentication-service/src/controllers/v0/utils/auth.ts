@@ -7,7 +7,6 @@ import {
     USER_EMAIL_FIELD,
     USER_JWT_TOKEN_EXPIRATION_FIELD,
     USER_JWT_TOKEN_FIELD,
-    ERROR_FIELD,
     USER_ROLE_FIELD,
 } from '../../../models/v0/headers/userHeaders';
 import { checkEmail, checkPassword, checkUser, createUser, deleteOneUser } from './userUtils';

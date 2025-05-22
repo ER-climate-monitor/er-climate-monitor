@@ -9,8 +9,6 @@ import YAML from 'yaml';
 
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
-
 function configureServer() {
     const app = express();
 
