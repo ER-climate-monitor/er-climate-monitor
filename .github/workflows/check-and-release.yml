@@ -39,9 +39,9 @@ jobs:
         run: npm run lint
         working-directory: ${{ matrix.project }}
 
-      - name: Run tests with coverage # CHANGE ME! By now only not. service tests passes in a CI env.
+      - name: Run tests with coverage
         run: npm test -- --coverage
-        working-directory: notification-service
+        working-directory: ${{ matrix.project }}
         continue-on-error: false # extra carefulness that if test does not passes fail instant
 
       - name: Publish CodeCov report
