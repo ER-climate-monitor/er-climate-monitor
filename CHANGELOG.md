@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.2.0...v1.2.1) (2025-05-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency npm-run-all2 to ^5.0.2 ([a361e0e](https://github.com/MatteoIorio11/er-climate-monitor/commit/a361e0e8afbf65cc44f1c9a00f42260e9f0e0cc3))
+
 # [1.2.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.1.0...v1.2.0) (2025-05-22)
 
 
