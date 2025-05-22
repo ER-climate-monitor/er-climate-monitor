@@ -25,21 +25,19 @@ paths:
             type: string
         - in: query
           name: from
-          schema:
-            type: string
-            format: date-time
-          description: Start timestamp (inclusive)
-        - in: query
-          name: to
-          schema:
-            type: string
-            format: date-time
-          description: End timestamp (inclusive)
-        - in: query
-          name: last
+          description: Start timestamp in milliseconds (inclusive)
           schema:
             type: integer
+        - in: query
+          name: to
+          description: End timestamp in milliseconds (inclusive)
+          schema:
+            type: integer
+        - in: query
+          name: last
           description: Return the last N detections
+          schema:
+            type: integer
       responses:
         '200':
           description: List of sensor detections
@@ -50,28 +48,21 @@ paths:
                   sensorName: "Temp Sensor 2"
                   value: 22.5
                   unit: "°C"
-                  timestamp: "2025-04-22T08:00:00Z"
+                  timestamp: 1682179200000
                   latitude: 43.06
                   longitude: 141.35
         '400':
-          description: Invalid query parameters
+          description: Invalid sensor type or query parameters
           content:
             application/json:
               example:
-                error: "Invalid query parameters."
+                error: "Unsupported sensor type: invalidType"
         '404':
-          description: Sensor not found or unsupported sensor type
+          description: Sensor ID not found
           content:
             application/json:
-              examples:
-                sensorIdNotFound:
-                  summary: Sensor ID doesn't exist
-                  value:
-                    error: "The input sensor ID does not exist."
-                unsupportedType:
-                  summary: Invalid sensor type
-                  value:
-                    error: "Unsupported sensor type: invalidType"
+              example:
+                error: "The input sensor ID does not exist."
 
     post:
       summary: Save a detection
@@ -94,7 +85,7 @@ paths:
               sensorName: "Temp Sensor 1"
               value: 23.4
               unit: "°C"
-              timestamp: "2025-04-22T08:30:00Z"
+              timestamp: 1682181000000
               latitude: 43.066
               longitude: 141.345
       responses:
@@ -140,11 +131,11 @@ paths:
                   latitude: 43.0667
                   longitude: 141.35
         '404':
-          description: No locations found
+          description: No locations found for the specified sensor type
           content:
             application/json:
               example:
-                error: 'No locations found for sensor type "temperature".'
+                error: 'No locations found for sensor type "temp".'
 
   /alerts:
     post:
@@ -157,7 +148,7 @@ paths:
               sensorId: "sensor-3"
               alertType: "threshold_exceeded"
               message: "Temperature exceeded safety threshold."
-              timestamp: "2025-04-22T08:35:00Z"
+              timestamp: 1682181300000
       responses:
         '200':
           description: Alert forwarded successfully
