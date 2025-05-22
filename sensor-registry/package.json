@@ -8,7 +8,7 @@
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "mocha --exit dist/test/globals/v0/sensor.ipv4.test.js & mocha --exit dist/test/globals/v0/sensor.ipv6.test.js "
+    "test": "nyc --reporter=html mocha --exit dist/test/globals/v0/sensor.ipv4.test.js & mocha --exit dist/test/globals/v0/sensor.ipv6.test.js "
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "mocha": "^11.4.0",
     "mongodb-memory-server": "^10.1.4",
     "mongoose": "^8.15.0",
+    "nyc": "^17.1.0",
     "random-ipv6": "^1.0.2",
     "supertest": "^7.1.1",
     "swagger-ui-express": "^5.0.1",

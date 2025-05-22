@@ -10,7 +10,7 @@
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "mocha --exit dist/test/globals/v0/jwt.test.js & mocha --exit dist/test/globals/v0/health.test.js & mocha --exit dist/test/globals/v0/auth.test.js "
+    "test": "nyc --reporter=html mocha --exit dist/test/globals/v0/jwt.test.js & mocha --exit dist/test/globals/v0/health.test.js & mocha --exit dist/test/globals/v0/auth.test.js "
   },
   "keywords": [],
   "author": "",
@@ -28,6 +28,7 @@
     "mongodb-memory-server": "^10.1.4",
     "mongoose": "^8.15.0",
     "npm-run-all2": "^5.0.0",
+    "nyc": "^17.1.0",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.8.0"
   },
