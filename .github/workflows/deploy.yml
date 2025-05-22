@@ -39,6 +39,7 @@ jobs:
         run: |
           cd service-builder
           uv sync 
+          uv venv
   
       - name: Authenticate Google Cloud user
         uses: 'google-github-actions/auth@v2'
