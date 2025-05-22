@@ -14,7 +14,7 @@ interface IDetection {
     value: number;
 }
 
-interface DetectionDocument extends IDetection, Document { }
+interface DetectionDocument extends IDetection, Document {}
 
 const detectionSchema = new mongoose.Schema(
     {

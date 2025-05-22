@@ -6,7 +6,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "ts-node src/index.ts",
-    "lint": "eslint 'src/**/*.{ts,js}' --fix",
+    "lint": "eslint 'src/**/*.{ts,js}'",
     "format": "prettier --write 'src/**/*.{ts,js}'",
     "test": "jest --detectOpenHandles"
   },

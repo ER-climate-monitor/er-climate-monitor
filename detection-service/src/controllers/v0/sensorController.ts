@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import HttpStatus, { BAD_REQUEST } from 'http-status-codes';
-import { Detection, DetectionDocument, getModelForSensorType } from '../../models/v0/detectionModel';
+import HttpStatus from 'http-status-codes';
+import { getModelForSensorType } from '../../models/v0/detectionModel';
 import {
     handleGetDetectionsFromSensor,
     handleSaveDetection,
