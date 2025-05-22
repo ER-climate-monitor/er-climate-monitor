@@ -12,7 +12,7 @@ FROM node:${NODE_VERSION}-alpine
 
 # Run the application as a non-root user.
 USER root
-ENV PORT=7777
+ENV PORT=8080
 ENV DB_URL="mongodb+srv://matteoiorio01:bsHMrwnluMpMptJY@cluster0.tj3ou.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ENV SECRET_API_KEY="secretKey"
 
@@ -32,7 +32,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 RUN npm uninstall tsc && npm install -D typescript
 
 # Expose the port that the application listens on.
-EXPOSE 7777
+EXPOSE 8080
 
 # Run the application.
 CMD npm run build ; npm run start

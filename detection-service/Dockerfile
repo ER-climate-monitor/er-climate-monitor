@@ -12,7 +12,7 @@ FROM node:${NODE_VERSION}-alpine
 
 # Run the application as a non-root user.
 USER root
-ENV PORT=3000
+ENV PORT=8080
 ENV DB_URL="mongodb+srv://matteoiorio01:bsHMrwnluMpMptJY@cluster0.tj3ou.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ENV AMPQ_URL="amqps://jakamicd:PB5xeKcvPbGIkOg14rAqtCLhrYmBhvKS@dog.lmq.cloudamqp.com/jakamicd"
 ENV EXCHANGE_NAME="sensor.notifications"
@@ -33,7 +33,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     npm ci --omit=dev
 RUN npm uninstall tsc && npm install -D typescript
 
-EXPOSE 3000
+EXPOSE 8080 
 
 # Run the application.
 CMD npm run build ; npm run start
