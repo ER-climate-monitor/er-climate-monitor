@@ -1,0 +1,36 @@
+name: Just run checks for PRs :)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project: ['notification-service', 'sensor-registry', 'authentication-service', 'detection-service' ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.10.0'
+
+      - name: Install deps
+        run: npm install
+        working-directory: ${{ matrix.project }}
+
+      - name: Run linter
+        run: npm run lint
+        working-directory: ${{ matrix.project }}
+
+      - name: Run tests with coverage # CHANGE ME! By now only not. service tests passes in a CI env.
+        run: npm test -- --coverage
+        working-directory: notification-service

@@ -42,11 +42,28 @@ jobs:
       - name: Run tests with coverage # CHANGE ME! By now only not. service tests passes in a CI env.
         run: npm test -- --coverage
         working-directory: notification-service
+        continue-on-error: false # extra carefulness that if test does not passes fail instant
 
       - name: Publish CodeCov report
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  release:
+    needs: [lint-and-test]
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.10.0'
+
+      - name: install deps
+        run: npm i
 
       - name: run semantic-release
         run: npm i && npx semantic-release
