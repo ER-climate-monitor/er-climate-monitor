@@ -1,5 +1,5 @@
 import Logger from 'js-logger';
-import { Channel, connect, ConsumeMessage } from 'amqplib';
+import { Channel, ChannelModel, connect, ConsumeMessage } from 'amqplib';
 import { SubscriptionTopic, DetectionEvent, UserSubscriptions } from '../model/notificationModel';
 import assert from 'assert';
 
@@ -19,6 +19,7 @@ type NotificationCallback<T> = (_userIds: Set<string>, _topic: SubscriptionTopic
 
 class DetectionBroker<T> {
     private channel: Channel | undefined;
+    private chm: ChannelModel | undefined;
     private connected: boolean = false;
     private notificationCallbacks: NotificationCallback<T>[] = [];
 
@@ -48,7 +49,8 @@ class DetectionBroker<T> {
         try {
             Logger.info('⏳ Connecting to Rabbit-MQ Server ...');
 
-            this.channel = await connect(this.connectionUrl).then((chm) => chm.createChannel());
+            this.chm = await connect(this.connectionUrl);
+            this.channel = await this.chm.createChannel();
 
             assert(this.channel !== undefined);
 
@@ -196,6 +198,7 @@ class DetectionBroker<T> {
 
     async close(): Promise<void> {
         try {
+            await this.chm?.close();
             await this.channel?.close();
             this.connected = false;
         } catch (_) {
