@@ -34,6 +34,11 @@ jobs:
         run: npm run lint
         working-directory: ${{ matrix.project }}
 
-      - name: Run tests # CHANGE ME! By now only not. service tests passes in a CI env.
-        run: npm run test
+      - name: Run tests with coverage # CHANGE ME! By now only not. service tests passes in a CI env.
+        run: npm test -- --coverage
         working-directory: notification-service
+
+      - name: Publish CodeCov report
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

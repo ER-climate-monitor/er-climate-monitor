@@ -1,7 +1,6 @@
 import { Model } from 'mongoose';
 import { Detection } from '../../../models/v0/detectionModel';
 import { DetectionDocument } from '../../../models/v0/detectionModel';
-import { HYDRO, TEMPERATURE } from '../../../models/v0/detectionTypes';
 
 const LOWER_BOUND = 0;
 const UPPER_BOUND = 100;
