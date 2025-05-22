@@ -32,8 +32,13 @@ RUN --mount=type=secret,id=env_variables \
  export ENV=$(cat /run/secrets/env_variables) && \
  echo $ENV # would output "foo".
 
+ENV REDIS_URL='redis://default:3FvYJB9kV1DojH192re71x94NTYobu4v@redis-15316.c327.europe-west1-2.gce.redns.redis-cloud.com:15316'
+ENV PORT=8080
+ENV SECRET_API_KEY="secretKey"
+
+
 # Expose the port that the application listens on.
-EXPOSE 8888
+EXPOSE 8080
 
 # Run the application.
 CMD npm run build ; npm run start
