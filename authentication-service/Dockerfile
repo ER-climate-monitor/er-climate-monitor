@@ -28,13 +28,8 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     npm ci --omit=dev
 RUN npm uninstall tsc && npm install -D typescript
 
-RUN --mount=type=secret,id=env_variables \
- export ENV=$(cat /run/secrets/env_variables) && \
- echo $ENV # would output "foo".
-
 # Expose the port that the application listens on.
-EXPOSE 8888
-ENV DB_URL="mongodb+srv://matteoiorio01:bsHMrwnluMpMptJY@cluster0.tj3ou.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+EXPOSE 8888:8888
 
 # Run the application.
 CMD npm run build ; npm run start
