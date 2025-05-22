@@ -31,7 +31,8 @@ class DetectionBroker<T> {
     private userSubscriptions: Map<string, Set<string>>;
 
     constructor(
-        connectionUrl: string = process.env.AMQP_URL ?? 'amqps://jakamicd:PB5xeKcvPbGIkOg14rAqtCLhrYmBhvKS@dog.lmq.cloudamqp.com/jakamicd',
+        connectionUrl: string = process.env.AMQP_URL ??
+            'amqps://jakamicd:PB5xeKcvPbGIkOg14rAqtCLhrYmBhvKS@dog.lmq.cloudamqp.com/jakamicd',
         instanceId: string | undefined = process.env.INSTANCE_ID
     ) {
         if (!instanceId) {
