@@ -39,6 +39,12 @@ jobs:
         run: |
           cd service-builder
           uv sync 
+  
+      - name: Authenticate Google Cloud user
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_TOKEN }}'
+
  
 
   
