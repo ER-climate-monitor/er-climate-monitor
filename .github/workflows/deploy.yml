@@ -1,13 +1,13 @@
 name: Deploy on Google Cloud Platform
 
 on:
-  workflow_run:
-    workflows:
-      - Check repo integrity
-    branches:
-      - main
-    types:
-      - completed
+  # workflow_run:
+  #   workflows:
+  #     - Check repo integrity
+  #   branches:
+  #     - main
+  #   types:
+  #     - completed
   workflow_dispatch:
 
 jobs:
