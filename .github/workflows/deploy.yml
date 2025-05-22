@@ -14,10 +14,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        project: ['notification-service', 'sensor-registry', 'authentication-service', 'detection-service' ]
-      fail-fast: false
+    # strategy:
+    #   matrix:
+    #     project: ['notification-service', 'sensor-registry', 'authentication-service', 'detection-service' ]
+    #   fail-fast: false
     
     steps:
       - name: Clone Cloud utility
