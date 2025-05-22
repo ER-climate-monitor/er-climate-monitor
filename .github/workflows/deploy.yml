@@ -62,7 +62,8 @@ jobs:
           username: _json_key
           password: '${{ secrets.GCP_TOKEN }}'
 
-
+      - name: Set up NodeJS  
+        uses: actions/setup-node@v4
 
       - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
         run: |
@@ -73,6 +74,9 @@ jobs:
           source ./service-builder/.venv/bin/activate
           for service in "${services[@]}"; do
             echo "[LOGGER] Building and Deploying service $service"
+            cd $(pwd)/$service
+            npm install
+            cd ..
             uv run ./service-builder/script.py $(pwd)/$service $service
           done
           cat ./service-builder/.env
