@@ -1,6 +1,6 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
+  "name": "@er-climate-monitor/notification-service",
+  "version": "0.0.0-semantically-released",
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
