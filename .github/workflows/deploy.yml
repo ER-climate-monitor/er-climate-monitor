@@ -61,7 +61,10 @@ jobs:
       - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
         run: |
           services=("notification-service" "sensor-registry" "authentication-service" "detection-service")
+          echo "[LOGGER] Activating virtual environment"
+          source ./service-builder/venv/bin/activate
           for service in "${services[@]}"; do
+            echo "[LOGGER] Building and Deploying service $service"
             uv run ./service-builder/script.py ./$service $service
           done
           cat ./service-builder/.env
