@@ -67,7 +67,7 @@ jobs:
           source ./service-builder/.venv/bin/activate
           for service in "${services[@]}"; do
             echo "[LOGGER] Building and Deploying service $service"
-            uv run ./service-builder/script.py $service $service
+            uv run ./service-builder/script.py $(pwd)/$service $service
           done
           cat ./service-builder/.env
 
