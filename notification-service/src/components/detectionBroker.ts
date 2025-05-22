@@ -31,7 +31,7 @@ class DetectionBroker<T> {
     private userSubscriptions: Map<string, Set<string>>;
 
     constructor(
-        connectionUrl: string = process.env.AMQP_URL ?? 'amqp://localhost',
+        connectionUrl: string = process.env.AMQP_URL ?? 'amqps://jakamicd:PB5xeKcvPbGIkOg14rAqtCLhrYmBhvKS@dog.lmq.cloudamqp.com/jakamicd',
         instanceId: string | undefined = process.env.INSTANCE_ID
     ) {
         if (!instanceId) {
@@ -48,6 +48,7 @@ class DetectionBroker<T> {
         if (this.connected) return;
         try {
             Logger.info('⏳ Connecting to Rabbit-MQ Server ...');
+            Logger.info('Connection Url: ' + this.connectionUrl);
 
             this.chm = await connect(this.connectionUrl);
             this.channel = await this.chm.createChannel();

@@ -18,7 +18,7 @@ Logger.useDefaults();
 
 const app = express();
 const server = createServer(app);
-const port = process.env.PORT || 4444;
+const port = process.env.PORT || 8080;
 const host = process.env.HOST || 'localhost';
 
 const messageBroker = new DetectionBroker<DetectionEvent>();
@@ -57,4 +57,4 @@ setMessageBroker(messageBroker);
 setSocketManger(socketManager);
 
 app.use('/v0/alert', router);
-server.listen(4444, () => Logger.log(`Server listening on http://${host}:${port}`));
+server.listen(port, () => Logger.log(`Server listening on http://${host}:${port}`));
