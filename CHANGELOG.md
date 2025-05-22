@@ -1,3 +1,20 @@
+# [1.2.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.1.0...v1.2.0) (2025-05-22)
+
+
+### Bug Fixes
+
+* **ci:** run build before running linter and test ([3a36383](https://github.com/MatteoIorio11/er-climate-monitor/commit/3a363839ba910f296519e7b6eb9b159e8688d61a))
+* **ci:** run semantic release if only checks are successful ([e37c44b](https://github.com/MatteoIorio11/er-climate-monitor/commit/e37c44be1b69b3271b2ac51f60da8236f283407f))
+* **deps:** update service dependencies ([c8244de](https://github.com/MatteoIorio11/er-climate-monitor/commit/c8244deca3543066d766c598deafb8ae15d871cd))
+* do not auto-compile before testing ([43d4e01](https://github.com/MatteoIorio11/er-climate-monitor/commit/43d4e01b4fa3c3ae932801c641e2882720350fa4))
+* **lint:** fix lint syntax ([4f482e7](https://github.com/MatteoIorio11/er-climate-monitor/commit/4f482e7ed4cf009d896e89d8b3313ed5cfc23907))
+* **lint:** fix linter syntax ([5b3be85](https://github.com/MatteoIorio11/er-climate-monitor/commit/5b3be85351b5fb207dc4bada533ca53ff0799706))
+
+
+### Features
+
+* **tsconfig:** separate test compilation from production ([c769005](https://github.com/MatteoIorio11/er-climate-monitor/commit/c7690053fe9829736022d19fffed60c438b77575))
+
 # [1.1.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.0.0...v1.1.0) (2025-05-22)
 
 
