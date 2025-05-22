@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.0.0...v1.1.0) (2025-05-22)
+
+
+### Features
+
+* **docker:** add env variables ([8e07a6a](https://github.com/MatteoIorio11/er-climate-monitor/commit/8e07a6aa5c69450f1281058531de15b03c71a2fe))
+* **url:** update urls with deployed one ([e4bc311](https://github.com/MatteoIorio11/er-climate-monitor/commit/e4bc31197a3c2e3bfd1e75a1cb3696eb6aa42a6a))
+
 # 1.0.0 (2025-05-22)
 
 
