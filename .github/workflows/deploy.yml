@@ -71,15 +71,16 @@ jobs:
         run: |
           ls -l
           pwd
-          services=( "authentication-service" "detection-service" "notification-service" "sensor-registry" "api-gateway" )
+          services=( "authentication-service,authentication-service,8080" "detection-service,detection-service,8080" "notification-service,notification-service,8080" "sensor-registry,sensor-registry,8080" "api-gateway,api-gateway,8080" "detection-service,detection-service-socket,8081" )
           echo "[LOGGER] Activating virtual environment"
           source ./service-builder/.venv/bin/activate
-          for service in "${services[@]}"; do
+          for service_info in "${services[@]}"; do
+            IFS=',' read -r service service_name port <<< "${service_info}"
             echo "[LOGGER] Building and Deploying service $service"
             cd $(pwd)/$service
             npm install
             cd ..
-            uv run ./service-builder/script.py $(pwd)/$service $service
+            uv run ./service-builder/script.py $(pwd)/$service $service_name $port
           done
           cat ./service-builder/.env
 
