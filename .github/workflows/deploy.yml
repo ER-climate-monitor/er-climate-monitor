@@ -13,11 +13,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    # strategy:
-    #   matrix:
-    #     project: ['notification-service', 'sensor-registry', 'authentication-service', 'detection-service' ]
-    #   fail-fast: false
     
     steps:
       - name: Clone Cloud utility
@@ -60,6 +55,7 @@ jobs:
           password: '${{ secrets.GCP_TOKEN }}'
 
       - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
+        uses: actions/checkout@v4
         run: |
           ls -l
           services=("notification-service" "sensor-registry" "authentication-service" "detection-service")
