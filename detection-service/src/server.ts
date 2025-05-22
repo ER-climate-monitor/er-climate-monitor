@@ -6,7 +6,7 @@ import { API_ROUTES } from './routes/v0/paths/detection.paths';
 export default function createServer(): Application {
     const app = express();
 
-    app.options('*', cors());
+    app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 

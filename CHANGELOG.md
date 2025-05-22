@@ -1,3 +1,16 @@
+# [1.3.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.2.1...v1.3.0) (2025-05-22)
+
+
+### Bug Fixes
+
+* **deps:** update service dependencies ([ed4164d](https://github.com/MatteoIorio11/er-climate-monitor/commit/ed4164d140101eba1efa969bd318b04c67a0ed68))
+* **detection-service:** adapt to deps major versions updates ([0c878dd](https://github.com/MatteoIorio11/er-climate-monitor/commit/0c878ddc1125c68a5869bee23013bc3e40262a6d))
+
+
+### Features
+
+* **deploy:** add api-gateway ([07bfa71](https://github.com/MatteoIorio11/er-climate-monitor/commit/07bfa71e3c5ab307959aa476a2ed60bf050a326b))
+
 ## [1.2.1](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.2.0...v1.2.1) (2025-05-22)
 
 

@@ -12,10 +12,18 @@ function generateMockDetection(sensorType: string, timestamp = Date.now()): Part
     };
 }
 
-function generateMultipleMockDetection(sensorType: string, count: number, sensorId: string): Partial<DetectionDocument>[] {
+function generateMultipleMockDetection(
+    sensorType: string,
+    count: number,
+    sensorId: string,
+): Partial<DetectionDocument>[] {
     return Array.from({ length: count }).map((_, index) => generateMockDetection(sensorType));
 }
-async function createDetection(sensorType: string, sensorId: string, timestamp = Date.now()): Promise<DetectionDocument> {
+async function createDetection(
+    sensorType: string,
+    sensorId: string,
+    timestamp = Date.now(),
+): Promise<DetectionDocument> {
     const model = getModelForSensorType(sensorType);
     const mockData = generateMockDetection(sensorType, timestamp);
 
@@ -25,8 +33,11 @@ async function createDetection(sensorType: string, sensorId: string, timestamp =
     return detection.save();
 }
 
-
-async function createMultipleDetections(sensorType: string, sensorId: string, count: number): Promise<DetectionDocument[]> {
+async function createMultipleDetections(
+    sensorType: string,
+    sensorId: string,
+    count: number,
+): Promise<DetectionDocument[]> {
     const model = getModelForSensorType(sensorType);
 
     const detections = Array.from({ length: count }).map((_, index) => {
@@ -56,11 +67,11 @@ async function closeDatabaseConnection(): Promise<void> {
     }
 }
 
-export { 
-    generateMockDetection, 
-    createDetection, 
-    createMultipleDetections, 
-    connectToDatabase, 
+export {
+    generateMockDetection,
+    createDetection,
+    createMultipleDetections,
+    connectToDatabase,
     generateMultipleMockDetection,
-    closeDatabaseConnection 
+    closeDatabaseConnection,
 };
