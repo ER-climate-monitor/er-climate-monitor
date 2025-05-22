@@ -34,6 +34,7 @@ RUN --mount=type=secret,id=env_variables \
 
 # Expose the port that the application listens on.
 EXPOSE 8888
+ENV DB_URL="mongodb+srv://matteoiorio01:bsHMrwnluMpMptJY@cluster0.tj3ou.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Run the application.
 CMD npm run build ; npm run start
