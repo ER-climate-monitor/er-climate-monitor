@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.3.0...v1.4.0) (2025-05-22)
+
+
+### Bug Fixes
+
+* ampq variable name ([83e5990](https://github.com/MatteoIorio11/er-climate-monitor/commit/83e5990265b48010efb864e33ecaef986901a273))
+
+
+### Features
+
+* **ci:** create array of tuples ([1de26dd](https://github.com/MatteoIorio11/er-climate-monitor/commit/1de26dd3f9de1decfe7826b24176645c31ffa231))
+* use correct port ([5c86d00](https://github.com/MatteoIorio11/er-climate-monitor/commit/5c86d00c4427c2175c421da11ae676f84f1ab57d))
+
 # [1.3.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.2.1...v1.3.0) (2025-05-22)
 
 
