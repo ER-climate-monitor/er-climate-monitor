@@ -61,7 +61,7 @@ jobs:
       - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
         run: |
           services=("notification-service" "sensor-registry" "authentication-service" "detection-service")
-          for service in "${services[@]}": do
+          for service in "${services[@]}"; do
             uv run ./service-builder/script.py ./$service $service
           done
           cat ./service-builder/.env
