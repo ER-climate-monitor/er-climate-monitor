@@ -5,37 +5,41 @@ import HttpStatus from 'http-status-codes';
 import { test, expect, describe, beforeAll, afterAll, beforeEach } from '@jest/globals';
 import { 
     createDetection, 
-    connectToDatabase, 
-    createMultipleDetections,
-    closeDatabaseConnection 
+    createMultipleDetections
 } from './utils/mockData';
 import { ERROR_TAG } from '../../src/config/Costants';
 import http from 'http';
 import { DetectionDocument } from '../../src/models/v0/detectionModel';
-
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 describe('Get Detections From Sensor Endpoint', () => {
-    const mongoUri = 'mongodb://localhost:27017';
     let server: http.Server;
+    let mongoServer: MongoMemoryServer;
 
     beforeAll(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        const uri = mongoServer.getUri();
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        } as mongoose.ConnectOptions);
+
         const app = createServer();
         server = http.createServer(app);
         server.listen();
-        await connectToDatabase(mongoUri);
     });
 
     beforeEach(async () => {
         const collections = await mongoose.connection.db?.collections();
-        for (let collection of collections || []) {
+        for (const collection of collections || []) {
             await collection.deleteMany({});
         }
     });
 
     afterAll(async () => {
+        await mongoose.disconnect();
+        await mongoServer.stop();
         server.close();
-                await mongoose.connection.db?.dropDatabase();
-                await closeDatabaseConnection();
     });
 
     test('should return 404 if sensorId does not exist', async () => {
@@ -46,16 +50,15 @@ describe('Get Detections From Sensor Endpoint', () => {
         expect(res.body[ERROR_TAG]).toContain('The input sensor ID does not exist.');
     });
 
-    test('should return 404 if sensorType does not exist', async () => {
+    test('should return 400 if sensorType does not exist', async () => {
         const sensorType = 'invalidType';
         const res = await request(server)
             .get(`/v0/sensor/${sensorType}/123/detections`);
 
         expect(res.status).toBe(HttpStatus.BAD_REQUEST);
         expect(res.body[ERROR_TAG]).toContain(`Unsupported sensor type: ${sensorType}`);
-    }); 
- 
-    
+    });
+
     test('should return all detections for a valid sensor', async () => {
         const sensorType = 'temp';
         const sensorId = 'sensor-1';
@@ -81,16 +84,12 @@ describe('Get Detections From Sensor Endpoint', () => {
             expect(match).toBeDefined();
         }
     });
-   
-    
-    
 
     test('should return the last X detections', async () => {
         const sensorType = 'temp';
         const sensorId = 'sensor-2';
     
         const now = Date.now();
-        //casual order
         const detection3 = await createDetection(sensorType, sensorId, now - 3000);
         const detection4 = await createDetection(sensorType, sensorId, now - 2000);
         const detection2 = await createDetection(sensorType, sensorId, now - 4000);
@@ -104,7 +103,6 @@ describe('Get Detections From Sensor Endpoint', () => {
         expect(res.body).toBeDefined();
         expect(res.body.length).toBe(3);
     
-        //check that the given detections are the last X in time
         const expectedDetections = [detection5, detection4, detection3];
         res.body.forEach((detection: DetectionDocument, index: number) => {
             expect(detection.sensorId).toBe(expectedDetections[index].sensorId);
@@ -114,20 +112,17 @@ describe('Get Detections From Sensor Endpoint', () => {
         });
     });
     
-    
-
     test('should return detections within a timestamp range', async () => {
         const sensorType = 'temp';
         const sensorId = 'sensor-3';
 
-        // Create detections with specific timestamps
         const now = Date.now();
-        const detection1 = await createDetection(sensorType, sensorId, now - 5 * 24 * 60 * 60 * 1000); // 5 days ago
-        const detection2 = await createDetection(sensorType, sensorId, now - 3 * 24 * 60 * 60 * 1000); // 3 days ago
-        const detection3 = await createDetection(sensorType, sensorId, now - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+        const detection1 = await createDetection(sensorType, sensorId, now - 5 * 24 * 60 * 60 * 1000);
+        const detection2 = await createDetection(sensorType, sensorId, now - 3 * 24 * 60 * 60 * 1000);
+        const detection3 = await createDetection(sensorType, sensorId, now - 7 * 24 * 60 * 60 * 1000);
 
-        const fromTimestamp = now - 6 * 24 * 60 * 60 * 1000; // 6 days ago
-        const toTimestamp = now - 2 * 24 * 60 * 60 * 1000; // 2 days ago
+        const fromTimestamp = now - 6 * 24 * 60 * 60 * 1000;
+        const toTimestamp = now - 2 * 24 * 60 * 60 * 1000;
 
         const res = await request(server)
             .get(`/v0/sensor/${sensorType}/${sensorId}/detections?from=${fromTimestamp}&to=${toTimestamp}`);

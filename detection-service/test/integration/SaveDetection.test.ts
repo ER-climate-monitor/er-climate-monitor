@@ -1,36 +1,44 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
-import createServer from '../../../detection-service/src/server'
+import createServer from '../../../detection-service/src/server';
 import HttpStatus from 'http-status-codes';
 import { test, expect, describe, beforeAll, beforeEach, afterAll } from '@jest/globals';
-import { connectToDatabase, closeDatabaseConnection, generateMockDetection } from './utils/mockData';
-import http from 'http';
+import { generateMockDetection } from './utils/mockData';
 import { ERROR_TAG, SUCCESS_TAG } from '../../src/config/Costants';
-import { DetectionDocument, getModelForSensorType } from '../../src/models/v0/detectionModel';
-
+import { getModelForSensorType } from '../../src/models/v0/detectionModel';
+import http from 'http';
+// @ts-ignore
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 describe('Save Detection Endpoint', () => {
-    const mongoUri = 'mongodb://localhost:27017';
     let server: http.Server;
+    let mongoServer: MongoMemoryServer;
 
     beforeAll(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        const uri = mongoServer.getUri();
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        } as mongoose.ConnectOptions);
+
         const app = createServer();
         server = http.createServer(app);
         server.listen();
-        await connectToDatabase(mongoUri);
     });
 
     beforeEach(async () => {
-        const collections = await mongoose.connection.db?.collections();
-        for (let collection of collections || []) {
-            await collection.deleteMany({});
+        const db = mongoose.connection.db!;
+        const collections = await db.collections();
+        for (const coll of collections) {
+            await coll.deleteMany({});
         }
     });
 
     afterAll(async () => {
+        await mongoose.disconnect();
+        await mongoServer.stop();
         server.close();
-        await mongoose.connection.db?.dropDatabase();
-        await closeDatabaseConnection();
     });
 
     test('should return 400 if modelData is missing', async () => {
@@ -45,7 +53,6 @@ describe('Save Detection Endpoint', () => {
     test('should return 201 if detection is successfully saved and check in DB', async () => {
         const sensorType = 'temp';
         const sensorId = 'sensor-1';
-
         const modelData = generateMockDetection(sensorType);
 
         const res = await request(server)
@@ -70,11 +77,11 @@ describe('Save Detection Endpoint', () => {
     test('should return 400 if saving detection fails', async () => {
         const sensorType = 'temp';
         const sensorId = 'sensor-1';
-        const modelData = { ...generateMockDetection(sensorType), value: undefined };
+        const badData = { ...generateMockDetection(sensorType), value: undefined };
 
         const res = await request(server)
             .post(`/v0/sensor/${sensorType}/${sensorId}/detections`)
-            .send(modelData);
+            .send(badData);
 
         expect(res.status).toBe(HttpStatus.BAD_REQUEST);
         expect(res.body[ERROR_TAG]).toBe('Missing required field: value');
