@@ -38,7 +38,7 @@ jobs:
       - name: Install the Python project using UV
         run: |
           cd service-builder
-          uv sync --locked --all-extras --dev
+          uv sync 
  
 
   
