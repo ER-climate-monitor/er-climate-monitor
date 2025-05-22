@@ -1,4 +1,5 @@
-import { Channel, connect, Connection } from 'amqplib';
+import { Channel, ChannelModel, connect } from 'amqplib';
+import assert from 'assert';
 import { config } from 'dotenv';
 import Logger from 'js-logger';
 import { AlertEvent } from 'src/models/v0/alertModel';
@@ -6,7 +7,7 @@ import { AlertEvent } from 'src/models/v0/alertModel';
 config();
 
 class DetectionPublisher {
-    private connection: Connection | undefined;
+    private chm: ChannelModel | undefined;
     private channel: Channel | undefined;
     private connected: boolean = false;
 
@@ -23,14 +24,12 @@ class DetectionPublisher {
 
         try {
             Logger.info('⏳ Connecting publisher to RabbitMQ...');
-            this.connection = await connect(this.brokerUrl);
-            this.channel = await this.connection.createChannel();
+            this.chm = await connect(this.brokerUrl);
+            this.channel = await this.chm.createChannel();
+
+            assert(this.channel !== undefined);
 
             await this.channel.assertExchange(this.EXCHANGE_NAME, 'topic', { durable: true });
-
-            this.connection.on('error', (err) => {
-                throw new Error(`(Connection error): ${JSON.stringify(err)}`);
-            });
 
             this.connected = true;
             Logger.info(`✅ Successfully connected to ${this.EXCHANGE_NAME}!`);
@@ -84,7 +83,7 @@ class DetectionPublisher {
     async close(): Promise<void> {
         try {
             await this.channel?.close();
-            await this.connection?.close();
+            await this.chm?.close();
             this.connected = false;
         } catch (_) {
             this.connected = false;
