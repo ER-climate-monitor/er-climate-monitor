@@ -1,0 +1,26 @@
+{
+  "name": "er-climate-monitor",
+  "version": "1.0.0",
+  "description": "## Requirements",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatteoIorio11/er-climate-monitor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MatteoIorio11/er-climate-monitor/issues"
+  },
+  "homepage": "https://github.com/MatteoIorio11/er-climate-monitor#readme",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.2",
+    "semantic-release": "^24.2.4"
+  }
+}
