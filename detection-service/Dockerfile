@@ -33,7 +33,8 @@ RUN --mount=type=bind,source=package.json,target=package.json \
     npm ci --omit=dev
 RUN npm uninstall tsc && npm install -D typescript
 
-EXPOSE 8080 
+EXPOSE 8080
+EXPOSE 8081
 
 # Run the application.
 CMD npm run build ; npm run start

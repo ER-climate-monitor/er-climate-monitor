@@ -15,7 +15,7 @@ class DetectionPublisher {
     private readonly maxReconnectRetries: number = parseInt(process.env.RECONNECT_RETRIES_NUMBER ?? '5');
     private readonly brokerUrl: string;
 
-    constructor(url: string = process.env.AMQP_URL ?? 'amqp://localhost') {
+    constructor(url: string = process.env.AMPQ_URL ?? 'amqp://localhost') {
         this.brokerUrl = url;
     }
 
@@ -24,6 +24,7 @@ class DetectionPublisher {
 
         try {
             Logger.info('⏳ Connecting publisher to RabbitMQ...');
+            Logger.info(this.brokerUrl)
             this.chm = await connect(this.brokerUrl);
             this.channel = await this.chm.createChannel();
 
