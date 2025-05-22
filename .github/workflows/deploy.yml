@@ -13,6 +13,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     
     steps:
       - name: Clone Cloud utility
@@ -54,8 +55,10 @@ jobs:
           username: _json_key
           password: '${{ secrets.GCP_TOKEN }}'
 
-      - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Build Docker image for each service and deploy the Docker Image on Google Could Platform
         run: |
           ls -l
           services=("notification-service" "sensor-registry" "authentication-service" "detection-service")
