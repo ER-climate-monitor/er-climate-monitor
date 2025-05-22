@@ -1,4 +1,4 @@
-name: Check repo integrity
+name: Repo QA workflow
 
 on:
   push:
