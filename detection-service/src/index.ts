@@ -9,7 +9,7 @@ import SwaggerUi from 'swagger-ui-express';
 import fs from 'fs';
 import YAML from 'yaml';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017';
 
 async function startServer() {
@@ -18,7 +18,7 @@ async function startServer() {
         await mongoose.connect(DB_URL, { dbName: 'detections-database', autoIndex: false });
         console.log('Connected to MongoDB');
 
-        detectionPublisher.connect();
+        await detectionPublisher.connect();
         console.log('Connected to Notification Event Broker!');
 
         Logger.useDefaults();
@@ -33,7 +33,7 @@ async function startServer() {
 
         const server = http.createServer(app);
         setupSocketServer(server);
-        server.listen(3001);
+        server.listen(8081);
     } catch (error) {
         console.error('Failed to connect to the database:', error);
     }
