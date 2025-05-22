@@ -8,7 +8,7 @@
     "dev": "ts-node src/index.ts",
     "lint": "eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write 'src/**/*.{ts,js}'",
-    "test": "nyc --reporter=html mocha --exit dist/test/globals/v0/sensor.ipv4.test.js & mocha --exit dist/test/globals/v0/sensor.ipv6.test.js "
+    "test": "nyc --reporter=lcov mocha --exit dist/test/globals/v0/sensor.ipv4.test.js & mocha --exit dist/test/globals/v0/sensor.ipv6.test.js "
   },
   "keywords": [],
   "author": "",
