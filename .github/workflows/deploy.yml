@@ -42,8 +42,6 @@ jobs:
   
       - name: Authenticate Google Cloud user
         uses: 'google-github-actions/auth@v2'
-        env:
-          GCP_AUTH_TOKEN: '${{ secrets.GCP_TOKEN }}'
         with:
           credentials_json: '${{ secrets.GCP_TOKEN }}'
 
