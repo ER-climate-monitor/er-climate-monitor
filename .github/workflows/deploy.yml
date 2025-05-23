@@ -71,7 +71,7 @@ jobs:
         run: |
           ls -l
           pwd
-          services=( "authentication-service,authentication-service,8080" "detection-service,detection-service,8080" "notification-service,notification-service,8080" "sensor-registry,sensor-registry,8080" "api-gateway,api-gateway,8080" "detection-service,detection-service-socket,8081" )
+          services=( "authentication-service,authentication-service,8080" "detection-service,detection-service,8080" "notification-service,notification-service,8080" "sensor-registry,sensor-registry,8080" "api-gateway,api-gateway,8080" )
           echo "[LOGGER] Activating virtual environment"
           source ./service-builder/.venv/bin/activate
           for service_info in "${services[@]}"; do
