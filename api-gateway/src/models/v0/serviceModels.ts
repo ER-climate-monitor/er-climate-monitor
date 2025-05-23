@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import { NOTIFICATIONS_API } from '../../routes/v0/paths/gatewayPaths';
 
 config();
 
