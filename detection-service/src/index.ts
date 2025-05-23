@@ -23,7 +23,7 @@ async function startServer() {
 
         Logger.useDefaults();
         const app = createServer();
-        app.listen(PORT, () => {
+        const server: http.Server = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
         });
 
@@ -31,9 +31,7 @@ async function startServer() {
         const swaggerDocument = YAML.parse(file);
         app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
 
-        const server = http.createServer(app);
-        setupSocketServer(server);
-        server.listen(8081);
+        setupSocketServer(server)
     } catch (error) {
         console.error('Failed to connect to the database:', error);
     }
