@@ -82,6 +82,5 @@ jobs:
             cd ..
             uv run ./service-builder/script.py $(pwd)/$service $service_name $port
           done
-          cat ./service-builder/.env
 
 
