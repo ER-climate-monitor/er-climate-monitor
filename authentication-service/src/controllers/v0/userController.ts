@@ -90,7 +90,9 @@ const loginAdmin = async (request: Request, response: Response) => {
 
 const registerUser = async (request: Request, response: Response) => {
     const modelData = request.body;
+    Logger.info('Received a request for registering a new User.');
     if (modelData && checkAction(USER_ACTION_FIELD, modelData, REGISTER)) {
+        Logger.info('All the needed data has been sent, processing the user creation.');
         await register(
             fromBody<string>(modelData, USER_EMAIL_FIELD, ''),
             fromBody<string>(modelData, USER_PASSWORD_FIELD, ''),
