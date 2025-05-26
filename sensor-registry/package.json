@@ -2,6 +2,9 @@
   "name": "@er-climate-monitor/sensor-registry",
   "version": "0.0.0-semantically-released",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
