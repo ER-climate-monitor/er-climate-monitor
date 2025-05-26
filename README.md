@@ -75,9 +75,9 @@ npm run dev
 Now, visit the prompted host and port in your browser (typically:
 `[localhost:5173](http://localhost:5173/)`).
 
-## Tear Up
+## Tear Down
 
-1. All sensors can be teared up with `<ctrl>-C`, make sure to press it only
+1. All sensors can be teared down with `<ctrl>-C`, make sure to press it only
    once in order to let the sensor tog gracefully stop.
 2. `<ctrl>-C` on the API-Gateway
 3. You can either run:
