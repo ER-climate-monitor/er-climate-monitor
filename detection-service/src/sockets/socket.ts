@@ -20,7 +20,7 @@ export const setupSocketServer = (server: http.Server) => {
             socket.join(sensorId);
         });
 
-          socket.on('unsubscribe', (sensorId: string) => {
+        socket.on('unsubscribe', (sensorId: string) => {
             console.log(`Client ${socket.id} unsubscribed from sensor ${sensorId}`);
             socket.leave(sensorId);
         });
