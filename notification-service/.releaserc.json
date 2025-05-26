@@ -3,7 +3,11 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/npm"
-  ]
+    "@semantic-release/npm",
+    "@semantic-release/github"
+  ],
+  "npmPublish": true,
+  "pkgRoot": ".",
+  "repositoryUrl": "https://github.com/MatteoIorio11/er-climate-monitor"
 }
 
