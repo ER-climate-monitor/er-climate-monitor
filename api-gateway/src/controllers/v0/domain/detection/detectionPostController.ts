@@ -11,6 +11,7 @@ Logger.useDefaults();
 const detectionPostHandler = async (request: Request, response: Response) => {
     let endpointPath = removeServiceFromUrl(DETECTION_ENDPOINT, request.url).replace('detection', 'sensor');
     try {
+        Logger.info('Received a request for saving a new detection. The input data is: ' + JSON.stringify(request.body));
         const httpResponse = await detectionService.saveDetectionOperation(endpointPath, request.headers, request.body);
         response = fromHttpResponseToExpressResponse(httpResponse, response);
         response.send(httpResponse.data);
