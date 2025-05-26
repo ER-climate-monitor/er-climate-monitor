@@ -1,3 +1,25 @@
+# [1.5.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.4.0...v1.5.0) (2025-05-26)
+
+
+### Bug Fixes
+
+* **ci:** fix labeler matches format ([236d4cb](https://github.com/MatteoIorio11/er-climate-monitor/commit/236d4cb40226257f7e502f26f6f8721cdaf21c4a))
+* **ci:** remove .env opening ([983516f](https://github.com/MatteoIorio11/er-climate-monitor/commit/983516f222122cd03b3d2cb3f293b948bbb97c71))
+* **ci:** remove socket service. Use the single detection service for both operations ([32e1c51](https://github.com/MatteoIorio11/er-climate-monitor/commit/32e1c51a69cd254ac6d7fde8adc8db7aaccc94c5))
+* **communication:** fix communication between gateway and services, remove from the headers the 'Host' value. (Ci ho messo un giorno a capire che Host distruggeva la communicazione, ma sono fiero. Come disse un mio amico 'I am not asking for one month, I am not asking for one week, but can you give me one more day. cit February) ([f8625ab](https://github.com/MatteoIorio11/er-climate-monitor/commit/f8625ab8fd54eaf4499300c9533baa7c4d93b4fb))
+* **lint:** add ; at the end of the setupSockerServer function ([4068771](https://github.com/MatteoIorio11/er-climate-monitor/commit/4068771f21071e7fcced676e372c2021c5cc4d1f))
+* **lint:** fix indentation ([facb343](https://github.com/MatteoIorio11/er-climate-monitor/commit/facb343a5dc68daa5d81d8a31472ca06c36fadd1))
+* **lint:** fix synstax using linter ([40bea24](https://github.com/MatteoIorio11/er-climate-monitor/commit/40bea245b58a0d0bdb89b6c6b0727153f0b713ea))
+
+
+### Features
+
+* **cors:** allow any origin ([00918ea](https://github.com/MatteoIorio11/er-climate-monitor/commit/00918ea9ecc8cc5e682008de6e0b588c36f4a439))
+* get http server and use it for the socket creation ([0520498](https://github.com/MatteoIorio11/er-climate-monitor/commit/0520498309ef52489058bb32e14754ce3e4874c3))
+* **log:** add more log ([518189d](https://github.com/MatteoIorio11/er-climate-monitor/commit/518189d88a8a6feaea1b219ded5b043ec32970b8))
+* **log:** add more log info ([781ce9f](https://github.com/MatteoIorio11/er-climate-monitor/commit/781ce9fe0f77131418a77617c4db2c133c1119a8))
+* **logs:** add new log for a post request ([775bc28](https://github.com/MatteoIorio11/er-climate-monitor/commit/775bc284a3b18615eae45135b1a9c8c2c73f4c69))
+
 # [1.4.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.3.0...v1.4.0) (2025-05-22)
 
 
