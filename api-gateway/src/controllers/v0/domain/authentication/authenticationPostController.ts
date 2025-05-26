@@ -62,7 +62,7 @@ const authenticationPostHandler = async (request: Request, response: Response) =
     switch (action) {
         case REGISTER_ACTION: {
             try {
-                Logger.info("Requested to register a new user.");
+                Logger.info('Requested to register a new user.');
                 const httpResponse = await authenticationService.registerOperation(
                     endpointPath,
                     request.headers,
