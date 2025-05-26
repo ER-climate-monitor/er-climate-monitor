@@ -31,7 +31,7 @@ async function startServer() {
         const swaggerDocument = YAML.parse(file);
         app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
 
-        setupSocketServer(server)
+        setupSocketServer(server);
     } catch (error) {
         console.error('Failed to connect to the database:', error);
     }
