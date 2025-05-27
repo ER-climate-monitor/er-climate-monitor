@@ -52,7 +52,7 @@
     "mongodb-memory-server": "^10.1.4",
     "prettier": "3.5.3",
     "socket.io-client": "^4.8.1",
-    "testcontainers": "^10.27.0",
+    "testcontainers": "^11.0.0",
     "ts-jest": "^29.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
