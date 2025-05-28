@@ -1,14 +1,15 @@
 api-gateway:
-  - ['api-gateway/**']
+  - api-gateway/**
 authentication-service:
-  - ['authentication-service/**']
+  - authentication-service/**
 detection-service:
-  - ['detection-service/**']
+  - detection-service/**
 notification-service:
-  - ['notification-service/**']
+  - notification-service/**
 sensor-registry:
-  - ['authentication-service/**']
+  - sensor-registry/**
 frontend:
-  - ['er-climate-monitor-frontend/**']
+  - er-climate-monitor-frontend/**
 sensors:
-  - ['er-climate-monitor-sensors/**']
+  - er-climate-monitor-sensors/**
+
