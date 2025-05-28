@@ -1,3 +1,7 @@
+---
+title: Index
+layout: default
+---
 # ER-Climate-Monitor
 
 - [Introdcution](./1-introduction.md)
