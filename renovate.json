@@ -23,6 +23,10 @@
         "npm"
       ],
       "groupName": "Root DevTools"
+    },
+    {
+      "matchPackageNames": ["express"],
+      "enabled": false
     }
   ],
   "enabledManagers": [
