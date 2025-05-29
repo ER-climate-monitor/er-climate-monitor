@@ -6,8 +6,7 @@ layout: default
 
 ## TODO
 
-We are very happy with the overall result, we were able to create a very well defined architecture, in which every service is responsible for a single domain. Then for each micro-service we have also introduced the opportunity to deploy it on *Google Cloud Platform* and by making it accessible from the outside world and not only locally.
-
+We are extremely pleased with the overall outcome. We successfully designed a well-defined architecture in which each service is dedicated to a specific domain, ensuring clear boundaries and responsibilities. A key achievement is that all systems are now highly independent, allowing them to operate, evolve, and scale autonomously. Additionally, for each microservice, we introduced the capability to deploy it on Google Cloud Platform, making it accessible not only locally but also externally. This marks a significant step forward in terms of flexibility, scalability, and readiness for production environments.
 
 ## Future Works
 
