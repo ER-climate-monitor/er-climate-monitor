@@ -6,6 +6,35 @@ layout: default
 
 ## Continous Deployment
 
+### Google Cloud
+
+Before we started deploy all our images, it was necessary to decide which cloud provider to use. Among all the possible choices our decision was between two providers (here are listed some of the advantages):
+1. *Azure*: the Alma Mater Studiorum gives 100$ to use with them;
+2. *Google Cloud*: it is easy to use, it is really fast, it has a lot of libraries by which it is possible to use it, it has a lot of support, it has a lot of services.
+So driven by all the advantages of GCP, we choose to use it. Among all the possible services that *Google Cloud* exposes, we had to use only: *Google Cloud Artifact Registry* and *Google Cloud Run*.
+
+#### Google Cloud Artifact Registry
+
+The *Google Cloud Artifact Registry* is a repository where it is possible to store *Docker* images. All the images that we build, must be tagged with a specific ID, and pushed inside the *Registry*. All this can be achieved by using the standard *docker build* command, here a snippet of our command: 
+
+```bash
+docker build --push -t {GCP-REGION}-docker.pkg.dev/{GCP-PROJECT}/{name-of-repository}/{tag-of-the-image} .
+```
+
+By default the last image that is pushed inside the *Registry* is labelled as *latest*, in this way the deploy is far more easy, because the deploy will always take the latest image pushed.
+
+#### Google Cloud Run
+
+It is a *Google* service that enables the automatic deployment of container images stored in a *Google Cloud Archive*. This service also supports automatic scaling—dynamically adjusting the number of instances based on incoming request traffic—allowing seamless handling of varying workloads. To deploy an image, a specific Google Cloud command is used:
+
+```bash
+gcloud run deploy {SERVICE-NAME}--image {Docker-TAG} --project {GCP-PROJECT} --region {GCP-REGION} --port {PORT}
+```
+
+In this way we are able to deploy our instances into the cloud and make it available to the internet.
+
+### Workflow for deploying the services
+
 This is the final step for deploying all our services into the cloud. We achieved this goal by creating a specific *github action* for this task. The action is called "Deploy on Google Cloud Platform" and it is divided into multiple steps:
 1. Checkout of the current repository;
 2. Clone the cloud utility *service-builder*;
