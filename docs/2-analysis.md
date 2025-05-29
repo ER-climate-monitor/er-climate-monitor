@@ -118,6 +118,19 @@ an individual of a subset of individuals).
 
 ### The Ubiquitous Language
 
+| **Name** | **Description** |
+| ---------| ----------------|
+| Web-Interface | Actual application, accessible via the web |
+| User | Generic term referring to an entity consuming a limited set of the system's capabilities |
+| Logged User | Users registered into the system, can subscribe and receive alerts |
+| Admin | Special kind of Logged Users that, having all functionalities of every logged users, can manage sensors deployed in the region |
+| Weather | Generic term referring to an environmental atmospheric condition or measurements |
+| Weather Event | A Weather Event is emitted when an environment atmospheric condition is met |
+| Alert | A Weather Event triggers Alerts on the user's end |
+| Notification | An Alert is reified on the user's end by means of a notification on the web-interface or by email |
+| Detection | A single measurement of a specific weather/atmospheric phenomena |
+| Sensor | An IoT device which is capable of measuring a specific weather/atmospheric phenomena, i.e. produces Detections |
+
 ---
 
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
