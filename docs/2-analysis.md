@@ -222,7 +222,7 @@ an individual of a subset of individuals).
 | **Weather Event** | A Weather Event is emitted when an environment atmospheric condition is met |
 | **Alert** | A Weather Event triggers Alerts on the user's end |
 | **Notification** | An Alert is reified on the user's end by means of a notification on the web-interface or by email |
-| **Query** | A predicate of the form `<name>: [>|<] <threshold>` (e.g. "threshold90%: > 7.5") that lets a user define custom rules for the alert system. |
+| **Query** | A predicate based on a threshold that lets a user define custom rules for the alert system. |
 | **Detection** | A single measurement of a specific weather/atmospheric phenomena |
 | **Sensor** | An IoT device which is capable of measuring a specific weather/atmospheric phenomena, i.e. produces Detections |
 | **Type** | The actual type of the Sensor, which defines the type of its Detections (i.e. The ones listed in the above table) |
