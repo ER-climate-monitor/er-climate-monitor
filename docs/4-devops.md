@@ -4,7 +4,14 @@ layout: default
 ---
 # DevOps
 
+## Versioning
+TBD
+
+## Licensing
+TBD
+
 ## Docker and Containerization
+
 Once we developed all our microservices, it was necessary to find a way to easily deploy all of them in cloud. In order to do so, we opted to use *Docker*, and by doing that, we created for each microservice a *Dockerfile*. This file helps us in creating a *Docker* image, that contains all the necessary dependencies for run the instance. It is also important to specify inside each *Dockerfile* a command for starting the service. Each microservice has its own specific *Dockerfile*, in which it also specifies all the necessary *ENV* variables that each system needs for configuring itself. Here can be seen an example of the Api Gateway's Dockerfile.
 
 ```Dockerfile
