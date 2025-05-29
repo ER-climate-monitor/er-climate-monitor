@@ -237,6 +237,32 @@ Identified bounded contexts can be summarised by the following diagram:
 
 ![ER-Climate-Monitor bounded contexts](./images/bounded-contexts.drawio.png)
 
+It is possible to distinguish four distinct bounded contexts:
+1. **Sensor** which will include all domain aspects of sensor's related objects,
+    operations upon them and relationships with other contexts. Inside this context,
+    Sensors are in the center, and thus have the richest representation among the
+    whole domain.  This subdomain is coupled with the Detection Management service,
+    which are integrated following the **customer-supplier**
+    cooperation pattern, where actual detections are generated and emitted by the
+    Sensor context, and acting as a contract upon which the Detection Management
+    must adapt to.
+2. **Detections Management**: this context manages detection persistency,
+    insight and data analysis as well as communicating with the Alert Management
+    context.  These two services cooperate through the **partnership model**,
+    meaning that changes in the communication contract's APIs are notified so that
+    the other team can adapt. When it comes to the cooperation with the Sensor
+    context, an **anti-corruption** layer is mandatory in order to protect this context
+    from the heterogeneity of Sensors.
+3. **Alerts** context is mainly responsible of representing and managing
+    subscriptions, as well as to provide the logic for implementing ad-hoc queries
+    requested by users that, when triggered, emit a notification for a certain user
+    or a subset of them. Alerts context communicate with User Management by means of
+    domain events which will be triggered on top of query matching, following a
+    customer-supplier mechanism (*Conformist*). 
+4. **User Management** is responsible for representing and manage all user
+    related information, as well as the definition of user's boundaries depending on
+    their role (unregistered, logged-in and admin).
+
 ---
 
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
