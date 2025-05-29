@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.5.4...v2.0.0) (2025-05-29)
+
+
+* feat!: force major release ([71644a2](https://github.com/MatteoIorio11/er-climate-monitor/commit/71644a20e348d25f719204704fd9c2e092278f9b))
+
+
+### BREAKING CHANGES
+
+* nothing really breaks, trying to trigger sem-release :)
+
 ## [1.5.4](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.5.3...v1.5.4) (2025-05-29)
 
 
