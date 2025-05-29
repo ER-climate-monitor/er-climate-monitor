@@ -1,3 +1,10 @@
+## [1.5.4](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.5.3...v1.5.4) (2025-05-29)
+
+
+### Bug Fixes
+
+* **ci:** properly indent yaml ([d772b4a](https://github.com/MatteoIorio11/er-climate-monitor/commit/d772b4a9fc8f770fb1a018e707931b1fc52501d8))
+
 ## [1.5.3](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.5.2...v1.5.3) (2025-05-29)
 
 
