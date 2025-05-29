@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.5.2...v1.5.3) (2025-05-29)
+
+
+### Bug Fixes
+
+* **ci:** fix labeler matching ([95f442f](https://github.com/MatteoIorio11/er-climate-monitor/commit/95f442f222d9b96df0b1a4ab5a9100c48fcefd11))
+
 # [1.5.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.4.0...v1.5.0) (2025-05-26)
 
 
