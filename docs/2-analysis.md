@@ -117,3 +117,12 @@ capable of properly separate the domain into smaller chunks manageable by differ
 an individual of a subset of individuals). 
 
 ### The Ubiquitous Language
+
+---
+
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+  <a href="/er-climate-monitor/1-introduction.html">&laquo; Previous</a>
+  <a href="/er-climate-monitor/index.html" style="text-align: center;">Home</a>
+  <a href="/er-climate-monitor/3-design.html">Next &raquo;</a>
+</div>
+

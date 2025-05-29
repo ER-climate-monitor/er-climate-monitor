@@ -84,3 +84,12 @@ We choose Python3 as the programming language for implementing a sensor, in this
 The last important aspect to discuss is our Domain Specific Language (DSL). We introduced an internal DSL to assist users in creating their own sensors easily by providing a human-readable language. This DSL guides users through the definition of sensor parameters and automatically generates a corresponding Python 3 file that represents the configured sensor.
 
 ### DSL Technologies
+
+---
+
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+  <a href="/er-climate-monitor/2-analysis.html">&laquo; Previous</a>
+  <a href="/er-climate-monitor/index.html" style="text-align: center;">Home</a>
+  <a href="/er-climate-monitor/4-devops.html">Next &raquo;</a>
+</div>
+

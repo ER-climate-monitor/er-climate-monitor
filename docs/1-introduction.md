@@ -32,3 +32,12 @@ Several technologies will be used to develop this website, including:
 * **Database**: MongoDB, Mongoose, Atlas  
 The website must be accessible and compliant with WCAG standards.
 
+
+---
+
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+  <a href="/er-climate-monitor/index.html">&laquo; Previous</a>
+  <a href="/er-climate-monitor/index.html" style="text-align: center;">Home</a>
+  <a href="/er-climate-monitor/2-analysis.html">Next &raquo;</a>
+</div>
+

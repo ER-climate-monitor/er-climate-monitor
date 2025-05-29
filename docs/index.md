@@ -15,3 +15,12 @@ layout: default
 - [Deployment](./5-deployment.md)
 
 - [Conclusions](./6-conclusions.md)
+
+---
+
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+  <span></span>
+  <a href="/er-climate-monitor/index.html" style="text-align: center;">Home</a>
+  <a href="/er-climate-monitor/1-introduction.html">Next &raquo;</a>
+</div>
+
