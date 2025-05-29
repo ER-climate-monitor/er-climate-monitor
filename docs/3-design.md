@@ -81,9 +81,56 @@ We choose Python3 as the programming language for implementing a sensor, in this
 
 ## DSL Overview
 
-The last important aspect to discuss is our Domain Specific Language (DSL). We introduced an internal DSL to assist users in creating their own sensors easily by providing a human-readable language. This DSL guides users through the definition of sensor parameters and automatically generates a corresponding Python 3 file that represents the configured sensor.
+The last important aspect to discuss is our Domain Specific Language (DSL). We introduced an internal DSL to assist users in creating their own sensors easily by providing a human-readable language. This DSL guides users through the definition of sensor parameters and automatically generates a corresponding Python 3 file that represents the configured sensor. Here it is an example of our language: 
+
+```yaml
+{
+    name "Diga di Ridracoli"
+    infos {
+        description "Sensore idrometrico diga di Ridracoli"
+        type idro_level
+        queries [
+            - threshold "soglia90%" > "570"
+            - threshold "soglia100%" > "575"
+        ]
+    }
+
+    network {
+        port 1926
+        ip "10.100.101.241"
+    }
+
+    gateway {
+        url "api-gateway-17633123551.europe-west8.run.app"
+        port 8080
+        registerRoute "/register"
+        shutdownRoute "/shutdown"
+        detectionRoute "/detection"
+        alertRoute "/alert"
+    }
+
+    registry {
+        registryUrl "sensor-registry-17633123551.europe-west8.run.app/v0/sensor"
+        key "secretKey"
+    }
+
+    cronjob {
+        from friday to saturday at "12":"00"
+    }
+}
+```
+
+The DSL significantly streamlines the process of creating sensors for system administrators. It enforces strict typing on all parameters, ensuring that every sensor is defined with complete accuracy. For instance, it validates that network.port values fall within the allowed range [0, 65,535] and that network.ip entries are valid IP addresses. This built-in validation reduces errors and improves reliability across the system. Additionally, the DSL simplifies cron job scheduling by allowing administrators to define schedules using a human-readable syntax, which is then automatically converted into the appropriate Python-compatible format.
 
 ### DSL Technologies
+
+The Domain Specific Language was created using XText with Java, and also in order to improve the usability of the system, the DSL project is also dockerized. In this way every admin can simply run the project with this command:
+
+```bash
+docker run -p 8080:8080 --name deleteme sfuri/er-climate-monitor-dsl-editor:1.0.4
+```
+
+Using this service, the administrator can define a sensor and check if there are no errors in its definition, after doing so the admin has to create a file "<my-sensor-config>.uanciutri" that will be given as input to the sensor generator software for the real sensor creation.
 
 ---
 
