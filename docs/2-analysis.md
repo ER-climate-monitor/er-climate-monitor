@@ -214,7 +214,8 @@ an individual of a subset of individuals).
 | **Name** | **Description** |
 | ---------| ----------------|
 | **Web-Interface** | Actual application, accessible via the web |
-| **User** | Generic term referring to an entity consuming a limited set of the system's capabilities |
+| **User** | Generic term referring to an entity consuming a set of the system's capabilities |
+| **Unregistered-User** | User consuming a limited set of the system's capabilities |
 | **Logged User** | Users registered into the system, can subscribe and receive alerts |
 | **Admin** | Special kind of Logged Users that, having all functionalities of every logged users, can manage sensors deployed in the region |
 | **Weather** | Generic term referring to an environmental atmospheric condition or measurements |
@@ -227,7 +228,14 @@ an individual of a subset of individuals).
 | **Type** | The actual type of the Sensor, which defines the type of its Detections (i.e. The ones listed in the above table) |
 | **Dashboard** | An element of the web interface, it let's users to interact with it |
 | **Sensor Panel** | Admin's remote sensors management tool |
-| **Notification Dashboard** | Dashboard that let's registered users to subscribe/unsubscribe to certain topics
+| **Notification Dashboard** | Dashboard that let's registered users to subscribe/unsubscribe to certain topics |
+| **Map** | Emilia-Romagna's map in the main dashboard accessible even by unregistered users. |
+
+### Bounded Contexts
+
+Identified bounded contexts can be summarised by the following diagram:
+
+![ER-Climate-Monitor bounded contexts](./images/bounded-contexts.drawio.png)
 
 ---
 
