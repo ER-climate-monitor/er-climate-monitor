@@ -65,4 +65,5 @@ Another necessary part that we had to develop, concerned the sensor. This object
 ### Sensor Technologies
 We choose Python3 as the programming language for implementing a sensor, in this way we were capable of creating a complex architecture easily. The sensor, in order to be able to receive messages from the outside, It is implemented using *FastApi*, by doing so the sensor is a http server, that exposes some routes for interacting with the outside world and for making the interaction with the sensor accessible from remote. We also used *apscheduler* for automatizing the scheduling of a task in specific intervals of time, and finally we used the library *uvicorn* for starting the http server.
 ## DSL Overview
+The last thing that It is importat to discuss is our Domain Specific Language, we decided to introduce an internal DSL for helping customers in creating their own sensors easily by providing to them a human readable language. The DSL, helps the user in to defining the most important values for 
 ### DSL Technologies
