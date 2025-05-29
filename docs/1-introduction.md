@@ -13,6 +13,7 @@ Our project aims to:
 * Implement a notification system regarding different weather events;
 * Provide real-time access to data visualization;
 * Make the site responsive to ensure access across different devices;
+
 ### Context and Stakeholders
 Our website will primarily be used by the citizens of the Emilia-Romagna region. In addition to residents, the site will also be useful for those transiting or staying temporarily in the area.
 ### Technologies
