@@ -100,13 +100,106 @@ Personas represent typical users of our website, based on research and assumptio
 2. **Personas 2**: The second persona is Ester Alfano, aged 39, who works in hospital cleaning and sanitation. Her goal is to monitor the weather in Emilia-Romagna, which is often affected by floods and overflows, to travel to and from work safely. Her frustration is the lack of a site that keeps her constantly updated with notifications about weather events. She primarily uses a smartphone.
 3. **Personas 3**: The third and final persona is Mario Le Pinze, aged 27, who monitors atmospheric sensors across Emilia-Romagna. He has permission to interact with installed sensors, including modifying them. His frustration is the absence of a website offering a simple interface for managing and filtering sensors. He mainly uses a computer.
 
-### Usage Scenarios
+
+#### Usage Scenarios
 
 Usage scenarios illustrate typical situations in which users interact with the website.
 1. **Scenario 1**: Real-time monitoring of the situation. The personas involved here are Stefano Vincenzi and Ester Alfano. The scenario involves planning a trip or visit within Emilia-Romagna. They use the website to monitor rainfall, temperature, and other data along their route. The site must provide simple and effective access to data.
 2. **Scenario 2**: Receiving notifications. This scenario involves Ester Alfano. Every morning, she commutes to work, but Emilia-Romagna is increasingly affected by severe storms leading to floods. Since she travels near rivers, she needs real-time notifications (e.g., "if more than X mm of rain falls") to avoid blocked roads or unsafe conditions. The website must provide a real-time notification system with options for push notifications such as email.
 3. **Scenario 3**: Sensor maintenance by Admins. This final scenario applies to a limited group of users—**Admins**. For example, Mario Le Pinze can interact with sensors to change sampling parameters, schedules, and even shut them down. In addition to these functions, the website must also offer an efficient sensor search mechanism with filtering capabilities.
 
+### Use Cases
+
+**Use Case #1**: Unregistered user capabilities.
+```
+As a non-logged user
+I want to browse current weather and atmospheric data without registering
+So that I can quickly check conditions before deciding whether to sign up.
+```
+
+**Use Case #2**: Secure registration of a user, and registered user capabilities.
+```
+As a user
+I want to register for an account securely
+So that I can gain access to subscription and alert features.
+```
+
+**Use Case #3**: Registered user login for accessing web interface.
+```
+As a registered user
+I want to log in with my credentials
+So that I can view and personalize my dashboard.
+```
+
+**Use Case #4**: Registered User subscription capability.
+```
+As a registered user
+I want to subscribe to rain-fall alerts in my commute area
+So that I receive push notifications if precipitation exceeds my threshold.
+```
+
+**Use Case #5**: Registered User unsubscription capability.
+```
+As a registered user
+I want to unsubscribe from humidity alerts
+So that I stop receiving notifications that aren’t relevant to me.
+```
+
+**Use Case #6**: Filter sensors' data capability.
+```
+As a user
+I want to filter real-time sensor data by event type (e.g., wind, rain)
+So that I can focus on the conditions that matter for my activity.
+```
+
+**Use Case #7**: Location-based data filtering.
+```
+As a registered user
+I want to filter sensor data by geographic location
+So that I can monitor only those stations along my route.
+```
+
+**Use Case #8**: Threshold specific alerting.
+```
+As a registered user
+I want to create a query that sends a notification when Savio river level reaches 7.5m
+So that I can understand if my basement is risking flooding.
+```
+
+**Use Case #9**: Admin can rename sensors.
+```
+As an admin (Mario Le Pinze)
+I want to rename a deployed sensor
+So that its label accurately reflects its location or purpose.
+```
+
+**Use Case #10**: Admin can shut down sensors.
+```
+As an admin
+I want to shut down a malfunctioning sensor
+So that I prevent bad data from being ingested into the system.
+```
+
+**Use Case #11**: Admin can reconfigure sensors network's parameters.
+```
+As an admin
+I want to update a sensor’s network parameters remotely
+So that I can optimize data throughput without physical intervention.
+```
+
+**Use Case #12**: Managing notification dashboard by registered users.
+```
+As a registered user
+I want to see a notification dashboard showing all unread alerts
+So that I can quickly review and mark them as read when I’ve handled them.
+```
+
+**Use Case #13**: Web interface must show at least data spanning in one week.
+```
+As a user
+I want at least one week of historical weather data stored
+So that users can analyze recent trends and receive alerts based on past patterns.
+```
 --- 
 
 ## Domain Driven Design
@@ -128,8 +221,13 @@ an individual of a subset of individuals).
 | **Weather Event** | A Weather Event is emitted when an environment atmospheric condition is met |
 | **Alert** | A Weather Event triggers Alerts on the user's end |
 | **Notification** | An Alert is reified on the user's end by means of a notification on the web-interface or by email |
+| **Query** | A predicate of the form `<name>: [>|<] <threshold>` (e.g. "threshold90%: > 7.5") that lets a user define custom rules for the alert system. |
 | **Detection** | A single measurement of a specific weather/atmospheric phenomena |
 | **Sensor** | An IoT device which is capable of measuring a specific weather/atmospheric phenomena, i.e. produces Detections |
+| **Type** | The actual type of the Sensor, which defines the type of its Detections (i.e. The ones listed in the above table) |
+| **Dashboard** | An element of the web interface, it let's users to interact with it |
+| **Sensor Panel** | Admin's remote sensors management tool |
+| **Notification Dashboard** | Dashboard that let's registered users to subscribe/unsubscribe to certain topics
 
 ---
 
