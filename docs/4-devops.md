@@ -38,17 +38,17 @@ The Dockerfile is used inside the CD pipeline, for automatically build the image
 Before we started deploy all our images, it was necessary to decide which cloud provider to use. Among all the possible choices our decision was between two providers (here are listed some of the advantages):
 1. *Azure*: the Alma Mater Studiorum gives 100$ to use with them;
 2. *Google Cloud*: it is easy to use, it is really fast, it has a lot of libraries by which it is possible to use it, it has a lot of support, it has a lot of services.
-So driven by all the advantages of GCP, we choose to use it. Among all the possible services that *Google Cloud* exposes, we had to use only: *Google Cloud Archive* and *Google Cloud Run*.
+So driven by all the advantages of GCP, we choose to use it. Among all the possible services that *Google Cloud* exposes, we had to use only: *Google Cloud Artifact Registry* and *Google Cloud Run*.
 
-#### Google Cloud Archive
+#### Google Cloud Artifact Registry
 
-The *Google Cloud Archive* is a repository where it is possible to store *Docker* images. All the images that we build, must be tagged with a specific ID, and pushed inside the *Archive*. All this can be achieved by using the standards *docker build* command, here a snippet of our command: 
+The *Google Cloud Artifact Registry* is a repository where it is possible to store *Docker* images. All the images that we build, must be tagged with a specific ID, and pushed inside the *Registry*. All this can be achieved by using the standard *docker build* command, here a snippet of our command: 
 
 ```bash
 docker build --push -t {GCP-REGION}-docker.pkg.dev/{GCP-PROJECT}/{name-of-repository}/{tag-of-the-image} .
 ```
 
-By default the last image that is pushed inside the *Archive* is labelled as *latest*, in this way the deploy is far more easy, because the deploy will always take the latest image pushed.
+By default the last image that is pushed inside the *Registry* is labelled as *latest*, in this way the deploy is far more easy, because the deploy will always take the latest image pushed.
 
 #### Google Cloud Run
 
