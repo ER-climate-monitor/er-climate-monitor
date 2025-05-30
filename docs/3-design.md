@@ -125,15 +125,75 @@ The last important aspect to discuss is our Domain Specific Language (DSL). We i
 
 The DSL significantly streamlines the process of creating sensors for system administrators. It enforces strict typing on all parameters, ensuring that every sensor is defined with complete accuracy. For instance, it validates that network.port values fall within the allowed range [0, 65,535] and that network.ip entries are valid IP addresses. This built-in validation reduces errors and improves reliability across the system. Additionally, the DSL simplifies cron job scheduling by allowing administrators to define schedules using a human-readable syntax, which is then automatically converted into the appropriate Python-compatible format.
 
+The DSL let users define correct sensor's configurations. The key components of sensors can be summarised as follows:
+- $\texttt{infos}$: this set of configurations contains sensor's main information along with the definition of queries
+  - $\texttt{queries}$ are defined as predicates with the following form:
+    `<query_name> [>|<] "value"`, where value can be a floating point value or an integer.
+- $\texttt{network}$ defines sensor's specific network information, namely its
+    ip and port. For local testing and configuration, this must be set to a local
+    network interface (i.e. `127.0.0.1`).
+- $\texttt{gateway}$ block specifies the network location of the api-gateway along with:
+    - sensor's registering route
+    - sensor's shutdown route
+    - sensor's detection route
+    - sensor's alert route
+- $\texttt{registry}$ contains similar information of gateway, with the
+    exception that URL and the secret token must be specified for the registry
+    component.
+- $\texttt{cronjob}$ specifies the frequency of detection sending to the
+    detection service. You can define cronjobs in the following manners:
+    - `every [DAY] at <hour>:<minutes>` runs the given day at specific hour and minutes;
+    - `every [DAY] every <value> [hours|minutes]` runs every day every X hours or minutes;
+    - `from [DAY] to [DAY] at <hour>:<minutes>` runs for the given range of days at specific hour and minutes;
+    - `from [DAY] to [DAY] every <value> [hours|minutes]` runs for the given range of days every X hours or minutes;
+`
+
 ### DSL Technologies
 
-The Domain Specific Language was created using XText with Java, and also in order to improve the usability of the system, the DSL project is also dockerized. In this way every admin can simply run the project with this command:
+The Domain Specific Language was created using XText with Java, and also in
+order to improve the usability of the system, the DSL project is also
+decomposed and deployed into two useful components: a dockerised web
+editor and an all in one generator that from DSL code produces a
+sensor's python script ready to be run.
+
+#### Web Editor
+The web editor has been deployed in dockerhub, and you can run an instance of it with:
 
 ```bash
 docker run -p 8080:8080 --name dsl-editor sfuri/er-climate-monitor-dsl-editor:1.0.4
 ```
 
-Using this service, the administrator can define a sensor and check if there are no errors in its definition, after doing so the admin has to create a file "<my-sensor-config>.uanciutri" that will be given as input to the sensor generator software for the real sensor creation.
+Using this service, the administrator can define a sensor and check if there are
+no errors in its definition, after doing so the admin has to create a file
+"<my-sensor-config>.uanciutri" that will be given as input to the sensor
+generator software for the real sensor creation.
+
+#### Sensor Generator
+
+Actual sensor's code is a simple python web server which, for testing purposes,
+it is backed by a scraper in order to provide real data about Emilia Romagna
+weather conditions. In a real word scenario, this web server will be backed by
+the actual sensor deployed in the environment.
+Having said that, the generator simply parses a configuration file written
+with the DSL and produces a valid sensor web server ready to be deployed.
+This generator is released as a jar in our repository, making it suitable
+to use it as a simple tool for fast conversion.
+
+Having the latest version of the jar, you can easily run the generation with:
+
+```bash
+java -jar sensorDsl-v0.2.6.jar <absolute_dsl_file_path> <absolute_output_path>
+```
+
+#### All-in-one solution
+
+A simple web interface has been created in order to provide this two functionalities
+in the same place, reducing the time required for building new sensors.
+
+You can find the dsl-sensor-generator [here](https://github.com/ER-climate-monitor/er-climate-monitor-sensors/tree/main/dsl-sensor-generator).
+
+Further refinements of this simple application can be made, but they're left for
+future developments.
 
 ---
 
