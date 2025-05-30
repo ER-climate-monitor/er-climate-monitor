@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MatteoIorio11/er-climate-monitor.git"
+    "url": "git+https://github.com/ER-climate-monitor/er-climate-monitor.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MatteoIorio11/er-climate-monitor/issues"
+    "url": "https://github.com/ER-climate-monitor/er-climate-monitor/issues"
   },
-  "homepage": "https://github.com/MatteoIorio11/er-climate-monitor#readme",
+  "homepage": "https://github.com/ER-climate-monitor/er-climate-monitor#readme",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
