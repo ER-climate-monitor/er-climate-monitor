@@ -10,8 +10,37 @@ To improve our development workflow and maintain a high standard of code quality
 
 ### Automatic Release
 
-### Licensing
+The automatic release workflow helps us in deliverying the new code changes to users without manual intervention. The workflow automatically runs all the tests defined inside each service (creating also the coverage), checks the synstanx using eslint. Then, after all this preliminary operations, if all of them exit succesfully, the system will automatically create a release, available inside the Project's release section.
 
+### Automatic Labelling of Pull Requests
+
+This action helps reviewers quickly understand what parts of the codebase are affected. This action is always triggered on pull requests events and assign the correct label using the following rules: 
+
+```yaml
+ApiGateway:
+- changed-files:
+    - any-glob-to-any-file: 'api-gateway/**'
+AuthenticationService:
+- changed-files:
+  - any-glob-to-any-file: 'authentication-service/**'
+DetectinService:
+- changed-files:
+  - any-glob-to-any-file: 'detection-service/**'
+NotificationService:
+- changed-files:
+  - any-glob-to-any-file: 'notification-service/**'
+SensorRegistry:
+- changed-files:
+  - any-glob-to-any-file: 'sensor-registry/**'
+Frontend:
+- changed-files:
+  - any-glob-to-any-file: 'er-climate-monitor-frontend/**'
+Sensors:
+- changed-files:
+  - any-glob-to-any-file: 'er-climate-monitor-sensors/**'
+Documentation:
+- base-branch: 'docs'
+```
 
 ## Continuous Deployment
 
