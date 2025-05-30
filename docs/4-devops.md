@@ -4,6 +4,10 @@ layout: default
 ---
 # DevOps
 
+## Quality
+### Frontend
+### Backend
+
 ## Versioning
 TBD
 
