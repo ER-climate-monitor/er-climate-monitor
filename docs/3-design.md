@@ -19,7 +19,7 @@ The system was developed using microservices in order to increase its scalabilit
 
 ### Microservices and Bounded Contexts
 
-In the previous chapter four bounded contexts have been identified. We can define a sort of mapping 1-1 with small tweaks in names
+In the previous chapter four bounded contexts have been identified. We can define a sort of 1-1 mapping with small tweaks in names
 when it comes to microservices:
 - User Management &rarr; Authentication Service
 - Sensors &rarr; Sensor Registry
