@@ -11,6 +11,7 @@ TBD
 TBD
 
 ## Continous Deployment
+This is the pipeline that is responsible for 
 
 ### Google Cloud
 
