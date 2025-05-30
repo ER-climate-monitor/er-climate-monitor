@@ -11,7 +11,7 @@ TBD
 TBD
 
 ## Continous Deployment
-This is the pipeline that is responsible for 
+This is the pipeline that is responsible for deploying automatically all our services into the cloud. The workflow in manually dispatched, in this way it is possible to have a better control over the entire process.
 
 ### Google Cloud
 
