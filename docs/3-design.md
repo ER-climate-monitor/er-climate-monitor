@@ -17,6 +17,20 @@ The system was developed using microservices in order to increase its scalabilit
 
 ![Architecture Overview](./images/Arch/General%20Architecture.drawio.png)
 
+### Microservices and Bounded Contexts
+
+In the previous chapter four bounded contexts have been identified. We can define a sort of mapping 1-1 with small tweaks in names
+when it comes to microservices:
+- User Management &rarr; Authentication Service
+- Sensors &rarr; Sensor Registry
+- Detections Management &rarr; Detection Service
+- Alerts &rarr; Notification Service
+
+Sensors' bounded context is actually further divided into the actual service
+responsible for the creation of actual sensors and its functionalities to
+communicate with the outside world, and the registry which will be used mainly
+by administrators (more in the following sections).
+
 ### Authentication Service
 
 The first microservice we are going to describe is the authentication service. The bounded context it covers concerns the management of various users, both registered and unregistered, and the generation of tokens to verify whether the user is authenticated or not (the authentication function will then intersect with the API Gateway). As previously described, this service has its own database, in which all users belonging to the domain are stored. Two different categories of users can be distinguished: regular users and admins. This difference then reflects on the various functionalities that the system provides.
