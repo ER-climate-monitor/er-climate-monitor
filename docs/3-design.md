@@ -126,21 +126,21 @@ The last important aspect to discuss is our Domain Specific Language (DSL). We i
 The DSL significantly streamlines the process of creating sensors for system administrators. It enforces strict typing on all parameters, ensuring that every sensor is defined with complete accuracy. For instance, it validates that network.port values fall within the allowed range [0, 65,535] and that network.ip entries are valid IP addresses. This built-in validation reduces errors and improves reliability across the system. Additionally, the DSL simplifies cron job scheduling by allowing administrators to define schedules using a human-readable syntax, which is then automatically converted into the appropriate Python-compatible format.
 
 The DSL let users define correct sensor's configurations. The key components of sensors can be summarised as follows:
-- $\texttt{infos}$: this set of configurations contains sensor's main information along with the definition of queries
-  - $\texttt{queries}$ are defined as predicates with the following form:
+- `infos`: this set of configurations contains sensor's main information along with the definition of queries
+  - `queries` are defined as predicates with the following form:
     `<query_name> [>|<] "value"`, where value can be a floating point value or an integer.
-- $\texttt{network}$ defines sensor's specific network information, namely its
+- `network` defines sensor's specific network information, namely its
     ip and port. For local testing and configuration, this must be set to a local
     network interface (i.e. `127.0.0.1`).
-- $\texttt{gateway}$ block specifies the network location of the api-gateway along with:
+- `gateway` block specifies the network location of the api-gateway along with:
     - sensor's registering route
     - sensor's shutdown route
     - sensor's detection route
     - sensor's alert route
-- $\texttt{registry}$ contains similar information of gateway, with the
+- `registry` contains similar information of gateway, with the
     exception that URL and the secret token must be specified for the registry
     component.
-- $\texttt{cronjob}$ specifies the frequency of detection sending to the
+- `cronjob` specifies the frequency of detection sending to the
     detection service. You can define cronjobs in the following manners:
     - `every [DAY] at <hour>:<minutes>` runs the given day at specific hour and minutes;
     - `every [DAY] every <value> [hours|minutes]` runs every day every X hours or minutes;
