@@ -47,7 +47,7 @@ The detection service offers "real-time" communication through the use of a sock
 As described earlier, each microservice refers to a specific bounded context; in particular, the Sensor Registry Service allows interaction with the various sensors installed in the territory. This microservice in particular acts as the main registry, within which all references of the various sensors are maintained, including their IP address and Port. In this way, in case an admin needs to stop a sensor, they would use this service. Also in this case, all various sensors are stored in a database that refers solely and exclusively to this service.
 
 ### API Gateway
-Finally, the last developed service is the API Gateway, whose task is to collect all client requests and redirect them to the appropriate service. Subsequently, once it receives the response from the queried service, it will return the response to the client. Another of the main functionalities of this system is the authentication service. To do this, this service uses the Authentication Service, which, once it returns a token, the API Gateway stores it in a repository to allow optimized searches to validate the permissions and responsibilities of the user who made the request. The API gateway is developed to be agnostic from every type of technology to use for HTTP communication between the API Gateway and a Generic Service, this was achieved by working heavily with Inheritance and Generics.
+Finally, the last developed service is the API Gateway, whose task is to collect all client requests and redirect them to the appropriate service. Subsequently, once it receives the response from the queried service, it will return the response to the client. Another of the main functionalities of this system is the authentication service. To do this, this service uses the Authentication Service, which, once it returns a token, the API Gateway stores it in a repository to allow optimized searches to validate the permissions and responsibilities of the user who made the request. The API gateway is developed to be agnostic from every type of technology to use for HTTP communication between the API Gateway and a Generic Service, this was achieved by working heavily with Inheritance and Generics. It is also important to say that we used the *Circuit Breaker* pattern, in this way our gateway can automatically decide if it can or not send a request to one of the other services.
 
 ## Technologies Used
 Various technologies were used to develop this project. Below, they are separated into Frontend and Backend technologies.
@@ -65,7 +65,7 @@ The authentication service, as previously described, also handles the creation a
 
 #### API Gateway
 
-Within the API Gateway, `Redis` is used as a repository in which to store the tokens received from the Authentication Service. Moreover, to route client requests to other services, the `Axios` library is used.
+Within the API Gateway, `Redis` is used as a repository in which to store the tokens received from the Authentication Service. Moreover, to route client requests to other services, the `Axios` library is used. It is also used the `opossum` library for implementing the circuit breaker pattern.
 
 #### Notification Service
 
