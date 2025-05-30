@@ -16,6 +16,7 @@ Now that we have concluded our project, we can make a brief description of futur
 3. Add new page that will have the latest atmosferic news;
 4. Introduce the ability to visualise multiple charts for a sensor's detections;
 5. Add a new page for visualising the history of detections for a single sensor, by doing so we can show enhanced charts and show temporal events in a period.
+6. Deploy the entire all the services on Google Cloud Kubernetes Engine (GKE), in this way we can manage different workloads automatically by paying for what we use.
 
 ---
 
