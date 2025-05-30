@@ -14,7 +14,7 @@ The *Frontend*, specifies its own rules for quality, in order to crate VueJS app
 
 ### Backend
 
-Each service that is realised has its own set of *eslint* rules. In this way it was possible to introduce best practices in all the different services and also avoid bugs related to types. This rules are also used inside the *Continous Integration* pipeline for checking if the code really follows all the rules that were defined before merging them .
+Each service that is realised has its own set of *eslint* rules. In this way it was possible to introduce best practices in all the different services and also avoid bugs related to types. This rules are also used inside the *Continuous Integration* pipeline for checking if the code really follows all the rules that were defined before merging them .
 
 ## Docker and Containerization
 
