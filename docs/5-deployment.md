@@ -4,6 +4,12 @@ layout: default
 ---
 # Continous Integration and Continous Deployment
 
+## Continous Integration
+### Versioning
+TBD
+### Licensing
+TBD
+
 ## Continous Deployment
 
 ### Google Cloud

@@ -5,14 +5,16 @@ layout: default
 # DevOps
 
 ## Quality
+
+It is also important that every lines of code that is pushed inside the production environment must be grammatically correct, use the correct syntax and avoid as much as possible the use of generic parameters such as *any* (where it is possible). In order to provide more quality to our code, the project was developed using *Typescript*, which allows us to enforce stricter type checking throughout the development process. This approach enhances maintainability, reduces potential bugs, and promotes more robust and predictable code. In all the different services we also decide to use *eslint*, this helps in enforcing code quality, consistency, and best practices across a codebase.
+
 ### Frontend
+
+The *Frontend*, specifies its own rules for quality, in order to crate VueJS application that are more maintainable.
+
 ### Backend
 
-## Versioning
-TBD
-
-## Licensing
-TBD
+Each service that is realised has its own set of *eslint* rules. In this way it was possible to introduce best practices in all the different services and also avoid bugs related to types. This rules are also used inside the *Continous Integration* pipeline for checking if the code really follows all the rules that were defined.
 
 ## Docker and Containerization
 
