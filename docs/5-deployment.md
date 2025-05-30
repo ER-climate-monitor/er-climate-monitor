@@ -8,11 +8,11 @@ layout: default
 
 To improve our development workflow and maintain a high standard of code quality, we are introducing Continuous Integration (CI) into the project.
 
-### Automatic Release
+### Automatic Release (Backend)
 
 The automatic release workflow helps us in deliverying the new code changes to users without manual intervention. The workflow automatically runs all the tests defined inside each service (creating also the coverage), checks the synstanx using eslint. Then, after all this preliminary operations, if all of them exit succesfully, the system will automatically create a release, available inside the Project's release section.
 
-### Automatic Labelling of Pull Requests
+### Automatic Labelling of Pull Requests (Backend)
 
 This action helps reviewers quickly understand what parts of the codebase are affected. This action is always triggered on pull requests events and assign the correct label using the following rules: 
 
@@ -42,7 +42,66 @@ Documentation:
 - base-branch: 'docs'
 ```
 
-## Continuous Deployment
+---
+
+### Automatic Build & Deploy (Frontend Vue)
+
+The **front‑end** lives in the separate repository `er-climate-monitor-frontend` and is built with **Vue 3 + Vite**. A dedicated CI/CD pipeline ensures that the browser bundle is reproducible and automatically served via GitHub Pages.
+
+#### CI workflow highlights
+
+| Step                | Purpose                                    |  Details                                                                                                                                |
+| ------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Node matrix**     | Validate against current & legacy runtimes | Runs on Node 22 (LTS), 20 (maintenance) and 24 (catch early warnings). Builds on 24 use `continue-on-error` so the job warns but does not fail the workflow. |                                                            |
+| **Code quality checks**   | Keep code healthy                          | Executes ESLint, unit tests, and coverage before building.                                                                                 |
+| **Artifact upload** | Upload the bundle once (Node 22) so every later job consumes the same artifact                 | Node 22 job uploads `dist-<sha>.zip`                                            |
+| **Scheduled run**   | Early‑detect stale dependencies            | Cron every Monday 04:00 UTC.                                                                                                               |
+
+```yaml
+
+strategy:
+  matrix:
+    node: [22, 20, 24]
+continue-on-error: ${{ matrix.node == '24' }}
+
+runs-on: ubuntu-latest
+
+- name: Build production bundle
+  run: npm run build
+
+- name: Upload artifact (only once)
+  if: ${{ matrix.node == '22' }}
+  uses: actions/upload-artifact@v4
+  with:
+    name: ${{ steps.setname.outputs.name }}
+    path: dist
+```
+
+#### Continuous Deployment to GitHub Pages
+
+A second job downloads the uploaded bundle and pushes it to the `gh-pages` branch using [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages). A fine‑grained PAT (`GH_PAGES_TOKEN`) with **contents\:write** + **pages\:write** scope is stored in the repo’s *Secrets*.
+
+```yaml
+jobs:
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: ./dist
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.GH_PAGES_TOKEN }}
+          publish_dir: ./dist
+```
+
+---
+
+## Continuous Deployment (Backend)
 
 This is the pipeline that is responsible for deploying automatically all our services into the cloud. The workflow in manually dispatched, in this way it is possible to have a better control over the entire process.
 
@@ -95,4 +154,3 @@ By executing all this steps, it is possible to deploy all the images on the clou
   <a href="/er-climate-monitor/index.html" style="text-align: center;">Home</a>
   <a href="/er-climate-monitor/6-conclusions.html">Next &raquo;</a>
 </div>
-
