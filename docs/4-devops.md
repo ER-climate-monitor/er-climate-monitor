@@ -39,7 +39,7 @@ EXPOSE 8080
 CMD npm run build ; npm run start
 ```
 
-The Dockerfile is used inside the CD pipeline, for automatically build the image and push it inside a *Google Cloud Archive*. For automatising the deployment of each service we have created a Python3 program that takes as input three different parameters and what it does is the follow (the script can be found here: [Service Builder](https://github.com/MatteoIorio11/service-builder)):
+The Dockerfile is used inside the CD pipeline, for automatically build the image and push it inside a *Google Cloud Archive*. For automatising the deployment of each service we have created a Python3 program that takes as input three different parameters and what it does is the follow (the script can be found here: [Service Builder](https://github.com/ER-climate-monitor/service-builder):
 1. Build and tag an image;
 2. Push the image inside a Google Cloud Archive;
 3. Deploy the image stored inside the Google Cloud Archive inside the Google Cloud Run.
