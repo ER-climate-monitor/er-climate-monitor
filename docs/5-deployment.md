@@ -8,11 +8,13 @@ layout: default
 
 To improve our development workflow and maintain a high standard of code quality, we are introducing Continuous Integration (CI) into the project.
 
-### Automatic Release 
+### Automatic Release
+
 ### Licensing
 
 
 ## Continuous Deployment
+
 This is the pipeline that is responsible for deploying automatically all our services into the cloud. The workflow in manually dispatched, in this way it is possible to have a better control over the entire process.
 
 ### Google Cloud
