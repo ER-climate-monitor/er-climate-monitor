@@ -79,7 +79,7 @@ runs-on: ubuntu-latest
 
 #### Continuous Deployment to GitHub Pages
 
-A second job downloads the uploaded bundle and pushes it to the `gh-pages` branch using [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages). A fine‑grained PAT (`GH_PAGES_TOKEN`) with **contents\:write** + **pages\:write** scope is stored in the repo’s *Secrets*.
+A second job downloads the uploaded bundle and pushes it to the `gh-pages` branch using [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages).
 
 ```yaml
 jobs:
