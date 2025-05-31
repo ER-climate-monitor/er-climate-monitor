@@ -110,6 +110,8 @@ Usage scenarios illustrate typical situations in which users interact with the w
 
 ### Use Cases
 
+![Use Cases](./images/usecases.drawio.png)
+
 **Use Case #1**: Unregistered user capabilities.
 ```
 As a non-logged user
