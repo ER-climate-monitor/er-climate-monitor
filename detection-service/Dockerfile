@@ -13,7 +13,7 @@ FROM node:${NODE_VERSION}-alpine
 # Run the application as a non-root user.
 USER root
 ENV PORT=8080
-ENV DB_URL="mongodb+srv://matteoiorio01:bsHMrwnluMpMptJY@cluster0.tj3ou.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+ENV DB_URL="mongodb+srv://aldobagliollc:cHgMKX9sHdFD7GyI@cluster0.xktcqxj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ENV AMPQ_URL="amqps://jakamicd:PB5xeKcvPbGIkOg14rAqtCLhrYmBhvKS@dog.lmq.cloudamqp.com/jakamicd"
 ENV EXCHANGE_NAME="sensor.notifications"
 ENV RECONNECT_RETRIES_NUMBER=5
