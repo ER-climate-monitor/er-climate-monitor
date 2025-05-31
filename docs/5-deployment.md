@@ -107,10 +107,12 @@ This is the pipeline that is responsible for deploying automatically all our ser
 
 ### Google Cloud
 
-Before we started deploy all our images, it was necessary to decide which cloud provider to use. Among all the possible choices our decision was between two providers (here are listed some of the advantages):
-1. *Azure*: the Alma Mater Studiorum gives 100$ to use with them;
-2. *Google Cloud*: it is easy to use, it is really fast, it has a lot of libraries by which it is possible to use it, it has a lot of support, it has a lot of services.
-So driven by all the advantages of GCP, we choose to use it. Among all the possible services that *Google Cloud* exposes, we had to use only: *Google Cloud Artifact Registry* and *Google Cloud Run*.
+Before deploying our images, we first needed to choose a cloud provider. After evaluating the available options, we narrowed our decision down to two main contenders, each with distinct advantages:
+
+1. Azure – The Alma Mater Studiorum offers a $100 credit for use with Azure.
+2. Google Cloud Platform (GCP) – Known for its ease of use, speed, extensive library support, strong community and documentation, and a wide range of services.
+
+Considering these benefits, we ultimately chose Google Cloud Platform. Among the many services GCP offers, we utilized only the ones essential for our deployment: Google Cloud Artifact Registry and Google Cloud Run.
 
 #### Google Cloud Artifact Registry
 
