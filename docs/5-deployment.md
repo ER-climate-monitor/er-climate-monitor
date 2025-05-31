@@ -149,6 +149,10 @@ This is the final step for deploying all our services into the cloud. We achieve
 
 By executing all this steps, it is possible to deploy all the images on the cloud. It is important to say that this workflow in triggered manually. The main reason for that is because it is a really costly operation and doing that every time that a push is made on the *main* branch can result is a higher invoice.
 
+The final architecture deployed on Google Cloud is the following:
+
+![Final Google Cloud Architecture](./images/gcp_final_arch.drawio.png)
+
 ---
 
 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
