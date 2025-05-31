@@ -1,3 +1,12 @@
+# [2.1.0](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.0.0...v2.1.0) (2025-05-31)
+
+
+### Features
+
+* **db:** add new connection string ([a1560fc](https://github.com/ER-climate-monitor/er-climate-monitor/commit/a1560fc2a211aee986b945be0b8f79b6521135a7))
+* **db:** update detection service db ([4bd40f1](https://github.com/ER-climate-monitor/er-climate-monitor/commit/4bd40f10121a99bcfeb3b6d6138b93022d77f279))
+* **db:** update notification service db ([5d05eab](https://github.com/ER-climate-monitor/er-climate-monitor/commit/5d05eabdf714cdcbfc97e42768011a62267c6540))
+
 # [2.0.0](https://github.com/MatteoIorio11/er-climate-monitor/compare/v1.5.4...v2.0.0) (2025-05-29)
 
 
