@@ -13,7 +13,7 @@ FROM node:${NODE_VERSION}-alpine
 # Run the application as a non-root user.
 USER root
 ENV PORT=8080
-ENV DB_URL="mongodb+srv://matteoiorio01:bsHMrwnluMpMptJY@cluster0.tj3ou.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+ENV DB_URL="mongodb+srv://mariorossi444222:VuewzEawzf93mWlu@cluster0.rymzz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 ENV SECRET_API_KEY="secretKey"
 
 # Copy the rest of the source files into the image.
