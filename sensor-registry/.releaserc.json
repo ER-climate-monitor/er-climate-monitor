@@ -1,7 +1,5 @@
 {
-  "branches": [
-    "main"
-  ],
+  "branches": [ "main" ],
   "tagFormat": "${name}@${version}",
   "plugins": [
     "semantic-release-monorepo",
