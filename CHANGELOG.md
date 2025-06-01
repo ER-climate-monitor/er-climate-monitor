@@ -1,3 +1,10 @@
+## [2.1.5](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.4...v2.1.5) (2025-06-01)
+
+
+### Bug Fixes
+
+* **ci:** do not release services on npm ([f2b4cc4](https://github.com/ER-climate-monitor/er-climate-monitor/commit/f2b4cc4cbe0efa77751f39142ce6fa63a3fc6f4b))
+
 ## [2.1.4](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.3...v2.1.4) (2025-06-01)
 
 
