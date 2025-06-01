@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has-changes: ${{ steps.set-matrix.outputs.has-changes }}
     steps:
       - uses: actions/checkout@v4
       - name: get changed files # this action has been object of a supply chain attack in march 2025, now it shoud be safe...
@@ -43,11 +44,18 @@ jobs:
               CHANGED_SERVICES+=("\"$service\"")
             fi
           done
-          echo "matrix={\"service\": [${CHANGED_SERVICES[*]}]}" >> $GITHUB_OUTPUT
+          
+          if [ ${#CHANGED_SERVICES[@]} -eq 0 ]; then
+            echo "matrix={\"service\": []}" >> $GITHUB_OUTPUT
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "matrix={\"service\": [${CHANGED_SERVICES[*]}]}" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          fi
 
   release:
     needs: detect-changes
-    if: ${{ fromJson(needs.detect-changes.outputs.matrix).service != [] }}
+    if: needs.detect-changes.outputs.has-changes == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
