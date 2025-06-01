@@ -1,3 +1,10 @@
+## [2.1.4](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.3...v2.1.4) (2025-06-01)
+
+
+### Bug Fixes
+
+* **ci:** properly configure plugins for `semantic-release-monorepo` ([66c42bb](https://github.com/ER-climate-monitor/er-climate-monitor/commit/66c42bb386debb528e135812a2c03a67cf830fa2))
+
 ## [2.1.3](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.2...v2.1.3) (2025-06-01)
 
 
