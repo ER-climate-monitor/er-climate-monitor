@@ -1,10 +1,9 @@
-name: Release project on NPM
+name: Release services on NPM
 
 permissions:
   contents: write
   issues: write
   pull-requests: write
-
 
 on:
   push:
@@ -18,26 +17,50 @@ on:
       - '.github/workflows/npm-sem-release.yml'
 
 jobs:
+  detect-changes: # cannot leverage anymore on commits if we want to release each microservice. Gotta check changes by ourselves...
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: get changed files # this action has been object of a supply chain attack in march 2025, now it shoud be safe...
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: |
+            notification-service/**
+            detection-service/**
+            authentication-service/**
+            sensor-registry/**
+            api-gateway/**
+
+      - name: set matrix
+        id: set-matrix
+        run: |
+          CHANGED_SERVICES=()
+          for service in notification-service detection-service authentication-service sensor-registry api-gateway; do
+            if echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -q "^$service/"; then
+              CHANGED_SERVICES+=("\"$service\"")
+            fi
+          done
+          echo "matrix={\"service\": [${CHANGED_SERVICES[*]}]}" >> $GITHUB_OUTPUT
+
   release:
+    needs: detect-changes
+    if: ${{ fromJson(needs.detect-changes.outputs.matrix).service != [] }}
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        service:
-          - notification-service
-          - detection-service
-          - authentication-service
-          - sensor-registry
-          - api-gateway
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
 
     defaults:
       run:
         working-directory: ${{ matrix.service }}
 
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v4
 
-      - name: Setup node
+      - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version: '23.10.0'
