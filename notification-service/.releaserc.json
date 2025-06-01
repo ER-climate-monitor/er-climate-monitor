@@ -1,6 +1,10 @@
 {
-  "branches": ["main"],
+  "branches": [
+    "main"
+  ],
+  "tagFormat": "${name}@${version}",
   "plugins": [
+    "semantic-release-monorepo",
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/npm",
@@ -10,4 +14,3 @@
   "pkgRoot": ".",
   "repositoryUrl": "https://github.com/ER-climate-monitor/er-climate-monitor"
 }
-
