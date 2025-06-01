@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.2...v2.1.3) (2025-06-01)
+
+
+### Bug Fixes
+
+* **ci:** properly use workflow compliant checks :') ([0751bf2](https://github.com/ER-climate-monitor/er-climate-monitor/commit/0751bf2f64e012f8781a67c5efa2a2254c6da2c5))
+
 ## [2.1.2](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.1...v2.1.2) (2025-06-01)
 
 
