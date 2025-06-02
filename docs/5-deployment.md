@@ -44,7 +44,8 @@ release:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-which triggers the actual release if QA tests passes (task `lint-and-test`).
+which triggers the actual release if QA tests passes (task `lint-and-test`) on
+GitHub releases section, including a changelog with all release information.
 
 ### Continuous Deployment on GitHub Pages
 
