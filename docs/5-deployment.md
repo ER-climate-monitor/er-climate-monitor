@@ -2,82 +2,51 @@
 title: Deployment
 layout: default
 ---
-# Continuous Integration and Continuous Deployment
 
-## Continuous Integration
+## Continuous Deployment (Backend)
 
-To improve our development workflow and maintain a high standard of code quality, we are introducing Continuous Integration (CI) into the project.
+This is the pipeline that is responsible for deploying automatically all our
+services into github and in the cloud. For the latter, the workflow in manually
+dispatched, in this way it is possible to have a better control over the entire
+process.
 
-### Automatic Release (Backend)
+### Semantic Release on GitHub
 
-The automatic release workflow helps us in deliverying the new code changes to users without manual intervention. The workflow automatically runs all the tests defined inside each service (creating also the coverage), checks the synstanx using eslint. Then, after all this preliminary operations, if all of them exit succesfully, the system will automatically create a release, available inside the Project's release section.
+Following conventional commits, we can leverage `semantic-release` in order
+to automatically trigger new releases of the whole backend monorepo on github
+(and in future versions, on NPM, see more in [future works](./6-conclusions.md)).
+More in particular, the usage of commit analyser let us to trigger:
+- a major version when including `BREAKING CHANGE` in commit message;
+- a minor version when including `feat` at the beginning of a commit;
+- a patch version when including `fix` at the beginning of a commit.
 
-### Automatic Labelling of Pull Requests (Backend)
-
-This action helps reviewers quickly understand what parts of the codebase are affected. This action is always triggered on pull requests events and assign the correct label using the following rules: 
-
+A version is then triggered with the following workflow:
 ```yaml
-ApiGateway:
-- changed-files:
-    - any-glob-to-any-file: 'api-gateway/**'
-AuthenticationService:
-- changed-files:
-  - any-glob-to-any-file: 'authentication-service/**'
-DetectinService:
-- changed-files:
-  - any-glob-to-any-file: 'detection-service/**'
-NotificationService:
-- changed-files:
-  - any-glob-to-any-file: 'notification-service/**'
-SensorRegistry:
-- changed-files:
-  - any-glob-to-any-file: 'sensor-registry/**'
-Frontend:
-- changed-files:
-  - any-glob-to-any-file: 'er-climate-monitor-frontend/**'
-Sensors:
-- changed-files:
-  - any-glob-to-any-file: 'er-climate-monitor-sensors/**'
-Documentation:
-- base-branch: 'docs'
+release:
+    needs: [lint-and-test]
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.10.0'
+
+      - name: install deps
+        run: npm i
+
+      - name: run semantic-release
+        run: npm i && npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
----
+which triggers the actual release if QA tests passes (task `lint-and-test`).
 
-### Automatic Build & Deploy (Frontend Vue)
-
-The **front‑end** lives in the separate repository `er-climate-monitor-frontend` and is built with **Vue 3 + Vite**. A dedicated CI/CD pipeline ensures that the browser bundle is reproducible and automatically served via GitHub Pages.
-
-#### CI workflow highlights
-
-| Step                | Purpose                                    |  Details                                                                                                                                |
-| ------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Node matrix**     | Validate against current & legacy runtimes | Runs on Node 22 (LTS), 20 (maintenance) and 24 (catch early warnings). Builds on 24 use `continue-on-error` so the job warns but does not fail the workflow. |                                                            |
-| **Code quality checks**   | Keep code healthy                          | Executes ESLint, unit tests, and coverage before building.                                                                                 |
-| **Artifact upload** | Upload the bundle once (Node 22) so every later job consumes the same artifact                 | Node 22 job uploads `dist-<sha>.zip`                                            |
-| **Scheduled run**   | Early‑detect stale dependencies            | Cron every Monday 04:00 UTC.                                                                                                               |
-
-```yaml
-
-strategy:
-  matrix:
-    node: [22, 20, 24]
-continue-on-error: ${{ matrix.node == '24' }}
-
-runs-on: ubuntu-latest
-
-- name: Build production bundle
-  run: npm run build
-
-- name: Upload artifact (only once)
-  if: ${{ matrix.node == '22' }}
-  uses: actions/upload-artifact@v4
-  with:
-    name: ${{ steps.setname.outputs.name }}
-    path: dist
-```
-
-#### Continuous Deployment to GitHub Pages
+### Continuous Deployment on GitHub Pages
 
 A second job downloads the uploaded bundle and pushes it to the `gh-pages` branch using [`peaceiris/actions-gh-pages`](https://github.com/peaceiris/actions-gh-pages).
 
@@ -98,12 +67,6 @@ jobs:
           personal_token: ${{ secrets.GH_PAGES_TOKEN }}
           publish_dir: ./dist
 ```
-
----
-
-## Continuous Deployment (Backend)
-
-This is the pipeline that is responsible for deploying automatically all our services into the cloud. The workflow in manually dispatched, in this way it is possible to have a better control over the entire process.
 
 ### Google Cloud
 
