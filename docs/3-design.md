@@ -61,7 +61,8 @@ The detection service offers "real-time" communication through the use of a sock
 As described earlier, each microservice refers to a specific bounded context; in particular, the Sensor Registry Service allows interaction with the various sensors installed in the territory. This microservice in particular acts as the main registry, within which all references of the various sensors are maintained, including their IP address and Port. In this way, in case an admin needs to stop a sensor, they would use this service. Also in this case, all various sensors are stored in a database that refers solely and exclusively to this service.
 
 ### API Gateway
-Finally, the last developed service is the API Gateway, whose task is to collect all client requests and redirect them to the appropriate service. Subsequently, once it receives the response from the queried service, it will return the response to the client. Another of the main functionalities of this system is the authentication service. To do this, this service uses the Authentication Service, which, once it returns a token, the API Gateway stores it in a repository to allow optimized searches to validate the permissions and responsibilities of the user who made the request. The API gateway is developed to be agnostic from every type of technology to use for HTTP communication between the API Gateway and a Generic Service, this was achieved by working heavily with Inheritance and Generics. It is also important to say that we used the *Circuit Breaker* pattern, in this way our gateway can automatically decide if it can or not send a request to one of the other services.
+Finally, the last developed service is the API Gateway, whose task is to collect all client requests and redirect them to the appropriate service. Subsequently, once it receives the response from the queried service, it will return the response to the client. Another of the main functionalities of this system is the authentication service. To do this, this service uses the Authentication Service, which, once it returns a token, the API Gateway stores it in a repository to allow optimized searches to validate the permissions and responsibilities of the user who made the request. The API gateway is developed to be agnostic from every type of technology to use for HTTP communication between the API Gateway and a Generic Service, this was achieved by working heavily with Inheritance and Generics. It is also important to say that we used the *Circuit Breaker* pattern, in this way our gateway can automatically decide if it can or not send a request to one of the other services, depending on various service factors including
+network status, number of processing requests and number of current opened requests.
 
 ## Technologies Used
 Various technologies were used to develop this project. Below, they are separated into Frontend and Backend technologies.
@@ -71,7 +72,7 @@ The first technologies we will list concern all the development of the user inte
 
 ### Backend Technologies
 
-As for the entire backend side, we chose to use `NodeJS` with the use of the `Express` library. All code was written using `Typescript`, in order to maintain type safety and code extensibility. In some of the implemented microservices, the `Socket.io` library is used to create and maintain communications through the WebSocket protocol. As mentioned earlier, each microservice has its own `Mongodb` NoSQL database, used together with the `Mongoose` library for the definition and interaction with various documents. Finally, each of the various microservices was tested using specific libraries for creating tests, including: `Mocha`, `Supertest`, and `Jest`. Each test uses a dedicated database to avoid interfering with production databases. Below, some technologies referring only to specific implemented services will be specified.
+As for the entire backend side, we chose to use `NodeJS` with the use of the `Express` library. All code was written using `Typescript`, in order to maintain type safety and code extensibility. In some of the implemented microservices, the `Socket.io` library is used to create and maintain communications through the WebSocket protocol. As mentioned earlier, each microservice has its own `Mongodb` NoSQL database, used together with the `Mongoose` library for the definition and interaction with various documents. Finally, each of the various microservices was tested using specific libraries for creating tests, including: `Mocha`, `Supertest`, and `Jest`. Each test uses a dedicated database to avoid interfering with production databases, weather an in memory database or a remote cloud based solution. Moreover, in order to make integration tests self-contained and runnable even in a continuous integration environment, tests leverages `testcontainer` in order to properly mimic production's environment. Below, some technologies referring only to specific implemented services will be specified.
 
 #### Authentication Service
 
@@ -99,7 +100,7 @@ We choose Python3 as the programming language for implementing a sensor, in this
 
 The last important aspect to discuss is our Domain Specific Language (DSL). We introduced an internal DSL to assist users in creating their own sensors easily by providing a human-readable language. This DSL guides users through the definition of sensor parameters and automatically generates a corresponding Python 3 file that represents the configured sensor. Here it is an example of our language: 
 
-```yaml
+```
 {
     name "Cesena"
     infos {

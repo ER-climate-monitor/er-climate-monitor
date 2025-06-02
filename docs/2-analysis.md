@@ -31,10 +31,11 @@ stage.
    1. The system must allow admins to shut down sensors.
    2. The system must allow admins to rename sensors.
    3. The system must allow admins to change sensors' network parameters.
-10. The system must let a user or admin to *logout*.
-12. The system should let *non-logged* users to visualise access weather/atmospheric conditions' data.
-13. The system should *not* let *non-logged* users to *subscribe* to certain weather/atmospheric conditions' *events*.
-14. The system should *not* let logged or non-logged users who are not admins to *manage* sensors deployed in the region.
+10. The system must allow the easy creation and installation of new *sensors* which can be heterogeneous among each other.
+11. The system must let a user or admin to *logout*.
+13. The system should let *non-logged* users to visualise access weather/atmospheric conditions' data.
+14. The system should *not* let *non-logged* users to *subscribe* to certain weather/atmospheric conditions' *events*.
+15. The system should *not* let logged or non-logged users who are not admins to *manage* sensors deployed in the region.
 
 ### Functional Requirements
 Alongside the vast majority of system requirements, we can further refine functional requirements to the followings.
