@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.5...v2.2.0) (2025-06-14)
+
+
+### Features
+
+* update Atlas password ([5d900cf](https://github.com/ER-climate-monitor/er-climate-monitor/commit/5d900cfda8a6f191dd6d2aab0370341d46bd76c9))
+
 ## [2.1.5](https://github.com/ER-climate-monitor/er-climate-monitor/compare/v2.1.4...v2.1.5) (2025-06-01)
 
 
